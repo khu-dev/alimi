@@ -22,6 +22,10 @@ public class MemoryNotificationRepository implements NotificationRepository{
             n.setId(mem.size() + 1);
         }
         mem.put(n.getId(), n);
+
+        for (Notification no : mem.values()) {
+            System.out.println(no.getTitle() + ": " + no.getContent());
+        }
         return mem.get(mem.size());
     }
 
