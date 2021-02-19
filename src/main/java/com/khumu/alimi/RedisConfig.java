@@ -1,5 +1,9 @@
-package com.khumu.alimi.config;
+package com.khumu.alimi;
 
+import com.khumu.alimi.listener.ArticleMessageListener;
+import com.khumu.alimi.listener.CommentMessageListener;
+import com.khumu.alimi.listener.RedisArticleMessageListener;
+import com.khumu.alimi.listener.RedisCommentMessageListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,13 +23,12 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 // https://jojoldu.tistory.com/418
-@PropertySource("application.properties")
+// classpath 안 달면 상당한 삽질이 예상된다...
+@PropertySource("classpath:application.properties")
 @RequiredArgsConstructor
 @Configuration
 //@EnableRedisRepositories
 public class RedisConfig {
-//    private final RedisProperties redisProperties;
-    @Autowired
     ApplicationContext context;
 
     @Value("${spring.redis.host}")
@@ -33,6 +36,12 @@ public class RedisConfig {
 
     @Value("${spring.redis.port}")
     private int redisPort;
+
+    @Autowired
+    public RedisConfig(ApplicationContext context) {
+        this.context = context;
+    }
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory(redisHostName, redisPort); // application.properties의 값 이용
@@ -49,14 +58,14 @@ public class RedisConfig {
         return redisTemplate;
     }
 
-    //MessageListenerAdapter로 우리가 정의한 RedisMessageSubscriber를 전달한다.
+    //MessageListenerAdapter로 우리가 정의한 RedisMessageListener를 전달한다.
     @Bean
-    MessageListenerAdapter articleEventMessageListenerAdapter() {
-        return new MessageListenerAdapter(context.getBean("ArticleMessageListener", MessageListener.class));
+    public MessageListenerAdapter articleEventMessageListenerAdapter() {
+        return new MessageListenerAdapter(context.getBean(RedisArticleMessageListener.class));
     }
     @Bean
-    MessageListenerAdapter commentEventMessageListenerAdapter() {
-        return new MessageListenerAdapter(context.getBean("CommentMessageListener", MessageListener.class));
+    public MessageListenerAdapter commentEventMessageListenerAdapter() {
+        return new MessageListenerAdapter(context.getBean(RedisCommentMessageListener.class));
     }
 
     // redis를 subscribe 하는 것 관련된 의존성들을 담는 컨테이너
@@ -65,8 +74,8 @@ public class RedisConfig {
         final RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(this.redisConnectionFactory());
 
-        container.addMessageListener(context.getBean("articleEventMessageListenerAdapter", MessageListenerAdapter.class), new ChannelTopic("article"));
-        container.addMessageListener(context.getBean("commentEventMessageListenerAdapter", MessageListenerAdapter.class), new ChannelTopic("comment"));
+        container.addMessageListener(articleEventMessageListenerAdapter(), new ChannelTopic("article"));
+        container.addMessageListener(commentEventMessageListenerAdapter(), new ChannelTopic("comment"));
         return container;
     }
 }

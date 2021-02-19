@@ -11,12 +11,11 @@ public class EventMessageTest {
     public void getResource_Resource_클래스_동적으로(){
         String title = "hello, Foo";
         String content = "I'm bar.";
-        EventMessage e = new EventMessage(
+        EventMessage<Comment> e = new EventMessage(
                 "Notification", "create",
-                new Notification(1, title, content, "jinsu", false, null)
+                new Comment(1L, title, "exists", content, "jinsu", null, 1, null, 0)
         );
-        Notification n = e.getResource(Notification.class);
-        assertEquals(n.getTitle(), title);
-        assertEquals(n.getContent(), content);
+        Comment c = e.getResource();
+        assertEquals(c.getContent(), content);
     }
 }

@@ -13,15 +13,15 @@ import java.lang.reflect.Type;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventMessage {
+public class EventMessage<R> {
     @SerializedName("resource_kind")
     private String resourceKind;
     @SerializedName("event_kind")
     private String eventKind;
     @SerializedName("resource")
-    private Object resource; // Notification이 이용할 data object
+    private R resource; // Notification이 이용할 data object
 
-    public <T> T getResource(Class<T> c){
-        return (T) this.resource;
-    }
+//    public <T> T getResource(Class<T> c){
+//        return (T) this.resource;
+//    }
 }

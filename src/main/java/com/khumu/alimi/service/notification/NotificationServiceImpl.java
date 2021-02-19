@@ -5,18 +5,32 @@ import com.khumu.alimi.repository.notification.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class NotificationServiceImpl implements NotificationService{
-    @Autowired
-    private NotificationRepository repo;
 
-    public NotificationServiceImpl() {
+    private final NotificationRepository nr;
+
+    @Autowired(required = true)
+    public NotificationServiceImpl(NotificationRepository nr) {
         System.out.println("New NotificationServiceImpl");
+        this.nr = nr;
+
     }
 
     @Override
-    public Notification getNotification(int id) {
-        System.out.println("hello, " + id);
-        return null;
+    public Notification getNotification(Long id) {
+        return nr.get(id);
+    }
+
+    @Override
+    public List<Notification> listNotifications(){
+        return nr.list();
+    }
+
+    @Override
+    public List<Notification> listNotificationsByUsername(String username){
+        return nr.list(username);
     }
 }
