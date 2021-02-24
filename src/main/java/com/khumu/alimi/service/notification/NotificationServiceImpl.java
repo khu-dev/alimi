@@ -12,11 +12,11 @@ public class NotificationServiceImpl implements NotificationService{
 
     private final NotificationRepository nr;
 
-    @Autowired(required = true)
+    @Autowired
     public NotificationServiceImpl(NotificationRepository nr) {
         System.out.println("New NotificationServiceImpl");
+        System.out.println("### Repository: " + nr);
         this.nr = nr;
-
     }
 
     @Override

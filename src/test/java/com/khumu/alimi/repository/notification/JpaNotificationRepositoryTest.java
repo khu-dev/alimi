@@ -6,17 +6,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.Extensions;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.transaction.Transactional;
 import static org.assertj.core.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -25,7 +19,7 @@ import static org.assertj.core.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class JpaNotificationRepositoryTest {
     @Autowired
-    private JpaNotificationRepositoryInterface jpaNotificationRepositoryIfc;
+    private JpaNotificationRepositoryIfc jpaNotificationRepositoryIfc;
     private JpaNotificationRepository repo;
 
     @BeforeEach
@@ -42,24 +36,14 @@ class JpaNotificationRepositoryTest {
     public void save(){
         assertThat(repo).isNotNull();
         Notification original = new Notification(
-                0L,
-                "댓글이 생성되었습니다.",
-                "이제~ 다시는~ 울지 않아~",
-                new SimpleKhumuUser("jinsu"),
-                false,
-                null
+                "jinsu", "뽀로로 댓글 생성~!"
         );
         Notification created = repo.create(original);
         assertThat(created.getId()).isNotEqualTo(0);
         assertThat(created.getId()).isNotNull();
 
         original = new Notification(
-                null,
-                "댓글이 생성되었습니다.",
-                "이제~ 다시는~ 울지 않아~",
-                new SimpleKhumuUser("jinsu"),
-                false,
-                null
+                "jinsu", "뽀로로 댓글 생성~! tow. 마치 사랑 two"
         );
         assertThat(created.getId()).isNotEqualTo(0);
         assertThat(created.getId()).isNotNull();
@@ -72,6 +56,7 @@ class JpaNotificationRepositoryTest {
                 null,
                 "댓글이 생성되었습니다.",
                 "이제~ 다시는~ 울지 않아~",
+                "new_commnet",
                 recipient,
                 false,
                 null

@@ -11,13 +11,11 @@ import java.util.List;
 
 @RestController
 public class NotificationController {
-    NotificationService notificationService;
-    NotificationRepository notificationRepository;
+    private NotificationService notificationService;
 
     @Autowired
-    public NotificationController(NotificationService notificationService, NotificationRepository notificationRepository) {
+    public NotificationController(NotificationService notificationService) {
         this.notificationService = notificationService;
-        this.notificationRepository = notificationRepository;
     }
 
     @RequestMapping(value="/ping", method=RequestMethod.GET)

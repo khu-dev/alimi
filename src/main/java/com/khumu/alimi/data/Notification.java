@@ -23,6 +23,7 @@ public class Notification {
     private Long id;
     private String title;
     private String content;
+    private String kind;
     @ManyToOne
     @JoinColumn(name="recipient_id")
     private SimpleKhumuUser recipient;
@@ -32,4 +33,12 @@ public class Notification {
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+
+    public Notification(String recipientUsername, String content) {
+        this.recipient = new SimpleKhumuUser(recipientUsername);
+        this.title = "임시 제목";
+        this.content = content;
+        this.kind = "mock";
+        this.isRead = false;
+    }
 }

@@ -10,15 +10,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
 
-@ExtendWith(MockitoExtension.class) // <- Spring까지는 쓸 필요 없는 경우, mocking하고 싶은 경우
+@ExtendWith(SpringExtension.class)
 class NotificationServiceImplTest {
-    @Spy
+    @SpyBean
     MemoryNotificationRepository repo;
-    @InjectMocks
+    @SpyBean
     NotificationServiceImpl service;
     @BeforeEach
     void setUp() {
@@ -26,7 +30,8 @@ class NotificationServiceImplTest {
                 null,
                 "테스트 댓글이 생성되었습니다.",
                 "이것은~ 테스트일 뿐~ 넘어져도 괜찮아~",
-                new SimpleKhumuUser("jinsu"),
+                "new_comment",
+                new SimpleKhumuUser("tester_jinsu"),
                 false,
                 null
         ));
@@ -47,9 +52,18 @@ class NotificationServiceImplTest {
 
     @Test
     void listNotifications() {
+        // setUP에서 만든 데이터를 이용해 테스트
+        assertThat(service.listNotifications()).hasSizeLessThanOrEqualTo(10);
+        assertThat(service.listNotifications()).hasSizeGreaterThanOrEqualTo(1);
     }
 
     @Test
     void listNotificationsByUsername() {
+        // setUP에서 만든 데이터를 이용해 테스트
+        List<Notification> l = service.listNotificationsByUsername("tester_jinsu");
+        assertThat(l).hasSizeGreaterThanOrEqualTo(1);
+        for (Notification n : l) {
+            assertThat(n.getRecipient().getUsername()).isEqualTo("tester_jinsu");
+        }
     }
 }

@@ -17,12 +17,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@ExtendWith(MockitoExtension.class) // <- Spring까지는 쓸 필요 없는 경우, mocking하고 싶은 경우
+// <- Spring까지는 쓸 필요 없는 경우, mocking하고 싶은 경우
+// Mockito class를 이용해 볼 수 있다.
+@ExtendWith(MockitoExtension.class)
 class MockitoNotificationServiceImplTest {
     @Spy
     MemoryNotificationRepository repo;
-    @Spy @InjectMocks
-    // or just InjectMocks
+    @InjectMocks
     NotificationServiceImpl service;
 
     @BeforeEach
@@ -31,6 +32,7 @@ class MockitoNotificationServiceImplTest {
                 null,
                 "테스트 댓글이 생성되었습니다.",
                 "이것은~ 테스트일 뿐~ 넘어져도 괜찮아~",
+                "new_comment",
                 new SimpleKhumuUser("jinsu"),
                 false,
                 null

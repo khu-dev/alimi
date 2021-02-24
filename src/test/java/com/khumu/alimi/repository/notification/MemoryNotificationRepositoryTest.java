@@ -33,7 +33,7 @@ class MemoryNotificationRepositoryTest {
     @Test
     void create() {
         Notification n = new Notification(
-                0L, "댓글이 생성되었습니다.", "어쩌구 저쩌구", new SimpleKhumuUser("jinsu"), false, null
+                0L, "댓글이 생성되었습니다.", "어쩌구 저쩌구", "new_comment",new SimpleKhumuUser("jinsu"), false, null
         );
         Notification created = repository.create(n);
         assertNotNull(created);
@@ -51,7 +51,7 @@ class MemoryNotificationRepositoryTest {
     void get() {
         // set up
         Notification n = new Notification(
-                0L, "댓글이 생성되었습니다.", "어쩌구 저쩌구", new SimpleKhumuUser("jinsu"), false, null
+                0L, "댓글이 생성되었습니다.", "어쩌구 저쩌구", "new_comment",new SimpleKhumuUser("jinsu"), false, null
         );
         Notification created = repository.create(n);
 

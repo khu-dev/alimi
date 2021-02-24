@@ -17,7 +17,7 @@ import java.util.List;
  * https://stackoverflow.com/a/11881203/9471220
  * custom jpa repository 이용하기.
   */
-public interface JpaNotificationRepositoryInterface extends JpaRepository<Notification, Long> {
+public interface JpaNotificationRepositoryIfc extends JpaRepository<Notification, Long> {
     @Query("select n from Notification  n where n.recipient.username=:recipient")
     List<Notification> list (@Param("recipient") String recipient);
 }
