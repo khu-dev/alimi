@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import org.mockito.Spy;
+import org.mockito.invocation.Invocation;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
@@ -57,6 +58,7 @@ class CommentEventMessageServiceImplTest {
         fixtureComments.add(new Comment("jinsu"));
         fixtureComments.add(new Comment("admin"));
         when(commentRepository.listFromArticle(anyLong())).thenReturn(fixtureComments);
+        when(notificationRepository.create(any(Notification.class))).thenAnswer(invocation -> invocation.getArgument(0));
     }
 
     @AfterEach
@@ -64,27 +66,36 @@ class CommentEventMessageServiceImplTest {
     }
 
     /**
-     * jinsu의 게시물에 jinsu와 admin이 댓글을 닮.
-     * jinsu는 두 번이 아닌 한 번 포함됨.
-     * 따라서 jinsu, admin에게 알림 전송.
+     * jinsu의 게시물에 jinsu와 admin이 댓글 존재.
+     * jinsu가 댓글 생성.
+     * jinsu는 댓글을 방금 단 당사자니까 제외. admin에게만 알림 발송
      */
     @Test
     void createNotifications_올바른_Recipient_Article과_Comment에_같은_Author() {
-        List<String> desiredRecipientUsernames = new ArrayList<>(Arrays.asList("jinsu", "admin"));
+        String desiredRecipientUsername = "admin";
         // fixture들은 article 1L을 사용하도록 되어있음.
         List<Notification> notifications = service.createNotifications(new EventMessage<Comment>("comment", "create", new Comment("jinsu", 1L)));
-        assertThat(notifications).hasSize(desiredRecipientUsernames.size());
+        assertThat(notifications).hasSize(1);
+        assertThat(notifications.get(1).getRecipient().getUsername()).isEqualTo(desiredRecipientUsername);
     }
 
     /**
-     * somebody의 게시물에 jinsu와 admin이 댓글을 닮.
-     * somebody, jinsu, admin에게 알림 전송.
+     * somebody의 게시물에 jinsu와 admin이 댓글 존재.
+     * somebody가 댓글 작성.
+     * somebody는 댓글을 방금 단 당사자니까 제외. jinsu와 admin에게만 알림 발송
      */
     @Test
     void createNotifications_올바른_Recipient_Article과_Comment에_다른_Author() {
         // fixture들은 article 1L을 사용하도록 되어있음.
-        List<String> desiredRecipientUsernames = new ArrayList<>(Arrays.asList("somebody", "jinsu", "admin"));
-        List<Notification> notifications = service.createNotifications(new EventMessage<Comment>("comment", "create", new Comment("somebody", 1L)));
-        assertThat(notifications).hasSize(desiredRecipientUsernames.size());
+        List<String> desiredRecipientUsernames = new ArrayList<>(Arrays.asList("jinsu", "admin"));
+        Comment c = new Comment("somebody", 1L);
+        c.setAuthor("somebody");
+        c.setAuthorObj(new SimpleKhumuUser("somebody"));
+        fixtureComments.add(c);
+
+        List<Notification> notifications = service.createNotifications(new EventMessage<Comment>("comment", "create", c));
+        for (Notification n : notifications) {
+            assertThat(desiredRecipientUsernames).contains(n.getRecipient().getUsername());
+        }
     }
 }

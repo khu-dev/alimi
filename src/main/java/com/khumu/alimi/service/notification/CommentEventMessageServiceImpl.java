@@ -38,7 +38,8 @@ public class CommentEventMessageServiceImpl {
         List<SimpleKhumuUser> recipients = new ArrayList<>();
         recipients.add(c.getAuthorObj());
         for (Comment comment : commentsInArticle) {
-            if (recipients.stream().noneMatch(recipient -> recipient.getUsername().equals(comment.getAuthorObj().getUsername()))) {
+            if (!c.getAuthor().equals(c.getArticleObj().getAuthor()) &&
+                    recipients.stream().noneMatch(recipient -> recipient.getUsername().equals(comment.getAuthor()))) {
                 recipients.add(comment.getAuthorObj());
             }
         }
