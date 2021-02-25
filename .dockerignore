@@ -34,7 +34,6 @@ build/
 
 
 .gradle
-gradle-wrapper.jar
 .mvn
 
 *.properties
