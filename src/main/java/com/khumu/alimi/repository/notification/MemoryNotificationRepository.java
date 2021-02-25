@@ -49,7 +49,7 @@ public class MemoryNotificationRepository implements NotificationRepository{
     public List<Notification> list(String username) {
         List<Notification> l = new ArrayList<>();
         for (Notification n: this.mem.values() ) {
-            if(username.equals(n.getRecipient().getUsername())){
+            if(username.equals(n.getRecipientObj().getUsername())){
                 l.add(n);
             }
         }

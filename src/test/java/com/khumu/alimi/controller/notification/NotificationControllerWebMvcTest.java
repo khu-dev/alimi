@@ -2,6 +2,8 @@ package com.khumu.alimi.controller.notification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -41,46 +43,52 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
+
 @WebMvcTest(NotificationController.class)
 public class NotificationControllerWebMvcTest {
 
-    // memory를 일종의 mocking(spy)처럼 이용하도록
-    @SpyBean
-    MemoryNotificationRepository memoryNotificationRepository;
-    @SpyBean
+    @MockBean
     NotificationServiceImpl notificationService;
 
     @Autowired
     private MockMvc mockMvc;
 
+    private List<Notification> fixtureNotifications = new ArrayList<Notification>();
     @BeforeEach
     void setUp() {
+
         Notification n1 = new Notification(
-                null,
+                1L,
                 "댓글이 생성되었습니다.",
                 "hello, world 댓글이랍니다~!",
                 "new_comment",
                 new SimpleKhumuUser("jinsu"),
+                "jinsu",
                 false,
-                null
+                new Date()
         );
-        memoryNotificationRepository.create(n1);
+        fixtureNotifications.add(n1);
 
         Notification n2 = new Notification(
-                null,
+                2L,
                 "광고",
                 "뭐?! 쿠뮤에서 이번에 새 팀원을 모집한다구~?!",
-                "new_comment",
+                "ad",
                 new SimpleKhumuUser("jinsu"),
+                "jinsu",
                 false,
-                null
+                new Date()
         );
-        memoryNotificationRepository.create(n1);
+        fixtureNotifications.add(n2);
+        when(notificationService.listNotifications()).thenReturn(this.fixtureNotifications);
+        when(notificationService.listNotificationsByUsername(anyString())).thenReturn(this.fixtureNotifications);
     }
 
     @AfterEach
     void tearDown() {
-        memoryNotificationRepository.clear();
     }
 
     @Test
@@ -89,41 +97,46 @@ public class NotificationControllerWebMvcTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test
-    public void listNotifications() throws Exception {
-
-        this.mockMvc.perform(get("/api/notifications"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("data").isArray())
-                // setUp에서 만드는 data에 의해
-                .andExpect(jsonPath("data.length()").value(greaterThanOrEqualTo(1)))
-                .andExpect(jsonPath("data.length()").value(lessThanOrEqualTo(10)));
-
-    }
+//    @Test
+//    public void listNotifications() throws Exception {
+//        this.mockMvc.perform(get("/api/notifications"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("data").isArray())
+//                // setUp에서 만드는 data에 의해
+//                .andExpect(jsonPath("data.length()").value(greaterThanOrEqualTo(1)))
+//                .andExpect(jsonPath("data.length()").value(lessThanOrEqualTo(10)));
+//    }
 
     @Test
-    public void listNotificationsByUsername() throws Exception {
+    public void listNotifications_json_필드명_체크() throws Exception {
         String recipientUsername = "jinsu";
         this.mockMvc.perform(get("/api/notifications?recipient=" + recipientUsername))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("data").isArray())
                 // setUp에서 만드는 data에 의해
-                .andExpect(
-                        jsonPath("data[*].recipient.username", everyItem(
-                                allOf(equalTo(recipientUsername))
-                        ))
-                );
+//                .andExpect(
+//                        jsonPath("data[*].recipient.username", everyItem(
+//                                allOf(equalTo(recipientUsername))
+//                        ))
+//                )
+                .andExpect(jsonPath("data[0].id").isNumber())
+                .andExpect(jsonPath("data[0].recipient").isString())
+                .andExpect(jsonPath("data[0].recipientObj").doesNotHaveJsonPath())
+                .andExpect(jsonPath("data[0].recipient_obj").doesNotHaveJsonPath())
+                .andExpect(jsonPath("data[0].recipient_id").doesNotHaveJsonPath())
+                .andExpect(jsonPath("data[0].createdAt").doesNotHaveJsonPath())
+                .andExpect(jsonPath("data[0].created_at").isString());
     }
 
-    @Test
-    public void listNotificationsByWrongUsername() throws Exception {
-        String recipientUsername = "FooBarCreatedByJinsu";
-        this.mockMvc.perform(get("/api/notifications?recipient=" + recipientUsername))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("data").isArray())
-                // setUp에서 만드는 data에 의해
-                .andExpect(
-                        jsonPath("data[*].recipient.username", hasSize(0))
-                );
-    }
+//    @Test
+//    public void listNotificationsByWrongUsername() throws Exception {
+//        String recipientUsername = "FooBarCreatedByJinsu";
+//        this.mockMvc.perform(get("/api/notifications?recipient=" + recipientUsername))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("data").isArray())
+//                // setUp에서 만드는 data에 의해
+//                .andExpect(
+//                        jsonPath("data[*].recipient.username", hasSize(0))
+//                );
+//    }
 }

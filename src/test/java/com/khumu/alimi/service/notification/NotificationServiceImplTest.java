@@ -32,6 +32,7 @@ class NotificationServiceImplTest {
                 "이것은~ 테스트일 뿐~ 넘어져도 괜찮아~",
                 "new_comment",
                 new SimpleKhumuUser("tester_jinsu"),
+                "tester_jinsu",
                 false,
                 null
         ));
@@ -63,7 +64,7 @@ class NotificationServiceImplTest {
         List<Notification> l = service.listNotificationsByUsername("tester_jinsu");
         assertThat(l).hasSizeGreaterThanOrEqualTo(1);
         for (Notification n : l) {
-            assertThat(n.getRecipient().getUsername()).isEqualTo("tester_jinsu");
+            assertThat(n.getRecipientObj().getUsername()).isEqualTo("tester_jinsu");
         }
     }
 }

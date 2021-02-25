@@ -32,6 +32,7 @@ public class RedisCommentMessageListener implements CommentMessageListener, Mess
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
+        System.out.println("RedisCommentMessageListener.onMessage");
         System.out.println(message.toString());
         EventMessage<Comment> em = gson.fromJson(message.toString(), commentMessageType);
         commentEventMessageService.createNotifications(em);

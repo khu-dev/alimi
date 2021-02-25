@@ -1,5 +1,6 @@
 package com.khumu.alimi.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
@@ -26,19 +27,24 @@ public class Notification {
     private String kind;
     @ManyToOne
     @JoinColumn(name="recipient_id")
-    private SimpleKhumuUser recipient;
-//    private String recipientId;
+    @JsonIgnore
+    private SimpleKhumuUser recipientObj;
+
+    @Transient
+    private String recipient;
     @JsonProperty("is_read")// Jackson이 is를 삭제해버리는데 왜지..
     private boolean isRead;
+
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
     public Notification(String recipientUsername, String content) {
-        this.recipient = new SimpleKhumuUser(recipientUsername);
+        this.recipientObj = new SimpleKhumuUser(recipientUsername);
         this.title = "임시 제목";
         this.content = content;
         this.kind = "mock";
         this.isRead = false;
+        this.createdAt = new Date();
     }
 }

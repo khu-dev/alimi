@@ -34,6 +34,7 @@ class MockitoNotificationServiceImplTest {
                 "이것은~ 테스트일 뿐~ 넘어져도 괜찮아~",
                 "new_comment",
                 new SimpleKhumuUser("jinsu"),
+                "jinsu",
                 false,
                 null
         ));

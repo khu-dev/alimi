@@ -5,6 +5,7 @@ import com.khumu.alimi.data.Comment;
 import com.khumu.alimi.data.EventMessage;
 import com.khumu.alimi.data.Notification;
 import com.khumu.alimi.data.SimpleKhumuUser;
+import com.khumu.alimi.repository.article.ArticleRepository;
 import com.khumu.alimi.repository.comment.CommentRepository;
 import com.khumu.alimi.repository.notification.NotificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,32 +16,48 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Comment Event Message는 articleObj를 이용하지 않고, articleId를 이용한다.
+ */
 @Service
 @RequiredArgsConstructor
 public class CommentEventMessageServiceImpl {
     private final NotificationRepository notificationRepository;
-    private final Gson gson;
+    private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
+
+    private final Gson gson;
 
     public List<Notification> createNotifications(EventMessage<Comment> e) {
         Comment c = e.getResource();
         List<Notification> results = new ArrayList<>();
         for (SimpleKhumuUser recipient : this.getRecipient(c)) {
-            results.add(notificationRepository.create(
-                    new Notification(null, "새로운 댓글이 작성되었습니다.", c.getContent(), "new_comment", recipient, false, null)
-            ));
+            Notification n = notificationRepository.create(
+                    new Notification(recipient.getUsername(), "댓글 생성돼써용~")
+            );
+            System.out.println("Create: " + n);
+            results.add(n);
         }
         return results;
     }
 
     private List<SimpleKhumuUser> getRecipient(Comment c) {
+        System.out.println(c.getArticleId());
+        System.out.println(articleRepository.get(1L));
+        System.out.println(articleRepository.get(c.getArticleId()));
+        String articleAuthorUsername = articleRepository.get(c.getArticleId()).getAuthorObj().getUsername();
+        String newCommentAuthorUsername = c.getAuthorObj().getUsername();
         List<Comment> commentsInArticle = commentRepository.listFromArticle(c.getArticleObj().getId());
         List<SimpleKhumuUser> recipients = new ArrayList<>();
-        recipients.add(c.getAuthorObj());
-        for (Comment comment : commentsInArticle) {
-            if (!c.getAuthor().equals(c.getArticleObj().getAuthor()) &&
-                    recipients.stream().noneMatch(recipient -> recipient.getUsername().equals(comment.getAuthor()))) {
-                recipients.add(comment.getAuthorObj());
+        // 게시물 작성자도 수신자. 단, 댓글 작성자가 게시물 작성자가 아닌 경우
+        if (!newCommentAuthorUsername.equals(articleAuthorUsername)) {
+            recipients.add(c.getAuthorObj());
+        }
+        for (Comment eachComment : commentsInArticle) {
+            // 새로운 댓글 작성자가 아니면서, 아직 수신자 목록에 없는 경우
+            if (!newCommentAuthorUsername.equals(eachComment.getAuthorObj().getUsername()) &&
+                    recipients.stream().noneMatch(recipient -> recipient.getUsername().equals(eachComment.getAuthorObj().getUsername()))) {
+                recipients.add(eachComment.getAuthorObj());
             }
         }
         return recipients;

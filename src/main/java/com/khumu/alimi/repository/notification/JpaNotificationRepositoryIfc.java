@@ -18,6 +18,6 @@ import java.util.List;
  * custom jpa repository 이용하기.
   */
 public interface JpaNotificationRepositoryIfc extends JpaRepository<Notification, Long> {
-    @Query("select n from Notification  n where n.recipient.username=:recipient")
+    @Query("select n from Notification  n where n.recipientObj.username=:recipient")
     List<Notification> list (@Param("recipient") String recipient);
 }
