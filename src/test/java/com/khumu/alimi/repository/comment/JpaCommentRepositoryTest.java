@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -52,7 +53,8 @@ class JpaCommentRepositoryTest {
 
     @Test
     public void list() {
-        assertThat(repo.list()).hasSizeGreaterThanOrEqualTo(1);
+        List<Comment> l = repo.list();
+        assertThat(l).hasSizeGreaterThanOrEqualTo(1);
     }
 
     @Test

@@ -58,6 +58,7 @@ class JpaNotificationRepositoryTest {
                 "이제~ 다시는~ 울지 않아~",
                 "new_commnet",
                 recipient,
+                "jinsu",
                 false,
                 null
         );

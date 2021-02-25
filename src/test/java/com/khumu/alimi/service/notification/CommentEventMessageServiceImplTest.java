@@ -1,9 +1,7 @@
 package com.khumu.alimi.service.notification;
 
-import com.khumu.alimi.data.Comment;
-import com.khumu.alimi.data.EventMessage;
-import com.khumu.alimi.data.Notification;
-import com.khumu.alimi.data.SimpleKhumuUser;
+import com.khumu.alimi.data.*;
+import com.khumu.alimi.repository.article.ArticleRepository;
 import com.khumu.alimi.repository.comment.CommentRepository;
 import com.khumu.alimi.repository.comment.JpaCommentRepository;
 import com.khumu.alimi.repository.comment.JpaCommentRepositoryIfc;
@@ -48,15 +46,36 @@ class CommentEventMessageServiceImplTest {
     NotificationRepository notificationRepository;
     @Mock
     CommentRepository commentRepository;
+    @Mock
+    ArticleRepository articleRepository;
     @InjectMocks
     CommentEventMessageServiceImpl service;
 
     List<Comment> fixtureComments=new ArrayList<>();
+    Article fixtureArticle;
+    SimpleKhumuUser fixtureAuthor;
     @BeforeEach
     void setUp() {
+        fixtureAuthor = new SimpleKhumuUser("jinsu");
+        fixtureArticle = new Article(1L, fixtureAuthor);
+        when(articleRepository.get(anyLong())).thenReturn(fixtureArticle);
+
         fixtureComments.clear();
-        fixtureComments.add(new Comment("jinsu"));
-        fixtureComments.add(new Comment("admin"));
+        // 최대한 Comment server가 redis에 publish한 message 형태 그대로.
+        Comment c1 = new Comment();
+        c1.setId(1L);
+        c1.setAuthorObj(fixtureAuthor);
+        // comment server는 redis에 articleObj가 아닌 articleId만을 전달한다.
+        c1.setArticleId(fixtureArticle.getId());
+        fixtureComments.add(c1);
+
+        Comment c2 = new Comment("admin");
+        c2.setId(2L);
+        c2.setAuthorObj(new SimpleKhumuUser("admin"));
+        c2.setArticleId(fixtureArticle.getId());
+
+        fixtureComments.add(c2);
+
         when(commentRepository.listFromArticle(anyLong())).thenReturn(fixtureComments);
         when(notificationRepository.create(any(Notification.class))).thenAnswer(invocation -> invocation.getArgument(0));
     }
@@ -74,9 +93,11 @@ class CommentEventMessageServiceImplTest {
     void createNotifications_올바른_Recipient_Article과_Comment에_같은_Author() {
         String desiredRecipientUsername = "admin";
         // fixture들은 article 1L을 사용하도록 되어있음.
-        List<Notification> notifications = service.createNotifications(new EventMessage<Comment>("comment", "create", new Comment("jinsu", 1L)));
+        Comment c = new Comment("jinsu");
+        c.setArticleObj(fixtureArticle);
+        List<Notification> notifications = service.createNotifications(new EventMessage<Comment>("comment", "create", c));
         assertThat(notifications).hasSize(1);
-        assertThat(notifications.get(1).getRecipient().getUsername()).isEqualTo(desiredRecipientUsername);
+        assertThat(notifications.get(0).getRecipientObj().getUsername()).isEqualTo(desiredRecipientUsername);
     }
 
     /**
@@ -86,16 +107,18 @@ class CommentEventMessageServiceImplTest {
      */
     @Test
     void createNotifications_올바른_Recipient_Article과_Comment에_다른_Author() {
-        // fixture들은 article 1L을 사용하도록 되어있음.
+        // setup
+        // fixture comment들이 바라보는 article을 somebody가 작성한 article로 변경
+        fixtureArticle.setAuthorObj(new SimpleKhumuUser("somebody"));
         List<String> desiredRecipientUsernames = new ArrayList<>(Arrays.asList("jinsu", "admin"));
-        Comment c = new Comment("somebody", 1L);
-        c.setAuthor("somebody");
-        c.setAuthorObj(new SimpleKhumuUser("somebody"));
+        Comment c = new Comment("somebody");
+        c.setArticleObj(fixtureArticle);
         fixtureComments.add(c);
 
+        // test
         List<Notification> notifications = service.createNotifications(new EventMessage<Comment>("comment", "create", c));
         for (Notification n : notifications) {
-            assertThat(desiredRecipientUsernames).contains(n.getRecipient().getUsername());
+            assertThat(desiredRecipientUsernames).contains(n.getRecipientObj().getUsername());
         }
     }
 }

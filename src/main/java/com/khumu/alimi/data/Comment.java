@@ -34,41 +34,36 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name="article_id", referencedColumnName = "id")
-    @SerializedName("article")
-    @JsonIgnore
     Article articleObj;
 
 
 
     @ManyToOne
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
-    @JsonIgnore
     Comment parentObj;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
-    @JsonInclude
-    @Transient
-    String author;
-    @JsonInclude
-    @Transient
-    Long article;
-    @JsonInclude
-    @Transient
-    int parent;
+//    @Transient
+//    String authorId;
+    // message는 article이라는 field를 이용해 article의 id만을 넘긴다.
+    @Transient @SerializedName("article")
+    Long articleId;
+//    @Transient
+//    int parentId;
 
     /**
      * Article ID가 1인 Comment 생성
      * @param author
      */
     public Comment(String author) {
-        this.author = author;
+//        this.authorId = author;
         this.authorObj = new SimpleKhumuUser(author);
         this.content = "Fixture 댓글입니다" + System.currentTimeMillis();
         this.articleObj = new Article(1L);
-        this.article = 1L;
+        this.articleId = 1L;
 
         this.kind = "named";
         this.state = "exists";
@@ -76,11 +71,11 @@ public class Comment {
     }
 
     public Comment(String author, Long article) {
-        this.author = author;
+//        this.authorId = author;
         this.authorObj = new SimpleKhumuUser(author);
         this.content = "Fixture 댓글입니다" + System.currentTimeMillis();
         this.articleObj = new Article(article);
-        this.article = 1L;
+        this.articleId = 1L;
 
         this.kind = "named";
         this.state = "exists";
