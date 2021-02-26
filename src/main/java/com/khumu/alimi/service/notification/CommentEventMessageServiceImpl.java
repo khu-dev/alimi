@@ -27,6 +27,7 @@ public class CommentEventMessageServiceImpl {
 
     public List<Notification> createNotifications(EventMessage<Comment> e) {
         Comment c = e.getResource();
+        // comment는 comment microservice로부터 article id만을 받는다.
         c.setArticleObj(new Article(c.getArticleId()));
 
         List<Notification> results = new ArrayList<>();
@@ -41,7 +42,7 @@ public class CommentEventMessageServiceImpl {
             Notification n = notificationRepository.create(
                     tmp
             );
-            System.out.println("Create: " + n);
+            System.out.println("Create notification: " + n);
             results.add(n);
         }
         return results;

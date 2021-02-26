@@ -3,6 +3,7 @@ package com.khumu.alimi.repository.notification;
 import com.khumu.alimi.data.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -36,7 +37,7 @@ public class JpaNotificationRepository implements NotificationRepository{
     @Override
     public List<Notification> list() {
         System.out.println("JpaNotificationRepository.list");
-        return jpa.findAll();
+        return jpa.findAll(Sort.by(Sort.Direction.DESC, "id"));
     }
 
     @Override

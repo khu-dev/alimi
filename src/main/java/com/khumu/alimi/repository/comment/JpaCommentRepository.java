@@ -2,7 +2,9 @@ package com.khumu.alimi.repository.comment;
 
 import com.khumu.alimi.data.Comment;
 import lombok.AllArgsConstructor;
+import org.hibernate.criterion.Order;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
