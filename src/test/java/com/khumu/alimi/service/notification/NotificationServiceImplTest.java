@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -35,7 +36,7 @@ class NotificationServiceImplTest {
     void setUp() {
         repo.create(new Notification(
                 null,
-                "테스트 댓글이 생성되었습니다.",
+                "테스트 댓글이 작성되었습니다.",
                 "이것은~ 테스트일 뿐~ 넘어져도 괜찮아~",
                 "커뮤니티",
                 new SimpleKhumuUser("tester_jinsu"),

@@ -22,7 +22,10 @@ Pub/Sub을 이용해 이벤트를 json 메시지 형태로 전달 받고, 이에
 * OOP의 원칙. SOLID 원칙을 준수
 * TDD를 통한 튼튼하고 편리한 개발
 * JPA + MySQL setting 참고 - https://victorydntmd.tistory.com/321
-
+* Spring 배포 방법
+  * ClassPath를 이용해야 상대 경로를 사용하기가 편한데... Jar로 배포하면서 제대로 classpath를 지정하는 방법을 몰라서
+    지금은 Jar로 빌드 후 다시 해제 해야함..
+  * 참고 - https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html
 ### Redis 관련
 
 #### local 환경

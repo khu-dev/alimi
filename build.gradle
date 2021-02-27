@@ -19,13 +19,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'junit:junit:4.12'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
     // redis pub sub
     compile('io.lettuce:lettuce-core')
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // gson
-    compile('com.google.code.gson:gson:2.8.0')
+    implementation('com.google.code.gson:gson:2.8.0')
 
     // jpa mysql driver
     // 참고 https://victorydntmd.tistory.com/321

@@ -46,13 +46,13 @@ public class FireBaseAdminTest {
     @Test
     public void 올바른_FireBaseAdminCredentialFile() {
         System.out.println(credentialPath);
-        InputStream wrongStream = FireBaseAdminTest.class.getResourceAsStream("/khumu-dev-firebase-credential-wrong-name.json");
+        InputStream wrongStream = FireBaseAdminTest.class.getClassLoader().getResourceAsStream("/khumu-dev-firebase-credential-wrong-name.json");
         assertThat(wrongStream).isNull();
         // /com/main/resources/khumu-dev-firebase-credential-wrong-name.json
         // 의 file에 대한 input stream
 
         assertDoesNotThrow(()->{
-            InputStream credential = FireBaseAdminTest.class.getResourceAsStream(credentialPath);
+            InputStream credential = FireBaseAdminTest.class.getClassLoader().getResourceAsStream(credentialPath);
             assertThat(credential).isNotNull();
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(credential))
@@ -62,33 +62,5 @@ public class FireBaseAdminTest {
             assertThat(app).isNotNull();
             app.delete(); // 같은 이름의 app은 singleton으로 유지되어야하는 듯. 따라서 delete 해줘야 함.
         });
-    }
-
-    @Test
-    public void Push_알림_생성() {
-        assertDoesNotThrow(()->{
-            InputStream credential = FireBaseAdminTest.class.getResourceAsStream(credentialPath);
-            assertThat(credential).isNotNull();
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(credential))
-                    .setDatabaseUrl(firebaseDBUrl)
-                    .build();
-            FirebaseApp app = FirebaseApp.initializeApp(options);
-            Message message = Message.builder()
-                    .setToken(defaultDeviceToken)
-                    .setAndroidConfig(AndroidConfig.builder()
-                            .setNotification(
-                                AndroidNotification.builder()
-                                        .setTitle("TDD를 수행 중입니다.")
-                                        .setBody("What do you think the advantages of TDD is?")
-                                        .build()).setTtl(500)
-                            .setTtl(500)
-                            .build())
-                    .build();
-            String resp = FirebaseMessaging.getInstance().send(message);
-            System.out.println(resp);
-            app.delete(); // 같은 이름의 app은 singleton으로 유지되어야하는 듯. 따라서 delete 해줘야 함.
-        });
-
     }
 }

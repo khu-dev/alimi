@@ -36,5 +36,7 @@ build/
 .gradle
 .mvn
 
-*.properties
-!application.properties
+# resources에는 credential이 위치할 수도 있음.
+/src/main/resources
+!/src/main/resources/application.properties
+

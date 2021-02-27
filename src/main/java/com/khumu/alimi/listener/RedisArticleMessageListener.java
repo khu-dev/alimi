@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service;
 @Component("redisArticleMessageListener")
 public class RedisArticleMessageListener implements ArticleMessageListener, MessageListener{
     private Gson gson;
-    private ArticleEventMessageServiceImpl articleEventMessageService;
+    private ArticleEventMessageServiceImpl articleMessageServiceImpl;
     @Autowired
     public RedisArticleMessageListener(Gson gson, ArticleEventMessageServiceImpl articleEventMessageService) {
         this.gson = gson;
-        this.articleEventMessageService = articleEventMessageService;
+        this.articleMessageServiceImpl = articleEventMessageService;
     }
 
     @Override

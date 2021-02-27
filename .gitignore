@@ -38,4 +38,4 @@ build/
 
 # resources에는 credential이 위치할 수도 있음.
 **/src/main/resources
-!application.properties
+!**/src/main/resources/application.properties
