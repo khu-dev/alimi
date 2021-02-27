@@ -5,7 +5,9 @@ import com.khumu.alimi.data.*;
 import com.khumu.alimi.repository.article.ArticleRepository;
 import com.khumu.alimi.repository.comment.CommentRepository;
 import com.khumu.alimi.repository.notification.NotificationRepository;
+import com.khumu.alimi.service.push.PushNotificationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +20,12 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommentEventMessageServiceImpl {
     private final NotificationRepository notificationRepository;
     private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
-
+    private final PushNotificationService pushNotificationService;
     private final Gson gson;
 
     public List<Notification> createNotifications(EventMessage<Comment> e) {
@@ -31,7 +34,9 @@ public class CommentEventMessageServiceImpl {
         c.setArticleObj(new Article(c.getArticleId()));
 
         List<Notification> results = new ArrayList<>();
-        for (SimpleKhumuUser recipient : this.getRecipient(c)) {
+        List<SimpleKhumuUser> recipients = this.getRecipient(c);
+        log.info("" + recipients);
+        for (SimpleKhumuUser recipient : recipients) {
             Notification tmp = new Notification();
             tmp.setRecipientObj(recipient);
             tmp.setRecipient(recipient.getUsername());
@@ -44,6 +49,7 @@ public class CommentEventMessageServiceImpl {
             );
             System.out.println("Create notification: " + n);
             results.add(n);
+            pushNotificationService.executeNotify(n);
         }
         return results;
     }

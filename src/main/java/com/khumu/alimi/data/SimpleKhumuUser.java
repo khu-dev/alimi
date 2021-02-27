@@ -1,9 +1,6 @@
 package com.khumu.alimi.data;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.context.annotation.Primary;
 
 import javax.persistence.Entity;
@@ -16,7 +13,15 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @Entity
 @Table(name="user_khumuuser")
+@ToString
 public class SimpleKhumuUser {
     @Id
     String username;
+
+    @Override
+    public String toString() {
+        return "SimpleKhumuUser{" +
+                "username='" + username + '\'' +
+                '}';
+    }
 }

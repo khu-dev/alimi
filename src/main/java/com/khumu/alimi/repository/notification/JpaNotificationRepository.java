@@ -1,6 +1,7 @@
 package com.khumu.alimi.repository.notification;
 
 import com.khumu.alimi.data.Notification;
+import com.khumu.alimi.data.SimpleKhumuUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Sort;
@@ -49,5 +50,13 @@ public class JpaNotificationRepository implements NotificationRepository{
     @Override
     public Notification update(Notification n) {
         return jpa.save(n);
+    }
+
+    public void preprocess(Notification n) {
+        if (n.getRecipientObj() == null) {
+            n.setRecipientObj(new SimpleKhumuUser(n.getRecipient()));
+        } else {
+            n.setRecipient(n.getRecipientObj().getUsername());
+        }
     }
 }

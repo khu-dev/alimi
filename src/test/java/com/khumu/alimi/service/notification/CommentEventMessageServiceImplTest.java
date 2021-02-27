@@ -8,6 +8,7 @@ import com.khumu.alimi.repository.comment.JpaCommentRepositoryIfc;
 import com.khumu.alimi.repository.notification.JpaNotificationRepository;
 import com.khumu.alimi.repository.notification.MemoryNotificationRepository;
 import com.khumu.alimi.repository.notification.NotificationRepository;
+import com.khumu.alimi.service.push.PushNotificationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,8 @@ class CommentEventMessageServiceImplTest {
     CommentRepository commentRepository;
     @Mock
     ArticleRepository articleRepository;
+    @Mock
+    PushNotificationService pushNotificationService;
     @InjectMocks
     CommentEventMessageServiceImpl service;
 

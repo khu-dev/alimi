@@ -4,6 +4,7 @@ import com.khumu.alimi.data.Notification;
 import com.khumu.alimi.data.SimpleKhumuUser;
 import com.khumu.alimi.repository.notification.MemoryNotificationRepository;
 import com.khumu.alimi.repository.notification.NotificationRepository;
+import com.khumu.alimi.service.push.PushNotificationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,8 @@ import static org.mockito.Mockito.when;
 class MockNotificationServiceImplTest {
     @Mock
     NotificationRepository repo;
+    @Mock
+    PushNotificationService pushNotificationService;
     @InjectMocks
     NotificationServiceImpl service;
     List<Notification> fixtureNotifications = new ArrayList<>();

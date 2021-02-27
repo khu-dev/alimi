@@ -3,10 +3,7 @@ package com.khumu.alimi.data;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.gson.annotations.SerializedName;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -19,6 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name="comment_comment")
+@ToString
 public class Comment {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

@@ -17,6 +17,7 @@ import java.sql.Time;
 @NoArgsConstructor
 @Entity
 @Table(name="notification_notification")
+@ToString
 // DB에는 기본적으로 Column name이 Snake case.
 public class Notification {
     @Id

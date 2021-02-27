@@ -19,6 +19,7 @@ public class JpaArticleRepository implements ArticleRepository {
     @Override
     public Article get(Long id) {
         Optional<Article> article = jpa.findById(id);
+        Article a = article.get();
         return article.get();
     }
 
