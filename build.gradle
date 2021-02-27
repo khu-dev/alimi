@@ -31,6 +31,8 @@ dependencies {
     // 참고 https://victorydntmd.tistory.com/321
     runtimeOnly 'mysql:mysql-connector-java'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
 }
 
 test {

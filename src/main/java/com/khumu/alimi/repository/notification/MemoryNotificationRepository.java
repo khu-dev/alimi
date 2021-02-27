@@ -37,6 +37,11 @@ public class MemoryNotificationRepository implements NotificationRepository{
     }
 
     @Override
+    public Notification update(Notification n) {
+        return null;
+    }
+
+    @Override
     public List<Notification> list() {
         List<Notification> l = new ArrayList<>();
         for (Notification n: this.mem.values() ) {

@@ -31,7 +31,7 @@ public class JpaNotificationRepository implements NotificationRepository{
 
     @Override
     public Notification get(Long id) {
-        return null;
+        return jpa.findById(id).get();
     }
 
     @Override
@@ -44,5 +44,10 @@ public class JpaNotificationRepository implements NotificationRepository{
     public List<Notification> list(String username) {
         System.out.println("JpaNotificationRepository.list");
         return jpa.list(username);
+    }
+
+    @Override
+    public Notification update(Notification n) {
+        return jpa.save(n);
     }
 }

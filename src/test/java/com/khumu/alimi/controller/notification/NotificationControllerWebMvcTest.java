@@ -64,7 +64,7 @@ public class NotificationControllerWebMvcTest {
                 1L,
                 "댓글이 생성되었습니다.",
                 "hello, world 댓글이랍니다~!",
-                "new_comment",
+                "커뮤니티",
                 new SimpleKhumuUser("jinsu"),
                 "jinsu",
                 false,

@@ -17,7 +17,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-
+/**
+ * mock을 이용하지 않고, spy bean을 이용해 Notification service를 테스트
+ */
 @ExtendWith(SpringExtension.class)
 class NotificationServiceImplTest {
     @SpyBean
@@ -30,7 +32,7 @@ class NotificationServiceImplTest {
                 null,
                 "테스트 댓글이 생성되었습니다.",
                 "이것은~ 테스트일 뿐~ 넘어져도 괜찮아~",
-                "new_comment",
+                "커뮤니티",
                 new SimpleKhumuUser("tester_jinsu"),
                 "tester_jinsu",
                 false,

@@ -15,7 +15,7 @@ public class NotificationServiceImpl implements NotificationService{
     @Autowired
     public NotificationServiceImpl(NotificationRepository nr) {
         System.out.println("New NotificationServiceImpl");
-        System.out.println("### Repository: " + nr);
+        System.out.println("Repository: " + nr.getClass());
         this.nr = nr;
     }
 
@@ -27,7 +27,15 @@ public class NotificationServiceImpl implements NotificationService{
     }
 
     @Override
+    public void read(Long id) {
+        Notification n = nr.get(id);
+        n.setRead(true);
+        nr.update(n);
+    }
+
+    @Override
     public List<Notification> listNotifications(){
+        System.out.println("NotificationServiceImpl.listNotifications");
         List<Notification> ns = nr.list();
         for (Notification n : ns) {
             applyPlainForeignKey(n);
