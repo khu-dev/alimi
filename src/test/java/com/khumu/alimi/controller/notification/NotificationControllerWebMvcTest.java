@@ -21,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +44,10 @@ public class NotificationControllerWebMvcTest {
                 "댓글이 생성되었습니다.",
                 "hello, world 댓글이랍니다~!",
                 "커뮤니티",
-                new SimpleKhumuUser("jinsu"),
+                SimpleKhumuUser.builder().username("jinsu").build(),
                 "jinsu",
                 false,
-                new Date()
+                LocalDateTime.now()
         );
         fixtureNotifications.add(n1);
 
@@ -55,10 +56,10 @@ public class NotificationControllerWebMvcTest {
                 "광고",
                 "뭐?! 쿠뮤에서 이번에 새 팀원을 모집한다구~?!",
                 "ad",
-                new SimpleKhumuUser("jinsu"),
+                SimpleKhumuUser.builder().username("jinsu").build(),
                 "jinsu",
                 false,
-                new Date()
+                LocalDateTime.now()
         );
         fixtureNotifications.add(n2);
         when(notificationService.listNotifications()).thenReturn(this.fixtureNotifications);

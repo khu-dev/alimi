@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             if (tokenString != null) {
                 String username = getUsernameFromToken(tokenString);
                 logger.info("Requesting username in: " + username);
-                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(new SimpleKhumuUser(username), "", null));
+                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(SimpleKhumuUser.builder().username(username).build(), "", null));
             }
         } catch (Exception e) {
             e.printStackTrace();

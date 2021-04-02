@@ -64,7 +64,8 @@ public class CommentEventMessageServiceImpl {
         List<SimpleKhumuUser> recipients = new ArrayList<>();
         // 게시물 작성자도 수신자. 단, 댓글 작성자가 게시물 작성자가 아닌 경우
         if (!articleAuthorUsername.equals(newCommentAuthorUsername)) {
-            recipients.add(new SimpleKhumuUser(articleAuthorUsername));
+            recipients.add(SimpleKhumuUser.builder().username(articleAuthorUsername).build());
+
         }
         for (Comment c : commentsInArticle) {
             // 새로운 댓글의 작성자가 아니면서, 아직 수신자 목록에 없는 경우

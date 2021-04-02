@@ -2,7 +2,9 @@ package com.khumu.alimi.mapper;
 
 import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.entity.Comment;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CommentMapper {
     public CommentDto toDto(Comment comment) {
         CommentDto dto = CommentDto.builder()

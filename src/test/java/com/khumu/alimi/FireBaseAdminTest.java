@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -28,7 +29,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class) // application
-@TestPropertySource(locations= {"classpath:application.properties", "classpath:application-cred.properties"})
+@ActiveProfiles("test")
+@TestPropertySource(locations= {"classpath:application.properties", "classpath:application-test.properties"})
 public class FireBaseAdminTest {
     @Value("${firebase.credential.path}")
     String credentialPath;
@@ -52,7 +54,9 @@ public class FireBaseAdminTest {
         // 의 file에 대한 input stream
 
         assertDoesNotThrow(()->{
-            InputStream credential = FireBaseAdminTest.class.getClassLoader().getResourceAsStream(credentialPath);
+            System.out.println( FireBaseAdminTest.class.getClassLoader().getName());
+            System.out.println( FireBaseAdminTest.class.getClassLoader().getName());
+            InputStream credential = AlimiApplication.class.getResourceAsStream("/khumu-dev-firebase-credential.json");
             assertThat(credential).isNotNull();
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(credential))

@@ -17,5 +17,9 @@ public class Article {
 
     @ManyToOne
     @JoinColumn
+    Board board;
+
+    @ManyToOne
+    @JoinColumn
     SimpleKhumuUser author;
 }

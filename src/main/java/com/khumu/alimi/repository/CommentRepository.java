@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    @Query("select c from Comment c where c.articleObj.id=:articleId")
+    @Query("select c from Comment c where c.article.id = :articleId")
     List<Comment> findByArticleId(@Param("articleId") Long articleId);
 }

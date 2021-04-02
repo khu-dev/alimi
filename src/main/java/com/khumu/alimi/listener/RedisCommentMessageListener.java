@@ -2,8 +2,10 @@ package com.khumu.alimi.listener;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.entity.Comment;
 import com.khumu.alimi.data.dto.EventMessageDto;
+import com.khumu.alimi.repository.NotificationRepository;
 import com.khumu.alimi.service.notification.CommentEventMessageServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
@@ -29,7 +31,7 @@ public class RedisCommentMessageListener implements CommentMessageListener, Mess
     public void onMessage(Message message, byte[] pattern) {
         System.out.println("RedisCommentMessageListener.onMessage");
         System.out.println(message.toString());
-        EventMessageDto<Comment> em = gson.fromJson(message.toString(), commentMessageType);
+        EventMessageDto<CommentDto> em = gson.fromJson(message.toString(), commentMessageType);
         commentEventMessageService.createNotifications(em);
     }
 }

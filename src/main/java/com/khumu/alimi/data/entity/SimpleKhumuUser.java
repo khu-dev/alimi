@@ -19,6 +19,7 @@ import java.util.Collection;
 public class SimpleKhumuUser implements UserDetails {
     @Id
     String username;
+    String password;
 
     /**
      * 얘넨 다 UserDetails로 사용하기 위한 dummy implementaions
