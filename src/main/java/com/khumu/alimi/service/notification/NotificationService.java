@@ -1,6 +1,6 @@
 package com.khumu.alimi.service.notification;
 
-import com.khumu.alimi.data.Notification;
+import com.khumu.alimi.data.entity.Notification;
 
 import java.util.List;
 

@@ -1,23 +1,21 @@
-package com.khumu.alimi.data;
+package com.khumu.alimi.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.annotations.SerializedName;
+import com.khumu.alimi.data.entity.SimpleKhumuUser;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
-import java.sql.Time;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name="notification_notification")
-@ToString
+@Data
+@Builder
 // DB에는 기본적으로 Column name이 Snake case.
 public class Notification {
     @Id
@@ -37,15 +35,5 @@ public class Notification {
     private boolean isRead;
 
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-
-    public Notification(String recipientUsername, String content) {
-        this.recipientObj = new SimpleKhumuUser(recipientUsername);
-        this.title = "임시 제목";
-        this.content = content;
-        this.kind = "mock";
-        this.isRead = false;
-        this.createdAt = new Date();
-    }
+    private LocalDateTime createdAt;
 }

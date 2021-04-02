@@ -1,9 +1,8 @@
-package com.khumu.alimi.controller.notification;
+package com.khumu.alimi.controller;
 
-import com.khumu.alimi.controller.DefaultResponse;
-import com.khumu.alimi.data.PushSubscription;
-import com.khumu.alimi.data.SimpleKhumuUser;
-import com.khumu.alimi.repository.push.PushSubscriptionRepository;
+import com.khumu.alimi.data.entity.PushSubscription;
+import com.khumu.alimi.data.entity.SimpleKhumuUser;
+import com.khumu.alimi.repository.PushSubscriptionRepository;
 import com.khumu.alimi.service.auth.FakeUserDetailsServiceImpl;
 import com.khumu.alimi.service.push.PushNotificationService;
 import com.khumu.alimi.service.push.SubscriptionServiceImpl;
@@ -13,10 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor

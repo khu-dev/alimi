@@ -1,18 +1,12 @@
 package com.khumu.alimi.service.notification;
 
-import com.khumu.alimi.data.Notification;
-import com.khumu.alimi.data.SimpleKhumuUser;
-import com.khumu.alimi.repository.notification.MemoryNotificationRepository;
+import com.khumu.alimi.data.entity.Notification;
+import com.khumu.alimi.data.entity.SimpleKhumuUser;
 import com.khumu.alimi.service.push.PushNotificationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;

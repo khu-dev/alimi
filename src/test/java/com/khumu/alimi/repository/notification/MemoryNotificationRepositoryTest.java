@@ -1,16 +1,13 @@
 package com.khumu.alimi.repository.notification;
 
-import com.khumu.alimi.data.Notification;
-import com.khumu.alimi.data.SimpleKhumuUser;
+import com.khumu.alimi.data.entity.Notification;
+import com.khumu.alimi.data.entity.SimpleKhumuUser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.jupiter.api.Assertions.*;
 

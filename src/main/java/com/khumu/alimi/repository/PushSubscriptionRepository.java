@@ -1,6 +1,6 @@
-package com.khumu.alimi.repository.push;
+package com.khumu.alimi.repository;
 
-import com.khumu.alimi.data.PushSubscription;
+import com.khumu.alimi.data.entity.PushSubscription;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;

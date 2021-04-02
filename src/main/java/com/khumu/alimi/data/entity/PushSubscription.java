@@ -1,16 +1,16 @@
-package com.khumu.alimi.data;
+package com.khumu.alimi.data.entity;
 
+import com.khumu.alimi.data.entity.SimpleKhumuUser;
 import lombok.*;
 
 import javax.persistence.*;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name="notification_pushsubscription")
-@ToString
+@Data
+@Builder
 public class PushSubscription {
     @Id
     String deviceToken;

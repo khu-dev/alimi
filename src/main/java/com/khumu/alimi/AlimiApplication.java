@@ -53,7 +53,7 @@ public class AlimiApplication {
 		InputStream credential = AlimiApplication.class.getResourceAsStream("/khumu-dev-firebase-credential.json");
 		FirebaseOptions options = new FirebaseOptions.Builder()
 			.setCredentials(GoogleCredentials.fromStream(credential))
-			.setDatabaseUrl("")
+//			.setDatabaseUrl("")
 			.build();
 		FirebaseApp app = FirebaseApp.initializeApp(options);
 		// 나중에 bean destroy 시에 app.delete를 해주는 게 좋긴 할 듯.

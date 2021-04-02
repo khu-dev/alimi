@@ -1,15 +1,12 @@
 package com.khumu.alimi.service.push;
 
-import com.google.firebase.messaging.*;
-import com.khumu.alimi.data.Notification;
-import com.khumu.alimi.data.PushSubscription;
-import com.khumu.alimi.repository.push.PushSubscriptionRepository;
+import com.khumu.alimi.data.entity.PushSubscription;
+import com.khumu.alimi.repository.PushSubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Primary

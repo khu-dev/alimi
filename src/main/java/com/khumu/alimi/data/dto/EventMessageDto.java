@@ -1,19 +1,16 @@
-package com.khumu.alimi.data;
+package com.khumu.alimi.data.dto;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.lang.reflect.Type;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventMessage<R> {
+@Data
+@Builder
+public class EventMessageDto<R> {
     @SerializedName("resource_kind")
     private String resourceKind;
     @SerializedName("event_kind")

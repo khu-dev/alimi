@@ -1,13 +1,10 @@
 package com.khumu.alimi.service.notification;
 
-import com.khumu.alimi.data.*;
-import com.khumu.alimi.repository.article.ArticleRepository;
-import com.khumu.alimi.repository.comment.CommentRepository;
-import com.khumu.alimi.repository.comment.JpaCommentRepository;
-import com.khumu.alimi.repository.comment.JpaCommentRepositoryIfc;
-import com.khumu.alimi.repository.notification.JpaNotificationRepository;
-import com.khumu.alimi.repository.notification.MemoryNotificationRepository;
-import com.khumu.alimi.repository.notification.NotificationRepository;
+import com.khumu.alimi.data.dto.EventMessageDto;
+import com.khumu.alimi.data.entity.Article;
+import com.khumu.alimi.data.entity.Comment;
+import com.khumu.alimi.data.entity.Notification;
+import com.khumu.alimi.data.entity.SimpleKhumuUser;
 import com.khumu.alimi.service.push.PushNotificationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,30 +12,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import org.mockito.Spy;
-import org.mockito.invocation.Invocation;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 @Transactional
@@ -67,7 +50,7 @@ class CommentEventMessageServiceImplTest {
         // 최대한 Comment server가 redis에 publish한 message 형태 그대로.
         Comment c1 = new Comment();
         c1.setId(1L);
-        c1.setAuthorObj(fixtureAuthor);
+        c1.setAuthor(fixtureAuthor);
         // comment server는 redis에 articleObj가 아닌 articleId만을 전달한다.
         c1.setArticleId(fixtureArticle.getId());
         fixtureComments.add(c1);
@@ -98,7 +81,7 @@ class CommentEventMessageServiceImplTest {
         // fixture들은 article 1L을 사용하도록 되어있음.
         Comment c = new Comment("jinsu");
         c.setArticleObj(fixtureArticle);
-        List<Notification> notifications = service.createNotifications(new EventMessage<Comment>("comment", "create", c));
+        List<Notification> notifications = service.createNotifications(new EventMessageDto<Comment>("comment", "create", c));
         assertThat(notifications).hasSize(1);
         assertThat(notifications.get(0).getRecipientObj().getUsername()).isEqualTo(desiredRecipientUsername);
     }
@@ -119,7 +102,7 @@ class CommentEventMessageServiceImplTest {
         fixtureComments.add(c);
 
         // test
-        List<Notification> notifications = service.createNotifications(new EventMessage<Comment>("comment", "create", c));
+        List<Notification> notifications = service.createNotifications(new EventMessageDto<Comment>("comment", "create", c));
         for (Notification n : notifications) {
             assertThat(desiredRecipientUsernames).contains(n.getRecipientObj().getUsername());
         }

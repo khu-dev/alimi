@@ -3,29 +3,17 @@ package com.khumu.alimi.service.push;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.messaging.AndroidConfig;
-import com.google.firebase.messaging.AndroidNotification;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
 import com.khumu.alimi.FireBaseAdminTest;
-import com.khumu.alimi.data.Notification;
-import com.khumu.alimi.data.PushSubscription;
-import com.khumu.alimi.data.SimpleKhumuUser;
-import com.khumu.alimi.repository.push.PushSubscriptionRepository;
+import com.khumu.alimi.data.entity.Notification;
+import com.khumu.alimi.data.entity.PushSubscription;
+import com.khumu.alimi.data.entity.SimpleKhumuUser;
+import com.khumu.alimi.repository.PushSubscriptionRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -35,12 +23,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class) // application
-@TestPropertySource(locations= {"classpath:application.properties", "classpath:application-cred.properties"})
+// value 삽입을 위함.
+@TestPropertySource(locations= {"classpath:application-test.properties"})
 class PushNotificationServiceImplTest {
     @MockBean
     PushSubscriptionRepository pushSubscriptionRepository;

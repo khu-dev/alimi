@@ -1,7 +1,8 @@
 package com.khumu.alimi.repository.notification;
 
-import com.khumu.alimi.data.Notification;
-import com.khumu.alimi.data.SimpleKhumuUser;
+import com.khumu.alimi.data.entity.Notification;
+import com.khumu.alimi.data.entity.SimpleKhumuUser;
+import com.khumu.alimi.repository.NotificationRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,13 +20,13 @@ import static org.assertj.core.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class JpaNotificationRepositoryTest {
     @Autowired
-    private JpaNotificationRepositoryIfc jpaNotificationRepositoryIfc;
+    private NotificationRepository notificationRepository;
     private JpaNotificationRepository repo;
 
     @BeforeEach
     void setUp() {
         System.out.println("테스트 시작");
-        repo = new JpaNotificationRepository(this.jpaNotificationRepositoryIfc);
+        repo = new JpaNotificationRepository(this.notificationRepository);
     }
     @AfterEach
     void tearDown() {

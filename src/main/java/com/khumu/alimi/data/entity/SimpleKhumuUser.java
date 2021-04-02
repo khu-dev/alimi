@@ -1,4 +1,4 @@
-package com.khumu.alimi.data;
+package com.khumu.alimi.data.entity;
 
 import lombok.*;
 import org.springframework.context.annotation.Primary;

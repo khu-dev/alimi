@@ -1,7 +1,6 @@
 package com.khumu.alimi.service.push;
 
-import com.khumu.alimi.data.Notification;
-import org.springframework.context.annotation.Primary;
+import com.khumu.alimi.data.entity.Notification;
 import org.springframework.stereotype.Service;
 
 //@Primary

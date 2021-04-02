@@ -1,9 +1,7 @@
 package com.khumu.alimi.service.notification;
 
-import com.khumu.alimi.data.Notification;
-import com.khumu.alimi.data.SimpleKhumuUser;
-import com.khumu.alimi.repository.notification.MemoryNotificationRepository;
-import com.khumu.alimi.repository.notification.NotificationRepository;
+import com.khumu.alimi.data.entity.Notification;
+import com.khumu.alimi.data.entity.SimpleKhumuUser;
 import com.khumu.alimi.service.push.PushNotificationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,19 +10,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
 
 
 /**

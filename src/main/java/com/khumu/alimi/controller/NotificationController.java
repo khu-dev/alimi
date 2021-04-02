@@ -1,10 +1,8 @@
-package com.khumu.alimi.controller.notification;
+package com.khumu.alimi.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.khumu.alimi.controller.DefaultResponse;
-import com.khumu.alimi.data.Notification;
-import com.khumu.alimi.repository.notification.NotificationRepository;
+import com.khumu.alimi.data.entity.Notification;
 import com.khumu.alimi.service.notification.NotificationService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
