@@ -62,7 +62,7 @@ $ publish article '{
 
 * JUnit5를 바탕으로 test를 진행
 * @SpringBootTest
-  * Junit5에서는 따로 정의할 필요 없다.
+  * Junit5에서는 @RunWith를 따로 정의할 필요 없다.
   * JUnit4에서는 @RunWith에 적절한 RunnerClass를 정의해줘야한다.
 * @ExtendWith 필요한 기능을 확장적으로 추가하여 테스트를 진행할 수 있다.
   * @ExtendWith(SpringExtension.class) - Spring 앱 서비스를 전체 다 띄우는 것은 아니지만 Bean 주입과 같은
