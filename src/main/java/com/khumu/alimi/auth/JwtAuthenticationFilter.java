@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Value("${jwt.secret}")
     private final String secret = null;
     private final JwtUtil jwtUtil;
-    final List<String> skipperUris = Arrays.asList("/");
+    final List<String> SKIPPER_URIS = Arrays.asList("/");
 
     public Jws<Claims> getVerifiedJwsFromToken(String token) {
         Jws<Claims> jws = jwtUtil.parseToken(token);
@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (skipperUris.stream().anyMatch(skip -> skip.equals(request.getRequestURI()))) {
+        if (SKIPPER_URIS.stream().anyMatch(skip -> skip.equals(request.getRequestURI()))) {
             filterChain.doFilter(request, response);
             return;
         }

@@ -5,13 +5,13 @@ RUN ./gradlew build  --exclude-task test --exclude-task testClasses
 
 
 RUN cp build/libs/*.jar build/libs/alimi.jar
-#RUN cp build/libs/*.jar alimi.jar && \
+# RUN cp build/libs/*.jar alimi.jar && \
 #    jar -xf alimi.jar
 # 단순히 jar만이 아니라 -xf로 jar을 풀어줘야
 # classpath를 올바르게 사용할 수 있더라 우선은 그 정도.
 # 근데 properties에서 include 말고 active profile을 이용하니까 괜찮아진 것 같기도........
 
-#ENTRYPOINT ["java", "-classpath", "BOOT-INF/classes:BOOT-INF/lib/*:/khumu/src/main/resources", "com.khumu.alimi.AlimiApplication"]
+# ENTRYPOINT ["java", "-classpath", "BOOT-INF/classes:BOOT-INF/lib/*:/khumu/src/main/resources", "com.khumu.alimi.AlimiApplication"]
 # java -Dspring.profiles.active=dev -jar build/libs/alimi.jar
 
 # .jar의 경로를 기준으로가 아닌

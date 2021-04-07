@@ -35,8 +35,6 @@ import java.util.Scanner;
 public class AlimiApplication {
 	@Value("${jwt.secret}")
 	private String jwtSecret;
-	@Value("${firebase.credential-file-path}")
-	String FIREBASE_CREDENTIAL_FILE_PATH;
 
 	public static void main(String[] args) {
 		SpringApplication.run(AlimiApplication.class, args);
@@ -48,19 +46,7 @@ public class AlimiApplication {
 		return new Gson();
 	}
 
-	@Bean
-	public FirebaseApp firebaseApp() throws IOException {
-		System.out.println("AlimiApplication.firebaseApp");
-		FileInputStream credentialFileInputStream = new FileInputStream(FIREBASE_CREDENTIAL_FILE_PATH);
-		FirebaseOptions options = new FirebaseOptions.Builder()
-				.setCredentials(GoogleCredentials.fromStream(credentialFileInputStream))
-//			.setDatabaseUrl("")
-				.build();
-		FirebaseApp app = FirebaseApp.initializeApp(options);
-		// 나중에 bean destroy 시에 app.delete를 해주는 게 좋긴 할 듯.
-		// 한 App 내에 default app이
-		return app;
-	}
+
 }
 
 

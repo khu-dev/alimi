@@ -39,28 +39,21 @@ public class NotificationControllerWebMvcTest {
     @BeforeEach
     void setUp() {
 
-        Notification n1 = new Notification(
-                1L,
-                "댓글이 생성되었습니다.",
-                "hello, world 댓글이랍니다~!",
-                "커뮤니티",
-                SimpleKhumuUser.builder().username("jinsu").build(),
-                "jinsu",
-                false,
-                LocalDateTime.now()
-        );
+        Notification n1 = Notification.builder()
+                .id(1L).title("댓글이 생성되었습니다.").content("hello, world 댓글이랍니다~!")
+                .kind("community")
+                .recipient(SimpleKhumuUser.builder().username("jinsu").build())
+                .isRead(false)
+                .build();
         fixtureNotifications.add(n1);
 
-        Notification n2 = new Notification(
-                2L,
-                "광고",
-                "뭐?! 쿠뮤에서 이번에 새 팀원을 모집한다구~?!",
-                "ad",
-                SimpleKhumuUser.builder().username("jinsu").build(),
-                "jinsu",
-                false,
-                LocalDateTime.now()
-        );
+        Notification n2 = Notification.builder()
+                .id(1L).title("광고").content("뭐?! 쿠뮤에서 이번에 새 팀원을 모집한다구~?!")
+                .kind("ad")
+                .recipient(SimpleKhumuUser.builder().username("jinsu").build())
+                .isRead(false)
+                .build();
+
         fixtureNotifications.add(n2);
         when(notificationService.listNotifications()).thenReturn(this.fixtureNotifications);
         when(notificationService.listNotificationsByUsername(anyString())).thenReturn(this.fixtureNotifications);

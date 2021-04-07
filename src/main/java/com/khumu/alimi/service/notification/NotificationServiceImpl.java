@@ -18,7 +18,7 @@ public class NotificationServiceImpl implements NotificationService{
     @Override
     public Notification getNotification(Long id) {
         Notification n = nr.getOne(id);
-        applyPlainForeignKey(n);
+//        applyPlainForeignKey(n);
         return n;
     }
 
@@ -34,7 +34,7 @@ public class NotificationServiceImpl implements NotificationService{
         System.out.println("NotificationServiceImpl.listNotifications");
         List<Notification> ns = nr.findAll();
         for (Notification n : ns) {
-            applyPlainForeignKey(n);
+//            applyPlainForeignKey(n);
         }
         return ns;
     }
@@ -43,17 +43,8 @@ public class NotificationServiceImpl implements NotificationService{
     public List<Notification> listNotificationsByUsername(String username){
         List<Notification> ns = nr.list(username);
         for (Notification n : ns) {
-            applyPlainForeignKey(n);
+//            applyPlainForeignKey(n);
         }
         return ns;
-    }
-
-    /**
-     * Repository 계층은 plain하게 foreing key를 field로 사용할 수 없기 떄문에
-     * instance에서 필요한 값을 꺼내 plain한 field에 적용한다.
-     * @param n
-     */
-    private void applyPlainForeignKey(Notification n){
-        n.setRecipient(n.getRecipientObj().getUsername());
     }
 }

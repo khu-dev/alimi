@@ -24,7 +24,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 // https://jojoldu.tistory.com/418
 // classpath 안 달면 상당한 삽질이 예상된다...
-@PropertySource("classpath:application.properties")
+//@PropertySource("classpath:application.properties")
 @RequiredArgsConstructor
 @Configuration
 //@EnableRedisRepositories

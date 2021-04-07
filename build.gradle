@@ -47,6 +47,20 @@ dependencies {
             //'org.bouncycastle:bcprov-jdk15on:1.60',
             // 'io.jsonwebtoken:jjwt-jackson:0.11.2' // for jackson
             'io.jsonwebtoken:jjwt-gson:0.11.2' // for gson
+
+    // dto, entitiy mapper
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+}
+
+compileJava{
+    options.compilerArgs += [
+            /**
+             * -Amapstruct.*은 mapstruct processor configurations
+             */
+            '-Amapstruct.defaultComponentModel=spring', // Spring의 dependency injection 이용
+            '-Amapstruct.verbose=false' // 컴파일 로그를 더 보고 싶으면 켜
+    ]
 }
 
 test {

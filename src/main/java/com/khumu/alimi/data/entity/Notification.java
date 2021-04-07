@@ -24,13 +24,12 @@ public class Notification {
     private String title;
     private String content;
     private String kind;
+
     @ManyToOne
     @JoinColumn(name="recipient_id")
     @JsonIgnore
-    private SimpleKhumuUser recipientObj;
+    private SimpleKhumuUser recipient;
 
-    @Transient
-    private String recipient;
     @JsonProperty("is_read")// Jackson이 is를 삭제해버리는데 왜지..
     private boolean isRead;
 

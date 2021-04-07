@@ -40,13 +40,14 @@ public class CommentEventMessageServiceImpl {
         List<Notification> results = new ArrayList<>();
         List<SimpleKhumuUser> recipients = this.getRecipient(commentDto);
         log.info("" + recipients);
+
         for (SimpleKhumuUser recipient : recipients) {
-            Notification tmp = new Notification();
-            tmp.setRecipientObj(recipient);
-            tmp.setRecipient(recipient.getUsername());
-            tmp.setTitle("새로운 댓글이 생성되었습니다.");
-            tmp.setContent(commentDto.getContent());
-            tmp.setKind("커뮤니티");
+            Notification tmp = Notification.builder()
+                    .recipient(recipient)
+                    .title("새로운 댓글이 생성되었습니다.")
+                    .content(commentDto.getContent())
+                    .kind("커뮤니티")
+                    .build();
 
             Notification n = notificationRepository.save(
                     tmp
@@ -78,6 +79,7 @@ public class CommentEventMessageServiceImpl {
                 recipients.add(c.getAuthor());
             }
         }
+
         return recipients;
     }
 }

@@ -1,4 +1,4 @@
-package com.khumu.alimi.service.auth;
+package com.khumu.alimi.service;
 
 import com.khumu.alimi.data.entity.SimpleKhumuUser;
 import lombok.Getter;
@@ -16,16 +16,12 @@ import org.springframework.stereotype.Service;
 @Service
 @Getter
 @RequiredArgsConstructor
-public class FakeUserDetailsServiceImpl implements UserDetailsService {
-
-    /**
-     * 해당 id의 유저가 존재하는가.
-     * @param username
-     * @return
-     * @throws UsernameNotFoundException
-     */
+public class AuthUserDetailsServiceImpl implements UserDetailsService {
+     // 해당 id의 유저가 존재하는가.
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return SimpleKhumuUser.builder().username(username).build();
+        // spring security 때문에 가짜로 구현.
+        // 원래는 login 할 때 이용하는 거.
+        return null;
     }
 }

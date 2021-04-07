@@ -20,14 +20,16 @@ public class PushNotificationServiceImpl implements  PushNotificationService{
     @Override
     public void executeNotify(Notification n) {
         System.out.println("PushNotificationServiceImpl.executeNotify");
-        List<PushSubscription> subscriptions = psr.listByUsername(n.getRecipient());
+        List<PushSubscription> subscriptions = psr.listByUsername(n.getRecipient().getUsername());
         for (PushSubscription s : subscriptions) {
             String token = s.getDeviceToken();
             try {
                 System.out.println("execute push notify to "+s.getUser().getUsername());
-                FirebaseMessaging.getInstance().send(
+                System.out.println(token);
+                String result = FirebaseMessaging.getInstance().send(
                         createMessage(n, token)
                 );
+                System.out.println(result);
             } catch (FirebaseMessagingException e) {
                 e.printStackTrace();
             }
@@ -40,7 +42,7 @@ public class PushNotificationServiceImpl implements  PushNotificationService{
             .setToken(deviceToken)
             .setAndroidConfig(AndroidConfig.builder()
                     .setNotification(
-                            AndroidNotification.builder()
+                            AndroidNotification.builder() // title이나 body 중 하나라도 null이 아니어야 알림이 간다!
                                     .setTitle(n.getTitle())
                                     .setBody(n.getContent())
                                     .build())
