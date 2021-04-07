@@ -22,16 +22,21 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Scanner;
 
 @SpringBootApplication
 //@EnableJpaRepositories(repositoryImplementationPostfix = "JpaImpl")
 public class AlimiApplication {
 	@Value("${jwt.secret}")
 	private String jwtSecret;
+	@Value("${firebase.credential-file-path}")
+	String FIREBASE_CREDENTIAL_FILE_PATH;
 
 	public static void main(String[] args) {
 		SpringApplication.run(AlimiApplication.class, args);
@@ -46,9 +51,9 @@ public class AlimiApplication {
 	@Bean
 	public FirebaseApp firebaseApp() throws IOException {
 		System.out.println("AlimiApplication.firebaseApp");
-		InputStream credential = AlimiApplication.class.getResourceAsStream("/khumu-dev-firebase-credential.json");
+		FileInputStream credentialFileInputStream = new FileInputStream(FIREBASE_CREDENTIAL_FILE_PATH);
 		FirebaseOptions options = new FirebaseOptions.Builder()
-				.setCredentials(GoogleCredentials.fromStream(credential))
+				.setCredentials(GoogleCredentials.fromStream(credentialFileInputStream))
 //			.setDatabaseUrl("")
 				.build();
 		FirebaseApp app = FirebaseApp.initializeApp(options);
