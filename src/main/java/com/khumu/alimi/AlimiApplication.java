@@ -1,7 +1,5 @@
 package com.khumu.alimi;
 
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -29,8 +27,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import static com.auth0.jwt.JWT.require;
-
 @SpringBootApplication
 //@EnableJpaRepositories(repositoryImplementationPostfix = "JpaImpl")
 public class AlimiApplication {
@@ -42,28 +38,25 @@ public class AlimiApplication {
 	}
 
 	@Bean
-	public Gson gson(){
+	public Gson gson() {
 		System.out.println("AlimiApplication.gson");
 		return new Gson();
 	}
 
 	@Bean
-	public FirebaseApp firebaseApp() throws IOException{
+	public FirebaseApp firebaseApp() throws IOException {
 		System.out.println("AlimiApplication.firebaseApp");
 		InputStream credential = AlimiApplication.class.getResourceAsStream("/khumu-dev-firebase-credential.json");
 		FirebaseOptions options = new FirebaseOptions.Builder()
-			.setCredentials(GoogleCredentials.fromStream(credential))
+				.setCredentials(GoogleCredentials.fromStream(credential))
 //			.setDatabaseUrl("")
-			.build();
+				.build();
 		FirebaseApp app = FirebaseApp.initializeApp(options);
 		// 나중에 bean destroy 시에 app.delete를 해주는 게 좋긴 할 듯.
 		// 한 App 내에 default app이
 		return app;
 	}
-
-	@Bean
-	public JWTVerifier jwtVerifier(){
-		JWTVerifier jwtVerifier = require(Algorithm.HMAC256(jwtSecret)).build();
-		return jwtVerifier;
-	}
 }
+
+
+

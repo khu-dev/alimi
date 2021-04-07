@@ -21,7 +21,7 @@ public class Comment {
     String content;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name="author_id")
     SimpleKhumuUser author;
 
     @ManyToOne

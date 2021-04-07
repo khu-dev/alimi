@@ -18,7 +18,7 @@ import java.lang.reflect.Type;
 public class RedisCommentMessageListener implements CommentMessageListener, MessageListener {
     private Gson gson;
     private CommentEventMessageServiceImpl commentEventMessageService;
-    private Type commentMessageType = new TypeToken<EventMessageDto<Comment>>() {
+    private Type commentMessageType = new TypeToken<EventMessageDto<CommentDto>>() {
     }.getType();
 
     @Autowired

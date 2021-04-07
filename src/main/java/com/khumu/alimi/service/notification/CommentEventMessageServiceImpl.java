@@ -14,7 +14,9 @@ import com.khumu.alimi.service.push.PushNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,7 @@ public class CommentEventMessageServiceImpl {
     final PushNotificationService pushNotificationService;
     final Gson gson;
 
+    @Transactional
     public List<Notification> createNotifications(EventMessageDto<CommentDto> e) {
         CommentDto commentDto = e.getResource();
         // comment는 comment microservice로부터 article id만을 받는다.
@@ -55,7 +58,8 @@ public class CommentEventMessageServiceImpl {
         return results;
     }
 
-    private List<SimpleKhumuUser> getRecipient(CommentDto commentDto) {
+    @Transactional
+    public List<SimpleKhumuUser> getRecipient(CommentDto commentDto) {
         Article article = articleRepository.getOne(commentDto.getArticle());
         String articleAuthorUsername = article.getAuthor().getUsername();
         String newCommentAuthorUsername = commentDto.getAuthor().getUsername();

@@ -1,7 +1,6 @@
-package com.khumu.alimi;
+package com.khumu.alimi.auth;
 
-import com.battlepang.pangpang.entity.Role;
-import com.battlepang.pangpang.entity.User;
+import com.khumu.alimi.data.entity.SimpleKhumuUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +20,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,13 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     public List<GrantedAuthority> getAuthoritiesFromJws(Jws<Claims> jws) {
-        List<String> roles = jws.getBody().get("roles", List.class);
-        return roles.stream().map(roleString -> new Role(null, roleString, null)).collect(Collectors.toList());
-    }
-
-    public Role getFirstRoleFromJws(Jws<Claims> jws) {
-        List<String> roles = jws.getBody().get("roles", List.class);
-        return Role.builder().name(roles.get(0)).build();
+        return new ArrayList<>();
     }
 
     @Override
@@ -69,12 +63,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (tokenString != null) {
                 Jws<Claims> jws = getVerifiedJwsFromToken(tokenString);
-                User user = new User();
-                user.setId(getUserIdFromJws(jws));
-                user.setRole(getFirstRoleFromJws(jws));
-                log.info("인증 성공");
+                SimpleKhumuUser user = SimpleKhumuUser.builder().username(getUserIdFromJws(jws)).build();
+                log.info("인증 성공. Request user: " + user.getUsername());
                 SecurityContextHolder.getContext().setAuthentication(
-                        new UsernamePasswordAuthenticationToken(user, "", getAuthoritiesFromJws(jws)));
+                        new UsernamePasswordAuthenticationToken(user, null));
             } else{
                 // token string이 null인 경우. 미인증 상태로 진행.
                 log.info("Authorization Bearer Token 내에 올바른 유저 정보 없음. 미인증 상태로 요청 진행");

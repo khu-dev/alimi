@@ -16,10 +16,10 @@ public class Article {
     Long id;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name="board_id") // board_name이 아닌 board_id가 column name
     Board board;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name="author_id") // author_username이 아닌 author_id가 column name
     SimpleKhumuUser author;
 }

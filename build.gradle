@@ -41,8 +41,12 @@ dependencies {
     // fcm push
     implementation 'com.google.firebase:firebase-admin:7.1.0'
 
-    // jwt
-    implementation 'com.auth0:java-jwt:3.13.0'
+    compile 'io.jsonwebtoken:jjwt-api:0.11.2'
+    runtime 'io.jsonwebtoken:jjwt-impl:0.11.2',
+            // Uncomment the next line if you want to use RSASSA-PSS (PS256, PS384, PS512) algorithms:
+            //'org.bouncycastle:bcprov-jdk15on:1.60',
+            // 'io.jsonwebtoken:jjwt-jackson:0.11.2' // for jackson
+            'io.jsonwebtoken:jjwt-gson:0.11.2' // for gson
 }
 
 test {
