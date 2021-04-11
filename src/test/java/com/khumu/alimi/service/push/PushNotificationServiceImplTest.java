@@ -10,6 +10,8 @@ import com.khumu.alimi.FireBaseConfig;
 import com.khumu.alimi.data.entity.Notification;
 import com.khumu.alimi.data.entity.PushSubscription;
 import com.khumu.alimi.data.entity.SimpleKhumuUser;
+import com.khumu.alimi.external.push.PushManager;
+import com.khumu.alimi.external.push.PushManagerImpl;
 import com.khumu.alimi.repository.PushSubscriptionRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -53,7 +55,7 @@ class PushNotificationServiceImplTest {
     @SpyBean
     FirebaseApp firebaseApp;
     @InjectMocks
-    PushNotificationServiceImpl pushNotificationService;
+    PushManagerImpl pushManager;
 
     @Value("${firebase.credential.path}")
     String credentialPath;
@@ -64,7 +66,6 @@ class PushNotificationServiceImplTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        pushNotificationService = new PushNotificationServiceImpl(pushSubscriptionRepository);
         when(pushSubscriptionRepository.listByUsername(anyString())).thenReturn(
                 new ArrayList<>(Arrays.asList(new PushSubscription(
                         defaultDeviceToken,
@@ -99,13 +100,13 @@ class PushNotificationServiceImplTest {
 
     @Test
     void executeNotify() {
-        pushNotificationService.executeNotify(Notification.builder()
+        pushManager.notify(Notification.builder()
                 .recipient(SimpleKhumuUser.builder()
                         .username("bo314")
                         .build())
                 .title("Execute notify")
                 .content("내용")
-                .build()
+                .build(), defaultDeviceToken
         );
     }
 }

@@ -1,7 +1,6 @@
-package com.khumu.alimi.listener;
+package com.khumu.alimi.external.listener;
 
 import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
 
 @Component("commentMessageListener")
