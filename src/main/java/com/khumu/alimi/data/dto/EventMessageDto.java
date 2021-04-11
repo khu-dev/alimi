@@ -6,6 +6,11 @@ import lombok.*;
 
 import java.lang.reflect.Type;
 
+/**
+ * Redis, SQS, SNS 등의 메시지 브로커에게 전달받는
+ * JSON 형태의 Event 내용을 담는 객체
+ * @param <R>
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

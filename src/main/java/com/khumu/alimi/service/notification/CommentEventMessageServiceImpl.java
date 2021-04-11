@@ -3,34 +3,33 @@ package com.khumu.alimi.service.notification;
 import com.google.gson.Gson;
 import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.dto.EventMessageDto;
-import com.khumu.alimi.data.entity.Article;
-import com.khumu.alimi.data.entity.Comment;
-import com.khumu.alimi.data.entity.Notification;
-import com.khumu.alimi.data.entity.SimpleKhumuUser;
+import com.khumu.alimi.data.entity.*;
+import com.khumu.alimi.external.push.PushManager;
 import com.khumu.alimi.repository.ArticleRepository;
 import com.khumu.alimi.repository.CommentRepository;
 import com.khumu.alimi.repository.NotificationRepository;
-import com.khumu.alimi.service.push.PushNotificationService;
+import com.khumu.alimi.repository.PushSubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Comment Event Message는 articleObj를 이용하지 않고, articleId를 이용한다.
+ * Comment 관련된 Event message의 기능을 담당.
+ * 예를 들어 댓글이 생성되었다는 Event가 발생했을 때 무엇을 할 것인지.
  */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CommentEventMessageServiceImpl {
     final NotificationRepository notificationRepository;
+    final PushSubscriptionRepository pushSubscriptionRepository;
     final ArticleRepository articleRepository;
     final CommentRepository commentRepository;
-    final PushNotificationService pushNotificationService;
+    final PushManager pushManager;
     final Gson gson;
 
     @Transactional
@@ -49,12 +48,13 @@ public class CommentEventMessageServiceImpl {
                     .kind("커뮤니티")
                     .build();
 
-            Notification n = notificationRepository.save(
-                    tmp
-            );
-            System.out.println("Create notification: " + n);
+            Notification n = notificationRepository.save(tmp);
+
+            List<PushSubscription> subscriptions = pushSubscriptionRepository.listByUsername(recipient.getUsername());
+            for (PushSubscription subscription : subscriptions) {
+                pushManager.notify(n, subscription.getDeviceToken());
+            }
             results.add(n);
-            pushNotificationService.executeNotify(n);
         }
         return results;
     }

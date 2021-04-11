@@ -11,25 +11,22 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class NotificationServiceImpl implements NotificationService{
+public class NotificationServiceImpl{
 
     final NotificationRepository nr;
 
-    @Override
     public Notification getNotification(Long id) {
         Notification n = nr.getOne(id);
 //        applyPlainForeignKey(n);
         return n;
     }
 
-    @Override
     @Transactional
     public void read(Long id) {
         Notification n = nr.getOne(id);
         n.setRead(true);
     }
 
-    @Override
     public List<Notification> listNotifications(){
         System.out.println("NotificationServiceImpl.listNotifications");
         List<Notification> ns = nr.findAll();
@@ -39,7 +36,6 @@ public class NotificationServiceImpl implements NotificationService{
         return ns;
     }
 
-    @Override
     public List<Notification> listNotificationsByUsername(String username){
         List<Notification> ns = nr.list(username);
         for (Notification n : ns) {

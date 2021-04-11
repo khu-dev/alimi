@@ -11,6 +11,10 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.List;
 
+
+/**
+ * Django가 이용하는 Comment DTO
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
