@@ -77,3 +77,11 @@ $ publish article '{
 ## 참고
 * Test관련 여러 Anootations - https://goddaehee.tistory.com/211
 * Mock vs Spy - https://stackoverflow.com/questions/28295625/mockito-spy-vs-mock
+
+## Message broker
+
+### SQS 이용하기
+
+#### 참고
+* https://docs.awspring.io/spring-cloud-aws/docs/current/reference/html/index.html#messaging
+  * gradle 의존성은 위의 문서를 따르되 starter로 aws-message를 이용해야 자동으로 시작할 때 띄워줌.

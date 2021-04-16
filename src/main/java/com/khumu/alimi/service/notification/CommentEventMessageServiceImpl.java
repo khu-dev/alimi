@@ -1,6 +1,8 @@
 package com.khumu.alimi.service.notification;
 
 import com.google.gson.Gson;
+import com.khumu.alimi.data.EventKind;
+import com.khumu.alimi.data.ResourceKind;
 import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.dto.EventMessageDto;
 import com.khumu.alimi.data.entity.*;
@@ -31,6 +33,32 @@ public class CommentEventMessageServiceImpl {
     final CommentRepository commentRepository;
     final PushManager pushManager;
     final Gson gson;
+
+    @Transactional
+    public List<Notification> createNotifications(ResourceKind resourceKind, EventKind eventKind, CommentDto commentDto) {
+        List<Notification> results = new ArrayList<>();
+        List<SimpleKhumuUser> recipients = this.getRecipient(commentDto);
+        log.info("" + recipients);
+
+        for (SimpleKhumuUser recipient : recipients) {
+            Notification tmp = Notification.builder()
+                    .recipient(recipient)
+                    .title("새로운 댓글이 생성되었습니다.")
+                    .content(commentDto.getContent())
+                    .kind("커뮤니티")
+                    .build();
+
+            Notification n = notificationRepository.save(tmp);
+
+            List<PushSubscription> subscriptions = pushSubscriptionRepository.listByUsername(recipient.getUsername());
+            for (PushSubscription subscription : subscriptions) {
+                pushManager.notify(n, subscription.getDeviceToken());
+                log.info("푸시를 보냅니다. " + subscription.getUser().getUsername());
+            }
+            results.add(n);
+        }
+        return results;
+    }
 
     @Transactional
     public List<Notification> createNotifications(EventMessageDto<CommentDto> e) {
