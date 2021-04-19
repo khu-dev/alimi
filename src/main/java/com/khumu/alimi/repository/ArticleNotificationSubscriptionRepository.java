@@ -13,4 +13,8 @@ public interface ArticleNotificationSubscriptionRepository extends JpaRepository
     @Query("select subscription from ArticleNotificationSubscription  subscription where subscription.article.id = :articleId and " +
             "subscription.subscriber.username = :subscriberUsername")
     List<ArticleNotificationSubscription> findAllByArticleIdAndSubscriberUsername(Long articleId, String subscriberUsername);
+
+
+    @Query("select subscription from ArticleNotificationSubscription  subscription where subscription.article.id = :articleId")
+    List<ArticleNotificationSubscription> findAllByArticleId(Long articleId);
 }

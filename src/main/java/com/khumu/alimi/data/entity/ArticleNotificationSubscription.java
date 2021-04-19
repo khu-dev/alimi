@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Data
 @Builder
 public class ArticleNotificationSubscription {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @ManyToOne

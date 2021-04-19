@@ -7,10 +7,7 @@ import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.dto.EventMessageDto;
 import com.khumu.alimi.data.entity.*;
 import com.khumu.alimi.external.push.PushManager;
-import com.khumu.alimi.repository.ArticleRepository;
-import com.khumu.alimi.repository.CommentRepository;
-import com.khumu.alimi.repository.NotificationRepository;
-import com.khumu.alimi.repository.PushSubscriptionRepository;
+import com.khumu.alimi.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Comment 관련된 Event message의 기능을 담당.
@@ -29,6 +27,7 @@ import java.util.List;
 public class CommentEventMessageServiceImpl {
     final NotificationRepository notificationRepository;
     final PushSubscriptionRepository pushSubscriptionRepository;
+    final ArticleNotificationSubscriptionRepository articleNotificationSubscriptionRepository;
     final ArticleRepository articleRepository;
     final CommentRepository commentRepository;
     final PushManager pushManager;
@@ -89,25 +88,31 @@ public class CommentEventMessageServiceImpl {
 
     @Transactional
     public List<SimpleKhumuUser> getRecipient(CommentDto commentDto) {
-        Article article = articleRepository.getOne(commentDto.getArticle());
-        String articleAuthorUsername = article.getAuthor().getUsername();
-        String newCommentAuthorUsername = commentDto.getAuthor().getUsername();
+        List<ArticleNotificationSubscription> subscriptions = articleNotificationSubscriptionRepository.findAllByArticleId(commentDto.getArticle());
 
-        List<Comment> commentsInArticle = commentRepository.findByArticleId(commentDto.getArticle());
-        List<SimpleKhumuUser> recipients = new ArrayList<>();
-        // 게시물 작성자도 수신자. 단, 댓글 작성자가 게시물 작성자가 아닌 경우
-        if (!articleAuthorUsername.equals(newCommentAuthorUsername)) {
-            recipients.add(SimpleKhumuUser.builder().username(articleAuthorUsername).build());
-
-        }
-        for (Comment c : commentsInArticle) {
-            // 새로운 댓글의 작성자가 아니면서, 아직 수신자 목록에 없는 경우
-            if (!c.getAuthor().getUsername().equals(newCommentAuthorUsername) &&
-                    recipients.stream().noneMatch(recipient -> recipient.getUsername().equals(c.getAuthor().getUsername()))) {
-                recipients.add(c.getAuthor());
-            }
-        }
-
-        return recipients;
+        return subscriptions.stream().filter(subscription -> {
+                // 현 댓글 작성자는 알림을 보내지 않는다.
+                return !subscription.getSubscriber().getUsername().equals(commentDto.getAuthor().getUsername());
+            }).map(subscription -> subscription.getSubscriber()).collect(Collectors.toList());
+//        Article article = articleRepository.getOne(commentDto.getArticle());
+//        String articleAuthorUsername = article.getAuthor().getUsername();
+//        String newCommentAuthorUsername = commentDto.getAuthor().getUsername();
+//
+//        List<Comment> commentsInArticle = commentRepository.findByArticleId(commentDto.getArticle());
+//        List<SimpleKhumuUser> recipients = new ArrayList<>();
+//        // 게시물 작성자도 수신자. 단, 댓글 작성자가 게시물 작성자가 아닌 경우
+//        if (!articleAuthorUsername.equals(newCommentAuthorUsername)) {
+//            recipients.add(SimpleKhumuUser.builder().username(articleAuthorUsername).build());
+//
+//        }
+//        for (Comment c : commentsInArticle) {
+//            // 새로운 댓글의 작성자가 아니면서, 아직 수신자 목록에 없는 경우
+//            if (!c.getAuthor().getUsername().equals(newCommentAuthorUsername) &&
+//                    recipients.stream().noneMatch(recipient -> recipient.getUsername().equals(c.getAuthor().getUsername()))) {
+//                recipients.add(c.getAuthor());
+//            }
+//        }
+//
+//        return recipients;
     }
 }

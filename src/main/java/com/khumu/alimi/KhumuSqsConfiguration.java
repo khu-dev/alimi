@@ -3,12 +3,14 @@ package com.khumu.alimi;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClient;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.awspring.cloud.messaging.config.QueueMessageHandlerFactory;
 import io.awspring.cloud.messaging.config.SimpleMessageListenerContainerFactory;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
 import io.awspring.cloud.messaging.listener.QueueMessageHandler;
 import io.awspring.cloud.messaging.listener.SqsMessageDeletionPolicy;
+import io.awspring.cloud.messaging.listener.SqsMessageMethodArgumentResolver;
 import org.springframework.boot.task.TaskExecutorCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +26,7 @@ import org.springframework.messaging.handler.annotation.support.HeadersMethodArg
 import org.springframework.messaging.handler.annotation.support.PayloadArgumentResolver;
 import org.springframework.messaging.handler.annotation.support.PayloadMethodArgumentResolver;
 import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
+import org.springframework.messaging.handler.invocation.reactive.ArgumentResolverConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.quartz.SimpleThreadPoolTaskExecutor;
 
@@ -62,7 +65,13 @@ class KhumuSqsConfiguration {
         QueueMessageHandlerFactory factory = new QueueMessageHandlerFactory();
         // header들을 Map<String, String>으로 받을 수 있는 Resolver,
         // Payload를 messageConverter를 이용해 parse하는 Resolver
-        factory.setArgumentResolvers(Arrays.asList(new HeadersMethodArgumentResolver(), new PayloadMethodArgumentResolver(messageConverter())));
+        factory.setArgumentResolvers(Arrays.asList(
+//                new SqsMessageMethodArgumentResolver()));
+                new HeadersMethodArgumentResolver(),
+//                new PayloadArgumentResolver(messageConverter()))
+                new PayloadMethodArgumentResolver(messageConverter()))
+        );
+//        factory.setArgumentResolvers(Collections.<HandlerMethodArgumentResolver>singletonList(new PayloadArgumentResolver(messageConverter())));
         factory.setSqsMessageDeletionPolicy(SqsMessageDeletionPolicy.ON_SUCCESS);
         return factory;
     }
@@ -70,6 +79,8 @@ class KhumuSqsConfiguration {
     @Bean
     public MessageConverter messageConverter() {
         MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
+        messageConverter.getObjectMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+//        messageConverter.getObjectMapper().configure(MapperFeature.A?, true);
 
         // set strict content type match to false
         messageConverter.setStrictContentTypeMatch(false);
