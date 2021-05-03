@@ -24,10 +24,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    // redis pub sub
-    compile('io.lettuce:lettuce-core')
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
     // gson
     implementation('com.google.code.gson:gson:2.8.0')
 
@@ -55,24 +51,6 @@ dependencies {
 
     implementation 'io.awspring.cloud:spring-cloud-starter-aws-messaging:2.3.0'
 }
-//        <dependencyManagement>
-//        <dependencies>
-//        <dependency>
-//        <groupId>com.amazonaws</groupId>
-//            <artifactId>aws-java-sdk-bom</artifactId>
-//        <version>${aws-java-sdk.version}</version>
-//            <type>pom</type>
-//<scope>import</scope>
-//        </dependency>
-//        </dependencies>
-//</dependencyManagement>
-
-//dependencyManagement {
-//    imports {
-//        // 이 레포지토리가 없으면 없으면 spring cloud를 가져올 수 없음..?
-//        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR10"
-//    }
-//}
 
 
 compileJava{

@@ -28,7 +28,6 @@ import org.springframework.messaging.handler.annotation.support.PayloadMethodArg
 import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
 import org.springframework.messaging.handler.invocation.reactive.ArgumentResolverConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.scheduling.quartz.SimpleThreadPoolTaskExecutor;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -38,7 +37,7 @@ import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
 @Configuration
-class KhumuSqsConfiguration {
+class KhumuSqsConfig {
     @Bean
     public SimpleMessageListenerContainerFactory simpleMessageListenerContainerFactory(AmazonSQSAsync amazonSqs) {
         SimpleMessageListenerContainerFactory factory = new SimpleMessageListenerContainerFactory();
