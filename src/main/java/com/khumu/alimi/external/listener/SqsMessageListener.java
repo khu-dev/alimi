@@ -35,23 +35,37 @@ public class SqsMessageListener {
     public void receiveMessage(
             SqsMessageBodyDto body,
             @Headers() Map<String, String> headers) throws JsonProcessingException {
+        log.info("SQS 메시지를 가져왔습니다.");
         String resourceKindStr = headers.getOrDefault("resource_kind","comments");
         String eventKindStr = headers.getOrDefault("event_kind", "create");
         EventKind eventKind = EventKind.valueOf(eventKindStr);
         ResourceKind resourceKind = ResourceKind.valueOf(resourceKindStr);
-
         if (resourceKind == ResourceKind.comments) {
             CommentDto commentDto = null;
-            commentDto = objectMapper.readValue(body.getMessage(), CommentDto.class);
-
-            if (eventKind == EventKind.create) {
-                log.info(commentDto.getId() + " 댓글이 생성되었습니다.");
-                notificationSubscriptionService.createSubscriptionIfNotExists(ArticleNotificationSubscription.builder()
-                        .article(Article.builder().id(commentDto.getArticle()).build())
-                        .subscriber(commentDto.getAuthor()).build()
-                );
-                commentEventMessageService.createNotifications(resourceKind, eventKind, commentDto);
+            try {
+                commentDto = objectMapper.readValue(body.getMessage(), CommentDto.class);
+                if (eventKind == EventKind.create) {
+                    log.info(commentDto.getId() + " 댓글이 생성되었습니다.");
+                    notificationSubscriptionService.createSubscriptionIfNotExists(ArticleNotificationSubscription.builder()
+                            .article(Article.builder().id(commentDto.getArticle()).build())
+                            .subscriber(commentDto.getAuthor()).build()
+                    );
+                    commentEventMessageService.createNotifications(resourceKind, eventKind, commentDto);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error("SQS 메시지 처리 도중 오류 발생!");
             }
+
+
+
         }
+        System.out.println("SQS 비용을 줄이기 위한 Dummy wait 시작");
+        try {
+            Thread.sleep(60000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("SQS 비용을 줄이기 위한 Dummy wait 마무리");
     }
 }
