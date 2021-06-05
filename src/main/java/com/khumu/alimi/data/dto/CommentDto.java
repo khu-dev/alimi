@@ -1,15 +1,10 @@
 package com.khumu.alimi.data.dto;
 
-import com.khumu.alimi.data.entity.Article;
-import com.khumu.alimi.data.entity.SimpleKhumuUser;
+import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.util.List;
 
 
 /**
@@ -21,7 +16,7 @@ import java.util.List;
 @Builder
 public class CommentDto {
     Long id;
-    SimpleKhumuUser author;
+    SimpleKhumuUserDto author;
     Long article;
     String content;
     String header;

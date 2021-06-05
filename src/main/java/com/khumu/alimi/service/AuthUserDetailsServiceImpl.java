@@ -1,6 +1,6 @@
 package com.khumu.alimi.service;
 
-import com.khumu.alimi.data.entity.SimpleKhumuUser;
+import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

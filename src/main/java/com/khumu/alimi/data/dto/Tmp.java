@@ -1,6 +1,6 @@
 package com.khumu.alimi.data.dto;
 
-import com.khumu.alimi.data.entity.SimpleKhumuUser;
+import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

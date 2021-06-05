@@ -9,7 +9,7 @@ import com.khumu.alimi.FireBaseAdminTest;
 import com.khumu.alimi.FireBaseConfig;
 import com.khumu.alimi.data.entity.Notification;
 import com.khumu.alimi.data.entity.PushSubscription;
-import com.khumu.alimi.data.entity.SimpleKhumuUser;
+import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.external.push.PushManager;
 import com.khumu.alimi.external.push.PushManagerImpl;
 import com.khumu.alimi.repository.PushSubscriptionRepository;
@@ -57,10 +57,6 @@ class PushNotificationServiceImplTest {
     @InjectMocks
     PushManagerImpl pushManager;
 
-    @Value("${firebase.credential.path}")
-    String credentialPath;
-    @Value("${firebase.credential.database-url}")
-    String firebaseDBUrl;
     @Value("${firebase.credential.default-device-token}")
     String defaultDeviceToken;
 
@@ -69,7 +65,7 @@ class PushNotificationServiceImplTest {
         when(pushSubscriptionRepository.listByUsername(anyString())).thenReturn(
                 new ArrayList<>(Arrays.asList(new PushSubscription(
                         defaultDeviceToken,
-                        SimpleKhumuUser.builder().username("bo314").build()
+                        "bo314"
                 )))
         );
     }
@@ -101,9 +97,7 @@ class PushNotificationServiceImplTest {
     @Test
     void executeNotify() {
         pushManager.notify(Notification.builder()
-                .recipient(SimpleKhumuUser.builder()
-                        .username("bo314")
-                        .build())
+                .recipient("bo314")
                 .title("Execute notify")
                 .content("내용")
                 .build(), defaultDeviceToken

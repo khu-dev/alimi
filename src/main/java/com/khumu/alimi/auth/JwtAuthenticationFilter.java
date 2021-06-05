@@ -1,6 +1,6 @@
 package com.khumu.alimi.auth;
 
-import com.khumu.alimi.data.entity.SimpleKhumuUser;
+import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (tokenString != null) {
                 Jws<Claims> jws = getVerifiedJwsFromToken(tokenString);
-                SimpleKhumuUser user = SimpleKhumuUser.builder().username(getUserIdFromJws(jws)).build();
+                SimpleKhumuUserDto user = SimpleKhumuUserDto.builder().username(getUserIdFromJws(jws)).build();
                 log.info("인증 성공. Request user: " + user.getUsername());
                 SecurityContextHolder.getContext().setAuthentication(
                         new UsernamePasswordAuthenticationToken(user, null));

@@ -23,7 +23,7 @@ public class NotificationSubscriptionServiceImpl {
     @Transactional
     public ArticleNotificationSubscription createOrUpdateArticleNotificationSubscription(ArticleNotificationSubscription subscription) {
         List<ArticleNotificationSubscription> myExistingSubscriptions = articleNotificationSubscriptionRepository.findAllByArticleIdAndSubscriberUsername(
-                subscription.getArticle().getId(), subscription.getSubscriber().getUsername());
+                subscription.getArticle(), subscription.getSubscriber());
 
         // 없으면 만듦.
         if (myExistingSubscriptions.isEmpty()) {
@@ -51,13 +51,13 @@ public class NotificationSubscriptionServiceImpl {
     @Transactional
     public ArticleNotificationSubscription createSubscriptionIfNotExists(ArticleNotificationSubscription subscription) {
         List<ArticleNotificationSubscription> myExistingSubscriptions = articleNotificationSubscriptionRepository.findAllByArticleIdAndSubscriberUsername(
-                subscription.getArticle().getId(), subscription.getSubscriber().getUsername());
+                subscription.getArticle(), subscription.getSubscriber());
         if (myExistingSubscriptions.isEmpty()) {
-            log.info(subscription.getArticle() + " 번 게시물에 대한 " + subscription.getSubscriber().getUsername() + " 유저의 게시글 알림 구독을 생성합니다.");
+            log.info(subscription.getArticle() + " 번 게시물에 대한 " + subscription.getSubscriber() + " 유저의 게시글 알림 구독을 생성합니다.");
             return articleNotificationSubscriptionRepository.save(subscription);
         }
 
-        log.info(subscription.getArticle() + " 번 게시물에 대한 " + subscription.getSubscriber().getUsername() + " 유저의 게시글 알림 구독이 존재하므로 새로 생성하지 않습니다.");
+        log.info(subscription.getArticle() + " 번 게시물에 대한 " + subscription.getSubscriber() + " 유저의 게시글 알림 구독이 존재하므로 새로 생성하지 않습니다.");
         return myExistingSubscriptions.get(0);
     }
 }

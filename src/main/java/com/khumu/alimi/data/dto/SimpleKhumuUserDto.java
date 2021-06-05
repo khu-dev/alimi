@@ -1,4 +1,4 @@
-package com.khumu.alimi.data.entity;
+package com.khumu.alimi.data.dto;
 
 import lombok.*;
 import org.springframework.context.annotation.Primary;
@@ -16,7 +16,7 @@ import java.util.Collection;
 @Table(name="user_khumuuser")
 @Data
 @Builder
-public class SimpleKhumuUser implements UserDetails {
+public class SimpleKhumuUserDto implements UserDetails {
     @Id
     String username;
     String password;

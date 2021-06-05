@@ -1,6 +1,6 @@
 package com.khumu.alimi.data.entity;
 
-import com.khumu.alimi.data.entity.SimpleKhumuUser;
+import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,8 +14,5 @@ import javax.persistence.*;
 public class PushSubscription {
     @Id
     String deviceToken;
-
-    @OneToOne
-    @JoinColumn(name="user_id")
-    SimpleKhumuUser user;
+    String user;
 }

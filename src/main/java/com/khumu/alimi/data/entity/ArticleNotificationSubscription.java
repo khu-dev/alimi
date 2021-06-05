@@ -16,14 +16,9 @@ import javax.persistence.*;
 public class ArticleNotificationSubscription {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "article_id")
-    Article article;
-
-    @OneToOne
-    @JoinColumn(name = "subscriber_id")
-    SimpleKhumuUser subscriber;
+    Long studyArticle;
+    Long article;
+    String subscriber;
 
     @Builder.Default
     Boolean isActivated = true;

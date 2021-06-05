@@ -9,19 +9,19 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Entity
-@Table(name="board_board")
-@Data
-@Builder
-public class Board {
-    @Id
-    String name;
-    String displayName;
-    String category;
-
-    @OneToMany(mappedBy = "board")
-    @Builder.Default
-    List<Article> articles = new ArrayList<>();
-}
+//@AllArgsConstructor
+//@NoArgsConstructor
+//@Entity
+//@Table(name="board_board")
+//@Data
+//@Builder
+//public class Board {
+//    @Id
+//    String name;
+//    String displayName;
+//    String category;
+//
+//    @OneToMany(mappedBy = "board")
+//    @Builder.Default
+//    List<Article> articles = new ArrayList<>();
+//}
