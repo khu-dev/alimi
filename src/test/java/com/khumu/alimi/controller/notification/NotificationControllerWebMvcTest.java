@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.khumu.alimi.controller.NotificationController;
 import com.khumu.alimi.data.entity.Notification;
-import com.khumu.alimi.data.entity.SimpleKhumuUser;
+import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.service.notification.NotificationServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ public class NotificationControllerWebMvcTest {
         Notification n1 = Notification.builder()
                 .id(1L).title("댓글이 생성되었습니다.").content("hello, world 댓글이랍니다~!")
                 .kind("community")
-                .recipient(SimpleKhumuUser.builder().username("jinsu").build())
+                .recipient("jinsu")
                 .isRead(false)
                 .build();
         fixtureNotifications.add(n1);
@@ -50,7 +50,7 @@ public class NotificationControllerWebMvcTest {
         Notification n2 = Notification.builder()
                 .id(1L).title("광고").content("뭐?! 쿠뮤에서 이번에 새 팀원을 모집한다구~?!")
                 .kind("ad")
-                .recipient(SimpleKhumuUser.builder().username("jinsu").build())
+                .recipient("jinsu")
                 .isRead(false)
                 .build();
 

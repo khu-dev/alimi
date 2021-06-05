@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //                "댓글이 생성되었습니다.",
 //                "hello, world 댓글이랍니다~!",
 //                "커뮤니티",
-//                SimpleKhumuUser.builder().username("jinsu").build(),
+//                SimpleKhumuUserDto.builder().username("jinsu").build(),
 //                false,
 //                null
 //        );
@@ -50,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //                "광고",
 //                "뭐?! 쿠뮤에서 이번에 새 팀원을 모집한다구~?!",
 //                "ad",
-//                SimpleKhumuUser.builder().username("jinsu").build(),
+//                SimpleKhumuUserDto.builder().username("jinsu").build(),
 //                false,
 //                null
 //        );

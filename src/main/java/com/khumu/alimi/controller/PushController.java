@@ -1,7 +1,7 @@
 package com.khumu.alimi.controller;
 
 import com.khumu.alimi.data.entity.PushSubscription;
-import com.khumu.alimi.data.entity.SimpleKhumuUser;
+import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.repository.PushSubscriptionRepository;
 import com.khumu.alimi.service.AuthUserDetailsServiceImpl;
 import com.khumu.alimi.service.push.SubscriptionServiceImpl;
@@ -24,10 +24,10 @@ public class PushController {
     @RequestMapping(value="/api/push-subscriptions", method= RequestMethod.PATCH)
     @ResponseBody
     public ResponseEntity<DefaultResponse<PushSubscription>> createPushSubscription(
-            @AuthenticationPrincipal SimpleKhumuUser user,
+            @AuthenticationPrincipal SimpleKhumuUserDto user,
         @RequestBody PushSubscription body) {
         if (user != null) {
-            body.setUser(user);
+            body.setUser(user.getUsername());
         }
 
         logger.info(user + " 유저에 대한 푸시 등록을 생성하거나 수정합니다.");

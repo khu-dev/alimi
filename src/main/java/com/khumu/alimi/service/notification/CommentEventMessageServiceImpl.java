@@ -5,6 +5,7 @@ import com.khumu.alimi.data.EventKind;
 import com.khumu.alimi.data.ResourceKind;
 import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.dto.EventMessageDto;
+import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.data.entity.*;
 import com.khumu.alimi.external.push.PushManager;
 import com.khumu.alimi.repository.*;
@@ -28,20 +29,18 @@ public class CommentEventMessageServiceImpl {
     final NotificationRepository notificationRepository;
     final PushSubscriptionRepository pushSubscriptionRepository;
     final ArticleNotificationSubscriptionRepository articleNotificationSubscriptionRepository;
-    final ArticleRepository articleRepository;
-    final CommentRepository commentRepository;
     final PushManager pushManager;
     final Gson gson;
 
     @Transactional
     public List<Notification> createNotifications(ResourceKind resourceKind, EventKind eventKind, CommentDto commentDto) {
         List<Notification> results = new ArrayList<>();
-        List<SimpleKhumuUser> recipients = this.getRecipient(commentDto);
-        log.info("" + recipients);
+        List<String> recipientIds = this.getRecipientIds(commentDto);
+        log.info("" + recipientIds);
 
-        for (SimpleKhumuUser recipient : recipients) {
+        for (String recipientId : recipientIds) {
             Notification tmp = Notification.builder()
-                    .recipient(recipient)
+                    .recipient(recipientId)
                     .title("새로운 댓글이 생성되었습니다.")
                     .content(commentDto.getContent())
                     .kind("커뮤니티")
@@ -49,10 +48,10 @@ public class CommentEventMessageServiceImpl {
 
             Notification n = notificationRepository.save(tmp);
 
-            List<PushSubscription> subscriptions = pushSubscriptionRepository.listByUsername(recipient.getUsername());
+            List<PushSubscription> subscriptions = pushSubscriptionRepository.listByUsername(recipientId);
             for (PushSubscription subscription : subscriptions) {
                 pushManager.notify(n, subscription.getDeviceToken());
-                log.info("푸시를 보냅니다. " + subscription.getUser().getUsername());
+                log.info("푸시를 보냅니다. " + subscription.getUser());
             }
             results.add(n);
         }
@@ -64,12 +63,12 @@ public class CommentEventMessageServiceImpl {
         CommentDto commentDto = e.getResource();
         // comment는 comment microservice로부터 article id만을 받는다.
         List<Notification> results = new ArrayList<>();
-        List<SimpleKhumuUser> recipients = this.getRecipient(commentDto);
+        List<String> recipients = this.getRecipientIds(commentDto);
         log.info("" + recipients);
 
-        for (SimpleKhumuUser recipient : recipients) {
+        for (String recipientId : recipients) {
             Notification tmp = Notification.builder()
-                    .recipient(recipient)
+                    .recipient(recipientId)
                     .title("새로운 댓글이 생성되었습니다.")
                     .content(commentDto.getContent())
                     .kind("커뮤니티")
@@ -77,7 +76,7 @@ public class CommentEventMessageServiceImpl {
 
             Notification n = notificationRepository.save(tmp);
 
-            List<PushSubscription> subscriptions = pushSubscriptionRepository.listByUsername(recipient.getUsername());
+            List<PushSubscription> subscriptions = pushSubscriptionRepository.listByUsername(recipientId);
             for (PushSubscription subscription : subscriptions) {
                 pushManager.notify(n, subscription.getDeviceToken());
             }
@@ -87,12 +86,12 @@ public class CommentEventMessageServiceImpl {
     }
 
     @Transactional
-    public List<SimpleKhumuUser> getRecipient(CommentDto commentDto) {
+    public List<String> getRecipientIds(CommentDto commentDto) {
         List<ArticleNotificationSubscription> subscriptions = articleNotificationSubscriptionRepository.findAllByArticleId(commentDto.getArticle());
 
         return subscriptions.stream().filter(subscription -> {
                 // 현 댓글 작성자는 알림을 보내지 않는다.
-                return !subscription.getSubscriber().getUsername().equals(commentDto.getAuthor().getUsername());
+                return !subscription.getSubscriber().equals(commentDto.getAuthor().getUsername());
             }).map(subscription -> subscription.getSubscriber()).collect(Collectors.toList());
 //        Article article = articleRepository.getOne(commentDto.getArticle());
 //        String articleAuthorUsername = article.getAuthor().getUsername();
@@ -102,7 +101,7 @@ public class CommentEventMessageServiceImpl {
 //        List<SimpleKhumuUser> recipients = new ArrayList<>();
 //        // 게시물 작성자도 수신자. 단, 댓글 작성자가 게시물 작성자가 아닌 경우
 //        if (!articleAuthorUsername.equals(newCommentAuthorUsername)) {
-//            recipients.add(SimpleKhumuUser.builder().username(articleAuthorUsername).build());
+//            recipients.add(SimpleKhumuUserDto.builder().username(articleAuthorUsername).build());
 //
 //        }
 //        for (Comment c : commentsInArticle) {

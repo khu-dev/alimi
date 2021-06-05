@@ -55,9 +55,9 @@
 //    List<Comment> fixtureComments=new ArrayList<>();
 //    Article fixtureArticle;
 //    Board fixtureBoard;
-//    SimpleKhumuUser fixtureUserJinsu;
-//    SimpleKhumuUser fixtureUserPenguin;
-//    SimpleKhumuUser fixtureUserKitty;
+//    SimpleKhumuUserDto fixtureUserJinsu;
+//    SimpleKhumuUserDto fixtureUserPenguin;
+//    SimpleKhumuUserDto fixtureUserKitty;
 //    @BeforeEach
 //    void setUp() {}
 //

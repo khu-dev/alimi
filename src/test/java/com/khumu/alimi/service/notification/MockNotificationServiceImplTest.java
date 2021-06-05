@@ -1,7 +1,7 @@
 //package com.khumu.alimi.service.notification;
 //
 //import com.khumu.alimi.data.entity.Notification;
-//import com.khumu.alimi.data.entity.SimpleKhumuUser;
+//import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 //import com.khumu.alimi.service.push.PushNotificationService;
 //import org.junit.jupiter.api.AfterEach;
 //import org.junit.jupiter.api.BeforeEach;

@@ -6,7 +6,6 @@ import com.khumu.alimi.data.EventKind;
 import com.khumu.alimi.data.ResourceKind;
 import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.dto.SqsMessageBodyDto;
-import com.khumu.alimi.data.entity.Article;
 import com.khumu.alimi.data.entity.ArticleNotificationSubscription;
 import com.khumu.alimi.service.notification.CommentEventMessageServiceImpl;
 import com.khumu.alimi.service.notification.NotificationSubscriptionServiceImpl;
@@ -47,8 +46,8 @@ public class SqsMessageListener {
                 if (eventKind == EventKind.create) {
                     log.info(commentDto.getId() + " 댓글이 생성되었습니다.");
                     notificationSubscriptionService.createSubscriptionIfNotExists(ArticleNotificationSubscription.builder()
-                            .article(Article.builder().id(commentDto.getArticle()).build())
-                            .subscriber(commentDto.getAuthor()).build()
+                            .article(commentDto.getArticle())
+                            .subscriber(commentDto.getAuthor().getUsername()).build()
                     );
                     commentEventMessageService.createNotifications(resourceKind, eventKind, commentDto);
                 }

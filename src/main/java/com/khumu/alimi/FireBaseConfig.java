@@ -8,22 +8,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Configuration
 @RequiredArgsConstructor
 public class FireBaseConfig {
-    @Value("${firebase.credential-file-path}")
-    String FIREBASE_CREDENTIAL_FILE_PATH;
+    String FIREBASE_CREDENTIAL_FILE_PATH = "khumu-dev-firebase-credential.json";
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
         System.out.println("AlimiApplication.firebaseApp");
-        FileInputStream credentialFileInputStream = new FileInputStream(FIREBASE_CREDENTIAL_FILE_PATH);
+        ClassPathResource classPathResource = new ClassPathResource(FIREBASE_CREDENTIAL_FILE_PATH);
         FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(credentialFileInputStream))
+                .setCredentials(GoogleCredentials.fromStream(classPathResource.getInputStream()))
 //			.setDatabaseUrl("")
                 .build();
         FirebaseApp app = FirebaseApp.initializeApp(options);

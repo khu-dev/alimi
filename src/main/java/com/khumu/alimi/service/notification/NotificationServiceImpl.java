@@ -24,7 +24,7 @@ public class NotificationServiceImpl{
     @Transactional
     public void read(Long id) {
         Notification n = nr.getOne(id);
-        n.setRead(true);
+        n.setIsRead(true);
     }
 
     public List<Notification> listNotifications(){
