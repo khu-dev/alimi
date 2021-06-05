@@ -70,7 +70,6 @@ class KhumuSqsConfig {
 //                new PayloadArgumentResolver(messageConverter()))
                 new PayloadMethodArgumentResolver(messageConverter()))
         );
-//        factory.setArgumentResolvers(Collections.<HandlerMethodArgumentResolver>singletonList(new PayloadArgumentResolver(messageConverter())));
         factory.setSqsMessageDeletionPolicy(SqsMessageDeletionPolicy.ON_SUCCESS);
         return factory;
     }
@@ -79,7 +78,6 @@ class KhumuSqsConfig {
     public MessageConverter messageConverter() {
         MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
         messageConverter.getObjectMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-//        messageConverter.getObjectMapper().configure(MapperFeature.A?, true);
 
         // set strict content type match to false
         messageConverter.setStrictContentTypeMatch(false);

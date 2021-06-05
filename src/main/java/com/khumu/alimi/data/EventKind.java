@@ -1,5 +1,5 @@
 package com.khumu.alimi.data;
 
 public enum EventKind {
-    create, update
+    create, update, delete
 }

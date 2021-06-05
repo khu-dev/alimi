@@ -2,6 +2,8 @@ package com.khumu.alimi.data.dto;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.khumu.alimi.data.EventKind;
+import com.khumu.alimi.data.ResourceKind;
 import lombok.*;
 
 import java.lang.reflect.Type;
@@ -16,10 +18,8 @@ import java.lang.reflect.Type;
 @Data
 @Builder
 public class EventMessageDto<R> {
-    @SerializedName("resource_kind")
-    private String resourceKind;
-    @SerializedName("event_kind")
-    private String eventKind;
+    ResourceKind resourceKind;
+    EventKind eventKind;
     @SerializedName("resource")
     private R resource; // Notification이 이용할 data object
 

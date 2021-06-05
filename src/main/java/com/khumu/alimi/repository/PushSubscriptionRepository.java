@@ -15,6 +15,6 @@ import java.util.List;
 @Primary
 @Repository
 public interface PushSubscriptionRepository extends JpaRepository<PushSubscription, String> {
-    @Query("select s from PushSubscription s where s.user.username=:username")
+    @Query("select s from PushSubscription s where s.user = :username")
     List<PushSubscription> listByUsername(@Param("username") String username);
 }

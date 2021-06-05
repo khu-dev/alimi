@@ -3,9 +3,11 @@ package com.khumu.alimi.external.push;
 import com.google.firebase.messaging.*;
 import com.khumu.alimi.data.entity.Notification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Primary
 @Component
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class PushManagerImpl implements PushManager{
             );
             System.out.println(result);
         } catch (FirebaseMessagingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), n, deviceToken);
         }
     }
 
