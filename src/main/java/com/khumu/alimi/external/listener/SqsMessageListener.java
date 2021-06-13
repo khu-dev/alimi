@@ -2,25 +2,17 @@ package com.khumu.alimi.external.listener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.firebase.FirebaseException;
 import com.khumu.alimi.data.EventKind;
 import com.khumu.alimi.data.ResourceKind;
 import com.khumu.alimi.data.dto.ArticleDto;
 import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.dto.EventMessageDto;
-import com.khumu.alimi.data.dto.SqsMessageBodyDto;
-import com.khumu.alimi.data.entity.ArticleNotificationSubscription;
 import com.khumu.alimi.service.notification.ArticleEventMessageServiceImpl;
 import com.khumu.alimi.service.notification.CommentEventMessageServiceImpl;
 import com.khumu.alimi.service.notification.NotificationSubscriptionServiceImpl;
 import io.awspring.cloud.messaging.listener.annotation.SqsListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.codec.json.Jackson2JsonDecoder;
-import org.springframework.http.codec.json.Jackson2JsonEncoder;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +32,7 @@ public class SqsMessageListener {
             String body,
             @Headers() Map<String, String> headers) throws JsonProcessingException {
         log.info("SQS 메시지를 가져왔습니다.");
-        String resourceKindStr = headers.getOrDefault("resource_kind","comments");
+        String resourceKindStr = headers.getOrDefault("resource_kind","comment");
         String eventKindStr = headers.getOrDefault("event_kind", "create");
         try{
             EventKind eventKind = EventKind.valueOf(eventKindStr);
@@ -48,13 +40,13 @@ public class SqsMessageListener {
             EventMessageDto eventMessageDto = EventMessageDto.builder().eventKind(eventKind).resourceKind(resourceKind).build();
 
             switch (resourceKind){
-                case comments:{
+                case comment:{
                     CommentDto commentDto = objectMapper.readValue(body, CommentDto.class);
                     eventMessageDto.setResource(commentDto);
                     commentEventMessageService.createNotifications(eventMessageDto);
                     break;
                 }
-                case articles: {
+                case article: {
                     ArticleDto articleDto = objectMapper.readValue(body, ArticleDto.class);
                     eventMessageDto.setResource(articleDto);
                     articleEventMessageService.createArticleNotificationSubscriptionForAuthor(eventMessageDto);

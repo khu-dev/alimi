@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class CommentEventMessageServiceImpl {
     final NotificationRepository notificationRepository;
     final PushSubscriptionRepository pushSubscriptionRepository;
-    final ArticleNotificationSubscriptionRepository articleNotificationSubscriptionRepository;
+    final ResourceNotificationSubscriptionRepository resourceNotificationSubscriptionRepository;
     final PushManager pushManager;
     final Gson gson;
 
@@ -36,7 +36,7 @@ public class CommentEventMessageServiceImpl {
     public List<Notification> createNotifications(EventMessageDto<CommentDto> e) {
         List<Notification> notifications = new ArrayList<>();
         switch (e.getResourceKind()) {
-            case comments:
+            case comment:
                 CommentDto commentDto = e.getResource();
                 switch (e.getEventKind()) {
                     case create:
@@ -61,7 +61,7 @@ public class CommentEventMessageServiceImpl {
                     .title("새로운 댓글이 생성되었습니다.")
                     .content(commentDto.getContent())
                     .kind("커뮤니티")
-                    .reference("comments/" + commentDto.getId())
+                    .reference("articles/" + commentDto.getArticle())
                     .build();
 
             Notification n = notificationRepository.save(tmp);
@@ -81,7 +81,7 @@ public class CommentEventMessageServiceImpl {
     // 댓글 생성 생성에 대한 recipient 찾기
     @Transactional
     public List<String> getRecipientIds(CommentDto commentDto) {
-        List<ArticleNotificationSubscription> subscriptions = articleNotificationSubscriptionRepository.findAllByArticleId(commentDto.getArticle());
+        List<ResourceNotificationSubscription> subscriptions = resourceNotificationSubscriptionRepository.findAllByArticle(commentDto.getArticle());
 
         return subscriptions.stream().filter(subscription -> {
                 // 현 댓글 작성자는 알림을 보내지 않는다.

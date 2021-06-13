@@ -12,12 +12,8 @@ import java.util.Collection;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name="user_khumuuser")
-@Data
 @Builder
 public class SimpleKhumuUserDto implements UserDetails {
-    @Id
     String username;
     String password;
 
@@ -33,6 +29,11 @@ public class SimpleKhumuUserDto implements UserDetails {
     @Override
     public String getPassword() {
         return "123123";
+    }
+
+    @Override
+    public String getUsername() {
+        return null;
     }
 
     @Override
