@@ -13,6 +13,7 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Data
 public class SimpleKhumuUserDto implements UserDetails {
     String username;
     String password;
@@ -23,16 +24,6 @@ public class SimpleKhumuUserDto implements UserDetails {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @Override
-    public String getPassword() {
-        return "123123";
-    }
-
-    @Override
-    public String getUsername() {
         return null;
     }
 

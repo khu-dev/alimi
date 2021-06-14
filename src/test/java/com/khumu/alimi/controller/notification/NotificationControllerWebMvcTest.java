@@ -10,8 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.khumu.alimi.controller.NotificationController;
 import com.khumu.alimi.data.entity.Notification;
-import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
-import com.khumu.alimi.service.notification.NotificationServiceImpl;
+import com.khumu.alimi.service.notification.NotificationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,8 +20,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +27,7 @@ import java.util.List;
 public class NotificationControllerWebMvcTest {
 
     @MockBean
-    NotificationServiceImpl notificationService;
+    NotificationService notificationService;
 
     @Autowired
     private MockMvc mockMvc;
