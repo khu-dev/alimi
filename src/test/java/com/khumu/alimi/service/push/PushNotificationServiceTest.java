@@ -49,7 +49,7 @@ import static org.mockito.Mockito.when;
 // 또 다른 Configuration을 사용하기 위함.
 @ContextConfiguration(classes= FireBaseConfig.class)
 @TestPropertySource(locations= {"classpath:application-test.properties"})
-class PushNotificationServiceImplTest {
+class PushNotificationServiceTest {
     @MockBean
     PushSubscriptionRepository pushSubscriptionRepository;
     @SpyBean

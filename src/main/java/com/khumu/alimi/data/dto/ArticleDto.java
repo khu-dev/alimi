@@ -1,6 +1,5 @@
 package com.khumu.alimi.data.dto;
 
-import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,11 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class CommentDto {
+public class ArticleDto {
     Long id;
     SimpleKhumuUserDto author;
-    Long article;
-    String content;
-//    Long parent;
-//    List<CommentDto> children;
 }

@@ -1,10 +1,14 @@
 package com.khumu.alimi.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.data.entity.Notification;
-import com.khumu.alimi.service.notification.NotificationServiceImpl;
+import com.khumu.alimi.data.entity.ResourceNotificationSubscription;
+import com.khumu.alimi.service.notification.NotificationService;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,7 +17,7 @@ import java.util.List;
 @Slf4j
 @RestController
 public class NotificationController {
-    final NotificationServiceImpl notificationService;
+    final NotificationService notificationService;
 
     @RequestMapping(value="/ping", method=RequestMethod.GET)
     public String ping() {
@@ -48,6 +52,18 @@ public class NotificationController {
         }
         return new DefaultResponse<>("Notification을 수정했습니다.", null);
     }
+
+    @RequestMapping(value = "/api/subscribe", method = RequestMethod.PATCH)
+    @ResponseBody
+    @ResponseStatus(code = HttpStatus.OK)
+    public DefaultResponse<Object> subscribeResource(@AuthenticationPrincipal SimpleKhumuUserDto user, @RequestBody ResourceNotificationSubscription body) throws Exception {
+
+        ResourceNotificationSubscription resourceNotificationSubscription = notificationService.toggleSubscription(user, body);
+
+        return new DefaultResponse<>(null, resourceNotificationSubscription);
+    }
+
+
 
     @Getter
     @Setter

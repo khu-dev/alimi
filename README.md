@@ -19,7 +19,7 @@ Pub/Sub을 이용해 이벤트를 json 메시지 형태로 전달 받고, 이에
   
 ## 개발팁
 
-* 본 alimi 마이크로서비스는 alimi용 데이터베이스인 `khumu_dev_notification` 데이터베이스를 사용한다. 필요한 필드나 모델만을 정의하고 필요에 따라 중심 DB에 대한 replication을 통해 데이터를 저장한다.
+* 본 alimi 마이크로서비스는 alimi용 데이터베이스인 `khumu_notification_dev` 데이터베이스를 사용한다. 필요한 필드나 모델만을 정의하고 필요에 따라 중심 DB에 대한 replication을 통해 데이터를 저장한다.
 * OOP의 원칙. SOLID 원칙을 준수
 * TDD를 통한 튼튼하고 편리한 개발
 * JPA + MySQL setting 참고 - https://victorydntmd.tistory.com/321
