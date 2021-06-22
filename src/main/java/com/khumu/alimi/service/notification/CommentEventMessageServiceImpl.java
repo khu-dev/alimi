@@ -54,7 +54,7 @@ public class CommentEventMessageServiceImpl {
         List<Notification> results = new ArrayList<>();
         List<String> recipientIds = this.getRecipientIds(commentDto);
         log.info("" + recipientIds);
-        
+
         for (String recipientId : recipientIds) {
             Notification tmp = Notification.builder()
                     .recipient(recipientId)
