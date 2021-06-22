@@ -1,9 +1,11 @@
 package com.khumu.alimi.service.notification;
 
 import com.khumu.alimi.data.ResourceKind;
+import com.khumu.alimi.data.dto.NotificationDto;
 import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.data.entity.Notification;
 import com.khumu.alimi.data.entity.ResourceNotificationSubscription;
+import com.khumu.alimi.mapper.NotificationMapper;
 import com.khumu.alimi.repository.NotificationRepository;
 import com.khumu.alimi.repository.ResourceNotificationSubscriptionRepository;
 import lombok.Builder;
@@ -12,10 +14,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -24,6 +29,8 @@ public class NotificationService {
 
     final NotificationRepository nr;
     final ResourceNotificationSubscriptionRepository resourceNotificationSubscriptionRepository;
+
+    final NotificationMapper notificationMapper;
     public Notification getNotification(Long id) {
         Notification n = nr.getOne(id);
 //        applyPlainForeignKey(n);
@@ -36,21 +43,17 @@ public class NotificationService {
         n.setIsRead(true);
     }
 
-    public List<Notification> listNotifications(){
+    public List<NotificationDto> listNotifications(Pageable pageable){
         System.out.println("NotificationServiceImpl.listNotifications");
-        List<Notification> ns = nr.findAll();
-        for (Notification n : ns) {
-//            applyPlainForeignKey(n);
-        }
-        return ns;
+        Page<Notification> ns = nr.findAll(pageable);
+
+        return ns.map(notificationMapper::toDto).toList();
     }
 
-    public List<Notification> listNotificationsByUsername(String username){
-        List<Notification> ns = nr.list(username);
-        for (Notification n : ns) {
-//            applyPlainForeignKey(n);
-        }
-        return ns;
+    public List<NotificationDto> listNotificationsByUsername(String username, Pageable pageable){
+        Page<Notification> ns = nr.findAllByRecipient(username, pageable);
+
+        return ns.map(notificationMapper::toDto).toList();
     }
 
     // 리소스에 대한 구독을 activate하거나 inactivate합니다.

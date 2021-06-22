@@ -69,7 +69,7 @@ public class SqsMessageListener {
 
         System.out.println("SQS 비용을 줄이기 위한 Dummy wait 시작");
         try {
-            Thread.sleep(6000);
+            Thread.sleep(15000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

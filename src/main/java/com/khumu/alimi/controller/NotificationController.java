@@ -1,12 +1,16 @@
 package com.khumu.alimi.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.khumu.alimi.data.dto.NotificationDto;
 import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.data.entity.Notification;
 import com.khumu.alimi.data.entity.ResourceNotificationSubscription;
 import com.khumu.alimi.service.notification.NotificationService;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +30,14 @@ public class NotificationController {
 
     @RequestMapping(value="/api/notifications", method=RequestMethod.GET)
     @ResponseBody
-    public DefaultResponse<List<Notification>> list(@RequestParam(value="recipient", required = false) String recipientUsername) {
-        List<Notification> notifications = null;
+    public DefaultResponse<List<NotificationDto>> list(
+            @RequestParam(value="recipient", required = false) String recipientUsername,
+            @PageableDefault(page=0, size=30) Pageable pageable) {
+        List<NotificationDto> notifications = null;
         if (recipientUsername != null) {
-            notifications = notificationService.listNotificationsByUsername(recipientUsername);
+            notifications = notificationService.listNotificationsByUsername(recipientUsername, pageable);
         } else {
-            notifications = notificationService.listNotifications();
+            notifications = notificationService.listNotifications(pageable);
         }
         System.out.println(recipientUsername);
 

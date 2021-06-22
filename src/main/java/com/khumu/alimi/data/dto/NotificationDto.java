@@ -1,10 +1,12 @@
 package com.khumu.alimi.data.dto;
 
-import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 
 /**
@@ -14,11 +16,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class CommentDto {
+public class NotificationDto {
     Long id;
-    SimpleKhumuUserDto author;
-    Long article;
+    String title;
     String content;
-//    Long parent;
-//    List<CommentDto> children;
+    String kind;
+    String recipient;
+    String reference; // 참조 링크
+
+    // @JsonProperty("is_read")// Jackson이 is라는 prefix를 삭제해버림.
+    // boolean인 경우 발생하던 문젠데 Boolean으로 변경함으로써 해결
+    @Builder.Default
+    Boolean isRead = false;
+    LocalDateTime createdAt;
 }
