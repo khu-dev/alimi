@@ -3,7 +3,9 @@ package com.khumu.alimi.service.notification;
 import com.khumu.alimi.data.ResourceKind;
 import com.khumu.alimi.data.dto.ArticleDto;
 import com.khumu.alimi.data.dto.EventMessageDto;
+import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.data.entity.ResourceNotificationSubscription;
+import com.khumu.alimi.data.resource.ArticleResource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,16 +22,16 @@ public class ArticleEventMessageServiceImpl{
 
     // author가 자기 게시물에 대한 알림을 켜게 함.
     // 익명 게시글의 경우 얘도 동작하기 힘들겠다...
-    public void createArticleNotificationSubscriptionForAuthor(EventMessageDto<ArticleDto> eventMessageDto) {
-        ArticleDto articleDto = eventMessageDto.getResource();
+    public void createArticleNotificationSubscriptionForAuthor(EventMessageDto<ArticleResource> eventMessageDto) {
+        ArticleResource articleResource = eventMessageDto.getResource();
         try {
-            notificationService.toggleSubscription(articleDto.getAuthor(), ResourceNotificationSubscription.builder()
-                .resourceKind(ResourceKind.article)
-                .article(articleDto.getId())
+            notificationService.toggleSubscription(SimpleKhumuUserDto.builder().username(articleResource.getAuthor()).build(), ResourceNotificationSubscription.builder()
+                    .resourceKind(ResourceKind.article)
+                    .article(articleResource.getId())
 
-            .build());
+                    .build());
         } catch (Exception e) {
-            log.error("Event message에 의한 알림 구독 생성이 실패했습니다. " + articleDto);
+            log.error("Event message에 의한 알림 구독 생성이 실패했습니다. " +articleResource);
             e.printStackTrace();
 
         }

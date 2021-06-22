@@ -10,6 +10,7 @@ import com.khumu.alimi.data.dto.ArticleDto;
 import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.dto.EventMessageDto;
 import com.khumu.alimi.data.dto.SqsMessageBodyDto;
+import com.khumu.alimi.data.resource.ArticleResource;
 import com.khumu.alimi.service.notification.ArticleEventMessageServiceImpl;
 import com.khumu.alimi.service.notification.CommentEventMessageServiceImpl;
 import io.awspring.cloud.messaging.config.annotation.NotificationMessage;
@@ -32,7 +33,7 @@ public class SqsMessageListener {
 
     final ObjectMapper objectMapper;
 
-    @SqsListener(value = "khumu-notifications")
+    @SqsListener(value = "${sqs.notificationQueue.name}")
     public void receiveMessage(
             SqsMessageBodyDto body) throws JsonProcessingException {
         log.info("SQS 메시지를 가져왔습니다.");
@@ -52,8 +53,8 @@ public class SqsMessageListener {
                     break;
                 }
                 case article: {
-                    ArticleDto articleDto = objectMapper.readValue(body.getMessage(), ArticleDto.class);
-                    eventMessageDto.setResource(articleDto);
+                    ArticleResource articleResource = objectMapper.readValue(body.getMessage(), ArticleResource.class);
+                    eventMessageDto.setResource(articleResource);
                     articleEventMessageService.createArticleNotificationSubscriptionForAuthor(eventMessageDto);
                     break;
                 }
