@@ -1,32 +1,8 @@
 # alimi - 메시지 기반 알림 마이크로서비스
 
 알리미(이하 `alimi`)는 쿠뮤의 `알림`이라는 엔티티와 `푸시` 알림 관련 다양한 기능을 담당하는 서비스입니다. 쿠뮤의 여러 마이크로서비스로부터 `메시지`를 전달 받아 **비동기적으로 작업**하며 **느슨하게 결합(Loesely coupled)**합니다.
-Pub/Sub을 이용해 이벤트를 json 메시지 형태로 전달 받고, 이에 대한 Notification 데이터 생성 및 푸시 알림 생성을 수행합니다. Java Spring boot와 Redis를 이용합니다.
 
-현재에는 Redis가 아니더라도 다양한 listener를 사용할 수 있게끔 ArticleMessageListener와 같은 것들을 Interface로 정의한 뒤 RedisArticleMessageListener로 구현해놓았다.
-만약 Redis를 통한 Pub/Sub이 아니라 SQS를 통한 Polling 방식으로 변경 시 SQSArticleMessageListener만 추가적으로 구현한 뒤 Config에서 변경하도록하면 좋겠다.
-
-## (WIP) Infrastructure
-
-* 각각의 마이크로서비스가 Publisher로서 Redis로 이벤트에 대한 메시지를 Publish
-  * e.g. comment 서버에서 대댓글 생성 이벤트에 대한 메시지를 publish
-* Redis가 해당 message를 Subscriber인 `alimi`에게 전달
-* `alimi`는 전달 받은 메시지에 담긴 event 내용을 분석하고 이에 해당하는 알림 수신자를 산출한 뒤 Notification 테이블에 데이터를 생성하고
-실제로 Push 서버에 알림 요청을 보냅니다.
-
-### (Deprecated) ~~메시지 브로커로 Redis를 이용하기~~
-
-현재는 AWS의 `SNS` + `SQS` 를 메시지 브로커로 해서 마이크로서비스들이 비동기적으로 작업하지만 기존에는 Redis의 Pub/Sub을 이용해 메시지를 전달했습니다. 하지만 사용하면서 메시지 브로커로서의 Redis에 대해 몇 가지 문제점을 느끼게 됐고 현재대로 AWS의 SNS와 SQS를 도입하게 되었습니다.
-
-### 메시지 브로커로서의 Redis 단점
-
-* **Consumer group 같은 개념이 존재하지 않는다.** 
-
-  만약 특정 topic을 여러 프로세스가 구독한다면 구독 중인 모든 프로세스에게 메시지가 Publish되는 단점이 존재했습니다.
-
-* **Subscriber가 동작하지 않는 경우 메시지는 유실된다.**
-
-  메시지 큐 서비스들은 일반적으로 구독자가 동작하지 않으면 메시지 큐에서 보관하고 있는 반면 Redis는 단순히 바로 바로 Push하는 방식이기 때문에 해당 시점에 구독자가 올바르게 동작하지 않으면 메시지가 유실될 수 밖에 없습니다. 사실 Redis는 메시지 "큐"라고 볼 수도 없긴 합니다.
+* 
 
 ## 특징 및 동작 방식
 
@@ -51,6 +27,20 @@ Pub/Sub을 이용해 이벤트를 json 메시지 형태로 전달 받고, 이에
 * Spring 배포 시 resources/ 경로의 파일을 찾기 힘든 경우
   * ClassPath를 이용해야 상대 경로를 사용하기가 편한데... Jar로 빌드한 뒤 credential들을 외부에서 추가하려다보니 로컬에선 ClassPath를 사용하고, 배포 시에는 절대 경로를 설정해 절대 경로를 이용하는 방식으로 사용 중입니다.
   * Jar 빌드 시에 존재하는 파일들은 jar로 배포, 실행 시에도 ClassPath로도 올바르게 찾을 수 있습니다.
+
+### (Deprecated) ~~메시지 브로커로 Redis를 이용하기~~
+
+현재는 AWS의 `SNS` + `SQS` 를 메시지 브로커로 해서 마이크로서비스들이 비동기적으로 작업하지만 기존에는 Redis의 Pub/Sub을 이용해 메시지를 전달했습니다. 하지만 사용하면서 메시지 브로커로서의 Redis에 대해 몇 가지 문제점을 느끼게 됐고 현재대로 AWS의 SNS와 SQS를 도입하게 되었습니다.
+
+### 메시지 브로커로서의 Redis 단점
+
+* **Consumer group 같은 개념이 존재하지 않는다.** 
+
+  만약 특정 topic을 여러 프로세스가 구독한다면 구독 중인 모든 프로세스에게 메시지가 Publish되는 단점이 존재했습니다.
+
+* **Subscriber가 동작하지 않는 경우 메시지는 유실된다.**
+
+  메시지 큐 서비스들은 일반적으로 구독자가 동작하지 않으면 메시지 큐에서 보관하고 있는 반면 Redis는 단순히 바로 바로 Push하는 방식이기 때문에 해당 시점에 구독자가 올바르게 동작하지 않으면 메시지가 유실될 수 밖에 없습니다. 사실 Redis는 메시지 "큐"라고 볼 수도 없긴 합니다.
 
 ## 테스트 코드 작성 방법 및 정리
 
