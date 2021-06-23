@@ -16,19 +16,17 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class ArticleEventMessageServiceImpl{
+public class ArticleEventMessageService {
 
     final NotificationService notificationService;
 
-    // author가 자기 게시물에 대한 알림을 켜게 함.
-    // 익명 게시글의 경우 얘도 동작하기 힘들겠다...
+    // ArticleEventMessageService는 NotificationService에 의존한다.
     public void createArticleNotificationSubscriptionForAuthor(EventMessageDto<ArticleResource> eventMessageDto) {
         ArticleResource articleResource = eventMessageDto.getResource();
         try {
-            notificationService.toggleSubscription(SimpleKhumuUserDto.builder().username(articleResource.getAuthor()).build(), ResourceNotificationSubscription.builder()
+            notificationService.subscribe(SimpleKhumuUserDto.builder().username(articleResource.getAuthor()).build(), ResourceNotificationSubscription.builder()
                     .resourceKind(ResourceKind.article)
                     .article(articleResource.getId())
-
                     .build());
         } catch (Exception e) {
             log.error("Event message에 의한 알림 구독 생성이 실패했습니다. " +articleResource);

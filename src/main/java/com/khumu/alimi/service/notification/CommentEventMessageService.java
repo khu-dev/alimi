@@ -7,8 +7,10 @@ import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.dto.EventMessageDto;
 import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.data.entity.*;
+import com.khumu.alimi.data.resource.ArticleResource;
 import com.khumu.alimi.external.push.PushManager;
 import com.khumu.alimi.repository.*;
+import com.khumu.alimi.service.KhumuException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.khumu.alimi.service.KhumuException.*;
+
 /**
  * Comment 관련된 Event message의 기능을 담당.
  * 예를 들어 댓글이 생성되었다는 Event가 발생했을 때 무엇을 할 것인지.
@@ -25,9 +29,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CommentEventMessageServiceImpl {
+public class CommentEventMessageService {
     final NotificationRepository notificationRepository;
     final PushSubscriptionRepository pushSubscriptionRepository;
+    final NotificationService notificationService;
     final ResourceNotificationSubscriptionRepository resourceNotificationSubscriptionRepository;
     final PushManager pushManager;
     final Gson gson;
@@ -76,8 +81,6 @@ public class CommentEventMessageServiceImpl {
         return results;
     }
 
-
-
     // 댓글 생성 생성에 대한 recipient 찾기
     @Transactional
     public List<String> getRecipientIds(CommentDto commentDto) {
@@ -87,5 +90,31 @@ public class CommentEventMessageServiceImpl {
                 // 현 댓글 작성자는 알림을 보내지 않는다.
                 return !subscription.getSubscriber().equals(commentDto.getAuthor().getUsername());
             }).map(subscription -> subscription.getSubscriber()).collect(Collectors.toList());
+    }
+
+    @Transactional
+    // SqsListener가 Comment event에 반응하여 사용할 메소드
+    // CommentEvenetMessageService는 NotificationService에 의존한다.
+    public void createArticleNotificationSubscriptionForCommentAuthor(EventMessageDto<CommentDto> eventMessageDto) throws WrongResourceKindException {
+        CommentDto commentDto = eventMessageDto.getResource();
+        ResourceKind resourceKind = null;
+        if (commentDto.getArticle() != null) {
+            resourceKind = ResourceKind.article;
+        } else if (commentDto.getStudyArticle() != null) {
+            resourceKind = ResourceKind.study_article;
+        } else{
+            throw new WrongResourceKindException();
+        }
+
+        try {
+            notificationService.subscribe(commentDto.getAuthor(), ResourceNotificationSubscription.builder()
+                    .resourceKind(resourceKind)
+                    .article(commentDto.getArticle())
+                    .studyArticle(commentDto.getStudyArticle())
+                    .build());
+        } catch (Exception e) {
+            log.error("Event message에 의한 알림 구독 생성이 실패했습니다. " + eventMessageDto);
+            e.printStackTrace();
+        }
     }
 }

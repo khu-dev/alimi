@@ -1,35 +1,26 @@
 package com.khumu.alimi.external.listener;
 
-import com.amazonaws.services.sqs.model.Message;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonObject;
 import com.khumu.alimi.data.EventKind;
 import com.khumu.alimi.data.ResourceKind;
-import com.khumu.alimi.data.dto.ArticleDto;
 import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.dto.EventMessageDto;
 import com.khumu.alimi.data.dto.SqsMessageBodyDto;
 import com.khumu.alimi.data.resource.ArticleResource;
-import com.khumu.alimi.service.notification.ArticleEventMessageServiceImpl;
-import com.khumu.alimi.service.notification.CommentEventMessageServiceImpl;
-import io.awspring.cloud.messaging.config.annotation.NotificationMessage;
+import com.khumu.alimi.service.notification.ArticleEventMessageService;
+import com.khumu.alimi.service.notification.CommentEventMessageService;
 import io.awspring.cloud.messaging.listener.annotation.SqsListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.json.JSONParser;
-import org.springframework.messaging.handler.annotation.Headers;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class SqsMessageListener {
-    final CommentEventMessageServiceImpl commentEventMessageService;
-    final ArticleEventMessageServiceImpl articleEventMessageService;
+    final CommentEventMessageService commentEventMessageService;
+    final ArticleEventMessageService articleEventMessageService;
 
     final ObjectMapper objectMapper;
 
@@ -49,6 +40,7 @@ public class SqsMessageListener {
                 case comment:{
                     CommentDto commentDto = objectMapper.readValue(body.getMessage(), CommentDto.class);
                     eventMessageDto.setResource(commentDto);
+                    commentEventMessageService.createArticleNotificationSubscriptionForCommentAuthor(eventMessageDto);
                     commentEventMessageService.createNotifications(eventMessageDto);
                     break;
                 }
@@ -58,7 +50,6 @@ public class SqsMessageListener {
                     articleEventMessageService.createArticleNotificationSubscriptionForAuthor(eventMessageDto);
                     break;
                 }
-
             }
 
         } catch (Exception e) {

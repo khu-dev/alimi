@@ -18,6 +18,7 @@ public class CommentDto {
     Long id;
     SimpleKhumuUserDto author;
     Long article;
+    Long studyArticle;
     String content;
 //    Long parent;
 //    List<CommentDto> children;

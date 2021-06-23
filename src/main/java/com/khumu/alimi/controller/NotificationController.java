@@ -59,17 +59,21 @@ public class NotificationController {
         return new DefaultResponse<>("Notification을 수정했습니다.", null);
     }
 
-    @RequestMapping(value = "/api/subscribe", method = RequestMethod.PATCH)
+    @PostMapping(value = "/api/subscribe")
     @ResponseBody
-    @ResponseStatus(code = HttpStatus.OK)
+    @ResponseStatus(code = HttpStatus.CREATED)
     public DefaultResponse<Object> subscribeResource(@AuthenticationPrincipal SimpleKhumuUserDto user, @RequestBody ResourceNotificationSubscription body) throws Exception {
-
-        ResourceNotificationSubscription resourceNotificationSubscription = notificationService.toggleSubscription(user, body);
-
-        return new DefaultResponse<>(null, resourceNotificationSubscription);
+        notificationService.subscribe(user, body);
+        return new DefaultResponse<>(null, null);
     }
 
-
+    @DeleteMapping(value = "/api/subscribe")
+    @ResponseBody
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public DefaultResponse<Object> unsubscribeResource(@AuthenticationPrincipal SimpleKhumuUserDto user, @RequestBody ResourceNotificationSubscription body) throws Exception {
+        notificationService.unsubscribe(user, body);
+        return new DefaultResponse<>(null, null);
+    }
 
     @Getter
     @Setter
@@ -79,5 +83,4 @@ public class NotificationController {
         @JsonProperty("is_read")
         private boolean isRead;
     }
-
 }
