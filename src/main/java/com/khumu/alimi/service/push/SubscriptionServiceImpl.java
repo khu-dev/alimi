@@ -16,11 +16,7 @@ import java.util.Optional;
 public class SubscriptionServiceImpl{
     private final PushSubscriptionRepository psr;
 
-    /**
-     * subscription에 row 정보를 담고, subscriptionReq를 참고해 업데이
-     * @param subscriptionReq
-     * @return
-     */
+    // subscription 요청을 바탕으로 구독을 만들거나 수정
     public PushSubscription createOrUpdateSubscription(PushSubscription subscriptionReq){
         Optional<PushSubscription> subscriptionRow = psr.findById(subscriptionReq.getDeviceToken());
         PushSubscription subscription = null;

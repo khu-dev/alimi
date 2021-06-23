@@ -31,10 +31,7 @@ import java.net.URLClassLoader;
 import java.util.Scanner;
 
 @SpringBootApplication
-//@EnableJpaRepositories(repositoryImplementationPostfix = "JpaImpl")
 public class AlimiApplication {
-	@Value("${jwt.secret}")
-	private String jwtSecret;
 
 	public static void main(String[] args) {
 		SpringApplication.run(AlimiApplication.class, args);

@@ -1,40 +1,26 @@
 package com.khumu.alimi.service.push;
 
-import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.*;
-import com.khumu.alimi.AlimiApplication;
-import com.khumu.alimi.FireBaseAdminTest;
 import com.khumu.alimi.FireBaseConfig;
 import com.khumu.alimi.data.entity.Notification;
 import com.khumu.alimi.data.entity.PushSubscription;
-import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
-import com.khumu.alimi.external.push.PushManager;
-import com.khumu.alimi.external.push.PushManagerImpl;
+import com.khumu.alimi.external.push.FcmPushManager;
 import com.khumu.alimi.repository.PushSubscriptionRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -55,7 +41,7 @@ class PushNotificationServiceTest {
     @SpyBean
     FirebaseApp firebaseApp;
     @InjectMocks
-    PushManagerImpl pushManager;
+    FcmPushManager pushManager;
 
     @Value("${firebase.credential.default-device-token}")
     String defaultDeviceToken;

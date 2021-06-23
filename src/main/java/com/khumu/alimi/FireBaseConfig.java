@@ -20,10 +20,13 @@ import java.io.InputStream;
 @RequiredArgsConstructor
 public class FireBaseConfig {
     @Value("${firebase.credential.pathType}")
+    // firebase credential을 절대 경로로 가져올 것인지 class path로 가져올 것인지
     String FIREBASE_CREDENTIAL_PATH_TYPE;
     @Value("${firebase.credential.classPath}")
+    // firebase credential을 class path로 이용하는 경우 그 class path
     String FIREBASE_CREDENTIAL_CLASS_PATH;
     @Value("${firebase.credential.absolutePath}")
+    // firebase credential을 절대 경로로 이용하는 경우 그 절대 경로
     String FIREBASE_CREDENTIAL_ABSOLUTE_PATH;
 
     @Bean
