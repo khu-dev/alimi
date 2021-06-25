@@ -75,17 +75,16 @@ public class NotificationService {
 
     @Transactional
     public ResourceNotificationSubscription getOrCreateSubscription(SimpleKhumuUserDto subscriber, ResourceNotificationSubscription body) throws KhumuException.WrongResourceKindException {
-        List<ResourceNotificationSubscription> subscriptions = null;
-        ResourceNotificationSubscription subscription = null;
-        ResourceKind resourceKind = body.getResourceKind();
-        if (resourceKind == ResourceKind.article) {
-            subscriptions = resourceNotificationSubscriptionRepository.findAllByArticleAndSubscriber(body.getResourceId(), subscriber.getUsername());
-        } else if (resourceKind == ResourceKind.study_article) {
-            subscriptions = resourceNotificationSubscriptionRepository.findAllByStudyArticleAndSubscriber(body.getResourceId(), subscriber.getUsername());
-        } else{
+        if (body.getResourceKind() != ResourceKind.article &&
+            body.getResourceKind() != ResourceKind.study_article &&
+            body.getResourceKind() != ResourceKind.announcement
+        ) {
             throw new KhumuException.WrongResourceKindException();
         }
-
+        List<ResourceNotificationSubscription> subscriptions = resourceNotificationSubscriptionRepository.findAllByResourceKindAndResourceIdAndSubscriber(body.getResourceKind(), body.getResourceId(), subscriber.getUsername());
+        ResourceNotificationSubscription subscription = null;
+        ResourceKind resourceKind = body.getResourceKind();
+        
         if (subscriptions.isEmpty()) {
             log.info(subscriber.getUsername() + "의 해당 Article에 대한 구독을 생성합니다.");
             subscription = resourceNotificationSubscriptionRepository.save(ResourceNotificationSubscription.builder()

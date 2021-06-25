@@ -84,7 +84,8 @@ public class CommentEventMessageService {
     // 댓글 생성 생성에 대한 recipient 찾기
     @Transactional
     public List<String> getRecipientIds(CommentDto commentDto) {
-        List<ResourceNotificationSubscription> subscriptions = resourceNotificationSubscriptionRepository.findAllByArticle(commentDto.getArticle());
+        // 지금은 우선 article에 대해서만 동작
+        List<ResourceNotificationSubscription> subscriptions = resourceNotificationSubscriptionRepository.findAllByResourceKindAndResourceId(ResourceKind.article, commentDto.getArticle());
 
         return subscriptions.stream().filter(subscription -> {
                 // 현 댓글 작성자는 알림을 보내지 않는다.
