@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.khumu.alimi.controller.NotificationController;
 import com.khumu.alimi.data.entity.Notification;
+import com.khumu.alimi.mapper.NotificationMapper;
 import com.khumu.alimi.service.notification.NotificationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,10 +19,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @WebMvcTest(NotificationController.class)
 public class NotificationControllerWebMvcTest {
@@ -31,6 +35,8 @@ public class NotificationControllerWebMvcTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    NotificationMapper notificationMapper;
 
     private List<Notification> fixtureNotifications = new ArrayList<Notification>();
     @BeforeEach
@@ -52,8 +58,8 @@ public class NotificationControllerWebMvcTest {
                 .build();
 
         fixtureNotifications.add(n2);
-        when(notificationService.listNotifications()).thenReturn(this.fixtureNotifications);
-        when(notificationService.listNotificationsByUsername(anyString())).thenReturn(this.fixtureNotifications);
+        when(notificationService.listNotifications(Pageable.unpaged())).thenReturn(fixtureNotifications.stream().map(notificationMapper::toDto).collect(Collectors.toList()));
+        when(notificationService.listNotificationsByUsername(anyString(), Pageable.unpaged())).thenReturn(fixtureNotifications.stream().map(notificationMapper::toDto).collect(Collectors.toList()));
     }
 
     @AfterEach

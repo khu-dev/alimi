@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Primary
 @Component
 @RequiredArgsConstructor
-public class PushManagerImpl implements PushManager{
+public class FcmPushManager implements PushManager{
     final FirebaseMessaging firebaseMessaging;
 
     public void notify(Notification n, String deviceToken) {

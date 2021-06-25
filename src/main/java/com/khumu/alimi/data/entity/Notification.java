@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="notification_notification")
+@Table
 @Data
 @Builder
 // DB에는 기본적으로 Column name이 Snake case.

@@ -11,15 +11,15 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="notification_resourcenotificationsubscription")
+@Table
 @Data
 @Builder
 public class ResourceNotificationSubscription {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // 현재 구독 자체의 아이디
     Long id;
-    Long studyArticle;
-    Long article;
-    Long announcement;
+    // 구독하는 리소스의 아이디
+    Long resourceId;
     @Enumerated(value=EnumType.STRING)
     ResourceKind resourceKind;
     String subscriber;

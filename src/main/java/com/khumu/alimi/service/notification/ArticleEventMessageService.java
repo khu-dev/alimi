@@ -26,7 +26,7 @@ public class ArticleEventMessageService {
         try {
             notificationService.subscribe(SimpleKhumuUserDto.builder().username(articleResource.getAuthor()).build(), ResourceNotificationSubscription.builder()
                     .resourceKind(ResourceKind.article)
-                    .article(articleResource.getId())
+                    .resourceId(articleResource.getId())
                     .build());
         } catch (Exception e) {
             log.error("Event message에 의한 알림 구독 생성이 실패했습니다. " +articleResource);

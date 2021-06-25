@@ -8,7 +8,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="notification_pushsubscription")
+@Table
 @Data
 @Builder
 public class PushSubscription {
