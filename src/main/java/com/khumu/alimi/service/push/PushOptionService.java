@@ -46,10 +46,7 @@ public class PushOptionService {
     }
 
     @Transactional
-<<<<<<< Updated upstream
-=======
     // 어떤 종류의 알림들을 push로 받을 것인지
->>>>>>> Stashed changes
     public PushOption updatePushOption(SimpleKhumuUserDto user, PushOption body) {
         // persistent한 PushOption instance를 리턴받아야 제대로 값이 자동 update 된다.
         PushOption option = getOrCreateOption(user.getUsername());

@@ -98,10 +98,13 @@ public class CommentEventMessageService {
     public void createArticleNotificationSubscriptionForCommentAuthor(EventMessageDto<CommentDto> eventMessageDto) throws WrongResourceKindException {
         CommentDto commentDto = eventMessageDto.getResource();
         ResourceKind resourceKind = null;
+        Long resourceId = null;
         if (commentDto.getArticle() != null) {
             resourceKind = ResourceKind.article;
+            resourceId = commentDto.getArticle();
         } else if (commentDto.getStudyArticle() != null) {
             resourceKind = ResourceKind.study_article;
+            resourceId = commentDto.getStudyArticle();
         } else{
             throw new WrongResourceKindException();
         }
@@ -109,8 +112,7 @@ public class CommentEventMessageService {
         try {
             notificationService.subscribe(commentDto.getAuthor(), ResourceNotificationSubscription.builder()
                     .resourceKind(resourceKind)
-                    .article(commentDto.getArticle())
-                    .studyArticle(commentDto.getStudyArticle())
+                    .resourceId(resourceId)
                     .build());
         } catch (Exception e) {
             log.error("Event message에 의한 알림 구독 생성이 실패했습니다. " + eventMessageDto);

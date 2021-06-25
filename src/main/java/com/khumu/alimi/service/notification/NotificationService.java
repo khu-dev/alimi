@@ -74,14 +74,14 @@ public class NotificationService {
     }
 
     @Transactional
-    private ResourceNotificationSubscription getOrCreateSubscription(SimpleKhumuUserDto subscriber, ResourceNotificationSubscription body) throws KhumuException.WrongResourceKindException {
+    public ResourceNotificationSubscription getOrCreateSubscription(SimpleKhumuUserDto subscriber, ResourceNotificationSubscription body) throws KhumuException.WrongResourceKindException {
         List<ResourceNotificationSubscription> subscriptions = null;
         ResourceNotificationSubscription subscription = null;
         ResourceKind resourceKind = body.getResourceKind();
         if (resourceKind == ResourceKind.article) {
-            subscriptions = resourceNotificationSubscriptionRepository.findAllByArticleAndSubscriber(body.getArticle(), subscriber.getUsername());
+            subscriptions = resourceNotificationSubscriptionRepository.findAllByArticleAndSubscriber(body.getResourceId(), subscriber.getUsername());
         } else if (resourceKind == ResourceKind.study_article) {
-            subscriptions = resourceNotificationSubscriptionRepository.findAllByStudyArticleAndSubscriber(body.getStudyArticle(), subscriber.getUsername());
+            subscriptions = resourceNotificationSubscriptionRepository.findAllByStudyArticleAndSubscriber(body.getResourceId(), subscriber.getUsername());
         } else{
             throw new KhumuException.WrongResourceKindException();
         }
@@ -89,10 +89,9 @@ public class NotificationService {
         if (subscriptions.isEmpty()) {
             log.info(subscriber.getUsername() + "의 해당 Article에 대한 구독을 생성합니다.");
             subscription = resourceNotificationSubscriptionRepository.save(ResourceNotificationSubscription.builder()
-                    .article(body.getArticle())
-                    .studyArticle(body.getStudyArticle())
                     .subscriber(subscriber.getUsername())
                     .resourceKind(resourceKind)
+                    .resourceId(body.getResourceId())
                     .isActivated(true) // 기본값은 true이다.
                     .build());
         } else {
@@ -100,7 +99,7 @@ public class NotificationService {
             // 마지막 구독을 allocate
             subscription = subscriptions.get(subscriptions.size() - 1);
             if (subscriptions.size() > 1) {
-                log.warn("Article(" + body.getArticle() + ")에 대한 " + subscriber.getUsername() + "의 구독이 이미 2개 이상 존재합니다. 마지막 구독만 남기고 나머지를 삭제합니다.");
+                log.warn(body.getResourceKind().name() + "(" + body.getResourceId() + ")에 대한 " + subscriber.getUsername() + "의 구독이 이미 2개 이상 존재합니다. 마지막 구독만 남기고 나머지를 삭제합니다.");
 
                 resourceNotificationSubscriptionRepository.deleteAll(subscriptions.subList(0, subscriptions.size() - 1));
             }
