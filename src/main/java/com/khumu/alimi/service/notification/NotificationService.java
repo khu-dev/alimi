@@ -2,6 +2,7 @@ package com.khumu.alimi.service.notification;
 
 import com.khumu.alimi.data.ResourceKind;
 import com.khumu.alimi.data.dto.NotificationDto;
+import com.khumu.alimi.data.dto.ResourceNotificationSubscriptionDto;
 import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.data.entity.Notification;
 import com.khumu.alimi.data.entity.ResourceNotificationSubscription;
@@ -73,6 +74,25 @@ public class NotificationService {
         subscription.setIsActivated(false);
     }
 
+    public ResourceNotificationSubscriptionDto getSubscription(SimpleKhumuUserDto requestUser, String subscriberId, ResourceKind resourceKind, Long resourceId) {
+        // 우선 인증 패스
+
+        List<ResourceNotificationSubscription> existingSubscriptions = resourceNotificationSubscriptionRepository.findAllBySubscriberAndResourceKindAndResourceId(subscriberId, resourceKind, resourceId);
+        if (existingSubscriptions.isEmpty()) {
+            // 사실 내부적으로는 구독 자체가 존재하지 않지만 클라이언트는 그런 내용을 알고 싶지않다.
+            // isActivated인지만 궁금.
+            // 추후 필요한 정보들을 위해 혹은 디버깅을 위해 요청 정보에 포함된 필드들도 몇 개 전달해줌.
+            return ResourceNotificationSubscriptionDto.builder()
+                    .subscriber(subscriberId)
+                    .isActivated(false)
+                    .resourceKind(resourceKind)
+                    .resourceId(resourceId)
+                    .build();
+        } else {
+            // 존재하는 구독 중 마지막 것.
+            return notificationMapper.toDto(existingSubscriptions.get(existingSubscriptions.size() - 1));
+        }
+    }
     @Transactional
     public ResourceNotificationSubscription getOrCreateSubscription(SimpleKhumuUserDto subscriber, ResourceNotificationSubscription body) throws KhumuException.WrongResourceKindException {
         if (body.getResourceKind() != ResourceKind.article &&
@@ -81,7 +101,7 @@ public class NotificationService {
         ) {
             throw new KhumuException.WrongResourceKindException();
         }
-        List<ResourceNotificationSubscription> subscriptions = resourceNotificationSubscriptionRepository.findAllByResourceKindAndResourceIdAndSubscriber(body.getResourceKind(), body.getResourceId(), subscriber.getUsername());
+        List<ResourceNotificationSubscription> subscriptions = resourceNotificationSubscriptionRepository.findAllBySubscriberAndResourceKindAndResourceId(subscriber.getUsername(), body.getResourceKind(), body.getResourceId());
         ResourceNotificationSubscription subscription = null;
         ResourceKind resourceKind = body.getResourceKind();
         

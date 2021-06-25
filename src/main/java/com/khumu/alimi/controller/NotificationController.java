@@ -1,7 +1,9 @@
 package com.khumu.alimi.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.khumu.alimi.data.ResourceKind;
 import com.khumu.alimi.data.dto.NotificationDto;
+import com.khumu.alimi.data.dto.ResourceNotificationSubscriptionDto;
 import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.data.entity.Notification;
 import com.khumu.alimi.data.entity.ResourceNotificationSubscription;
@@ -16,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -65,6 +68,19 @@ public class NotificationController {
     public DefaultResponse<Object> subscribeResource(@AuthenticationPrincipal SimpleKhumuUserDto user, @RequestBody ResourceNotificationSubscription body) throws Exception {
         notificationService.subscribe(user, body);
         return new DefaultResponse<>(null, null);
+    }
+
+    // 내부적인 API
+    @GetMapping(value = "/api/subscriptions/{username}/{resourceKind}/{resourceId}")
+    @ResponseBody
+    @ResponseStatus(code = HttpStatus.OK)
+    public DefaultResponse<Object> subscribeResource(
+            @AuthenticationPrincipal SimpleKhumuUserDto user,
+            @PathVariable String username,
+            @PathVariable ResourceKind resourceKind,
+            @PathVariable Long resourceId) throws Exception {
+        ResourceNotificationSubscriptionDto subscriptionDto = notificationService.getSubscription(user, username, resourceKind, resourceId);
+        return new DefaultResponse<>(null, subscriptionDto);
     }
 
     @DeleteMapping(value = "/api/subscribe")
