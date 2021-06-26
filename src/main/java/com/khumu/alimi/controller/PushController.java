@@ -3,14 +3,9 @@ package com.khumu.alimi.controller;
 import com.khumu.alimi.data.entity.PushOption;
 import com.khumu.alimi.data.entity.PushSubscription;
 import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
-import com.khumu.alimi.repository.PushSubscriptionRepository;
-import com.khumu.alimi.service.AuthUserDetailsServiceImpl;
-import com.khumu.alimi.service.push.PushOptionService;
-import com.khumu.alimi.service.push.SubscriptionServiceImpl;
+import com.khumu.alimi.service.PushService;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,8 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 public class PushController {
-    final SubscriptionServiceImpl subscriptionService;
-    final PushOptionService pushOptionService;
+    final PushService pushService;
 
     @PatchMapping(value="/api/push-subscriptions")
     @ResponseBody
@@ -32,8 +26,8 @@ public class PushController {
             body.setUser(user.getUsername());
         }
 
-        log.info(user + " 유저에 대한 푸시 등록을 생성하거나 수정합니다.");
-        PushSubscription newSubscription = subscriptionService.createOrUpdateSubscription(body);
+        log.info(user + " 유저에 대한 푸시 디바이스를 등록해 푸시 알림을 구독합니다.");
+        PushSubscription newSubscription = pushService.subscribePush(body);
         return new ResponseEntity<>(new DefaultResponse<>(
                 null, newSubscription), HttpStatus.OK);
     }
@@ -45,7 +39,7 @@ public class PushController {
             @PathVariable  String userId
         ) {
         log.info(user + " 유저에 대한 푸시 옵션을 조회합니다.");
-        PushOption option = pushOptionService.getPushOption(user, userId);
+        PushOption option = pushService.getPushOption(user, userId);
         return new DefaultResponse<PushOption>(null, option);
     }
 
@@ -58,7 +52,7 @@ public class PushController {
     ) {
         log.info(user + " 유저에 대한 푸시 옵션을 수정합니다.");
         body.setId(userId);
-        PushOption option = pushOptionService.updatePushOption(user, body);
+        PushOption option = pushService.updatePushOption(user, body);
         return new DefaultResponse<PushOption>(null, option);
     }
 }

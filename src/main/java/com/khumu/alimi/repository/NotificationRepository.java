@@ -9,8 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
-@Repository
 /**
  * Notification Entitiy를 이용하는 Repository
  */

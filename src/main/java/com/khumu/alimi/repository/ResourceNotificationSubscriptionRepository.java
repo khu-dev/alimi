@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public interface ResourceNotificationSubscriptionRepository extends JpaRepository<ResourceNotificationSubscription, Long> {
     List<ResourceNotificationSubscription> findAllByResourceKindAndResourceId(ResourceKind resourceKind, Long resourceId);
     List<ResourceNotificationSubscription> findAllBySubscriberAndResourceKindAndResourceId(String subscriberId, ResourceKind resourceKind, Long resourceId);
