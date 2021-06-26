@@ -13,6 +13,5 @@ import java.util.List;
  * Push subscription은 간단하니까 Jpa에 바로 기능 추가.
  */
 public interface PushSubscriptionRepository extends JpaRepository<PushSubscription, String> {
-    @Query("select s from PushSubscription s where s.user = :username")
-    List<PushSubscription> listByUsername(@Param("username") String username);
+    List<PushSubscription> findAllByUser(String user);
 }

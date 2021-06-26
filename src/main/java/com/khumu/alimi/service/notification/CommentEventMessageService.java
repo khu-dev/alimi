@@ -1,16 +1,12 @@
 package com.khumu.alimi.service.notification;
 
 import com.google.gson.Gson;
-import com.khumu.alimi.data.EventKind;
 import com.khumu.alimi.data.ResourceKind;
 import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.dto.EventMessageDto;
-import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.data.entity.*;
-import com.khumu.alimi.data.resource.ArticleResource;
 import com.khumu.alimi.external.push.PushManager;
 import com.khumu.alimi.repository.*;
-import com.khumu.alimi.service.KhumuException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,7 +27,8 @@ import static com.khumu.alimi.service.KhumuException.*;
 @Slf4j
 public class CommentEventMessageService {
     final NotificationRepository notificationRepository;
-    final PushSubscriptionRepository pushSubscriptionRepository;
+    final CustomPushSubscriptionRepository pushSubscriptionRepository;
+    final CustomPushOptionRepository pushOptionRepository;
     final NotificationService notificationService;
     final ResourceNotificationSubscriptionRepository resourceNotificationSubscriptionRepository;
     final PushManager pushManager;
@@ -71,7 +68,7 @@ public class CommentEventMessageService {
 
             Notification n = notificationRepository.save(tmp);
 
-            List<PushSubscription> subscriptions = pushSubscriptionRepository.listByUsername(recipientId);
+            List<PushSubscription> subscriptions = pushSubscriptionRepository.findAllByUser(recipientId);
             for (PushSubscription subscription : subscriptions) {
                 pushManager.notify(n, subscription.getDeviceToken());
                 log.info("푸시를 보냅니다. " + subscription.getUser());
@@ -88,8 +85,12 @@ public class CommentEventMessageService {
         List<ResourceNotificationSubscription> subscriptions = resourceNotificationSubscriptionRepository.findAllByResourceKindAndResourceId(ResourceKind.article, commentDto.getArticle());
 
         return subscriptions.stream().filter(subscription -> {
-                // 현 댓글 작성자는 알림을 보내지 않는다.
-                return !subscription.getSubscriber().equals(commentDto.getAuthor().getUsername());
+            PushOption pushOption = pushOptionRepository.getOrCreate(PushOption.builder().id(subscription.getSubscriber()).build());
+
+                // 알림을 활성화한 사람
+                return pushOption.getIsCommentNotificationActivated() &&
+                        // 현 댓글 작성자는 알림을 보내지 않는다.
+                        !subscription.getSubscriber().equals(commentDto.getAuthor().getUsername());
             }).map(subscription -> subscription.getSubscriber()).collect(Collectors.toList());
     }
 

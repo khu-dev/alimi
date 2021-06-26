@@ -4,14 +4,22 @@ import com.khumu.alimi.data.entity.PushOption;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 /**
- * Push subscription은 간단하니까 Jpa에 바로 기능 추가.
+ * class명을 PushOptionRespotiroyImpl로 설정하면
+ * PushOptionRepository 인터페이스에 커스텀으로 적용한 메소드가 있을 경우
+ * 프록시를 거쳐서 걔를 실행해야하는데 얘를 실행해버림.
+ * 예를 들어 PushOptionRepository interface에 findAllByUser 라는 커스텀 메소드를 정의할 경우 JPA에서 자동으로
+ * PushOptionRepositoryImpl 클래스를 만들고 findAllByUser 메소드를 만든다.
+ * 근데 나도 똑같이 PushOptionRepositoryImpl 클래스를 만들면 JPA의 findAllByUser을 못 쓰게 될 수 있다는 의미.
+ * 따라서 좀 이상해보이긴 하지만 그냥 Custom이라는 prefix를 이용 중!
  */
 @Slf4j
-public class PushOptionRepositoryImpl {
+@Component
+public class CustomPushOptionRepository {
     @Autowired
     @Lazy
     PushOptionRepository pushOptionRepository;

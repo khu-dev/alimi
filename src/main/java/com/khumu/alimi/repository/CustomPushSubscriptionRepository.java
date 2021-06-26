@@ -5,18 +5,25 @@ import com.khumu.alimi.data.entity.PushSubscription;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Optional;
 
 /**
  * Push subscription은 간단하니까 Jpa에 바로 기능 추가.
  */
 @Slf4j
-public class PushSubscriptionRepositoryImpl {
+@Repository
+public class CustomPushSubscriptionRepository {
     @Autowired
     @Lazy
     PushSubscriptionRepository pushSubscriptionRepository;
+    @Autowired
+    EntityManager em;
 
+    String name = "zz";
     public PushSubscription getOrCreate(PushSubscription subscription) {
         Optional<PushSubscription> subscriptionRow = pushSubscriptionRepository.findById(subscription.getDeviceToken());
         PushSubscription result = null;
@@ -33,6 +40,11 @@ public class PushSubscriptionRepositoryImpl {
         }
 
         return subscription;
+    }
+
+    public List<PushSubscription> findAllByUser(String username) {
+        return pushSubscriptionRepository.findAllByUser(username);
+//        return pushSubscriptionRepository.findAll();
     }
 
     public PushSubscription save(PushSubscription subscription) {

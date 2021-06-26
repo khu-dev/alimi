@@ -3,24 +3,21 @@ package com.khumu.alimi.service;
 import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.data.entity.PushOption;
 import com.khumu.alimi.data.entity.PushSubscription;
-import com.khumu.alimi.repository.PushOptionRepositoryImpl;
-import com.khumu.alimi.repository.PushSubscriptionRepository;
-import com.khumu.alimi.repository.PushSubscriptionRepositoryImpl;
+import com.khumu.alimi.repository.CustomPushOptionRepository;
+import com.khumu.alimi.repository.CustomPushSubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Primary
 @RequiredArgsConstructor
 @Service
 @Slf4j
 public class PushService {
-    final PushSubscriptionRepositoryImpl pushSubscriptionRepository;
-    final PushOptionRepositoryImpl pushOptionRepository;
+    final CustomPushSubscriptionRepository pushSubscriptionRepository;
+    final CustomPushOptionRepository pushOptionRepository;
 
     @Transactional
     public PushSubscription subscribePush(PushSubscription subscriptionReq){
