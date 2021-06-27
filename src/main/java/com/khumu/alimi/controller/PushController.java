@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class PushController {
     final PushService pushService;
 
-    @PatchMapping(value="/api/push-subscriptions")
+    @PostMapping(value="/api/push/subscribe")
     @ResponseBody
     public ResponseEntity<DefaultResponse<PushSubscription>> createPushSubscription(
             @AuthenticationPrincipal SimpleKhumuUserDto user,
@@ -32,7 +32,7 @@ public class PushController {
                 null, newSubscription), HttpStatus.OK);
     }
 
-    @GetMapping(value="/api/push-options/{userId}")
+    @GetMapping(value="/api/push/options/{userId}")
     @ResponseBody
     public DefaultResponse<PushOption> getPushOption(
             @AuthenticationPrincipal SimpleKhumuUserDto user,
@@ -43,7 +43,7 @@ public class PushController {
         return new DefaultResponse<PushOption>(null, option);
     }
 
-    @PutMapping(value="/api/push-options/{userId}")
+    @PutMapping(value="/api/push/options/{userId}")
     @ResponseBody
     public DefaultResponse<PushOption> updatePushOption(
             @AuthenticationPrincipal SimpleKhumuUserDto user,
