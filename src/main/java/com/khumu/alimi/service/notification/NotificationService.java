@@ -39,6 +39,19 @@ public class NotificationService {
         return n;
     }
 
+    public List<NotificationDto> listNotifications(Pageable pageable){
+        System.out.println("NotificationServiceImpl.listNotifications");
+        Page<Notification> ns = nr.findAll(pageable);
+
+        return ns.map(notificationMapper::toDto).toList();
+    }
+
+    public List<NotificationDto> listNotificationsByUsername(String username, Pageable pageable){
+        Page<Notification> ns = nr.findAllByRecipient(username, pageable);
+
+        return ns.map(notificationMapper::toDto).toList();
+    }
+
     @Transactional
     public void read(Long id) {
         Notification n = nr.findById(id).get();
@@ -71,17 +84,13 @@ public class NotificationService {
         }
     }
 
-    public List<NotificationDto> listNotifications(Pageable pageable){
-        System.out.println("NotificationServiceImpl.listNotifications");
-        Page<Notification> ns = nr.findAll(pageable);
-
-        return ns.map(notificationMapper::toDto).toList();
-    }
-
-    public List<NotificationDto> listNotificationsByUsername(String username, Pageable pageable){
-        Page<Notification> ns = nr.findAllByRecipient(username, pageable);
-
-        return ns.map(notificationMapper::toDto).toList();
+    @Transactional
+    public void delete(SimpleKhumuUserDto requestUser, Long id) throws KhumuException.NoPermissionException {
+        Notification n = nr.getOne(id);
+        if (!requestUser.getUsername().equals(n.getRecipient())) {
+            throw new KhumuException.NoPermissionException("본인의 알림만을 삭제할 수 있습니다.");
+        }
+        nr.delete(n);
     }
 
     @Transactional

@@ -17,4 +17,17 @@ public class KhumuException {
             super(message);
         }
     }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class NoPermissionException extends Exception {
+        public NoPermissionException() {
+            super("작업을 수행할 권한이 존재하지 않습니다.");
+        }
+        public NoPermissionException(String message) {
+            super(message);
+        }
+    }
+
 }

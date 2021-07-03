@@ -7,6 +7,7 @@ import com.khumu.alimi.data.dto.ResourceNotificationSubscriptionDto;
 import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.data.entity.Notification;
 import com.khumu.alimi.data.entity.ResourceNotificationSubscription;
+import com.khumu.alimi.service.KhumuException;
 import com.khumu.alimi.service.notification.NotificationService;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -73,6 +74,14 @@ public class NotificationController {
     public DefaultResponse<Object> unread(@PathVariable Long id) {
         notificationService.unread(id);
         return new DefaultResponse<>("Notification(id=" + id + ")를 읽지 않음 처리 했습니다.", null);
+    }
+
+    @DeleteMapping(value = "/api/notifications/{id}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    @ResponseBody
+    public DefaultResponse<Object> delete(@AuthenticationPrincipal SimpleKhumuUserDto user, @PathVariable Long id) throws KhumuException.NoPermissionException {
+        notificationService.delete(user, id);
+        return new DefaultResponse<>("Notification(id=" + id + ")를 삭제했습니다.", null);
     }
 
 //    @RequestMapping(value = "/api/notifications/{id}", method = RequestMethod.PATCH)

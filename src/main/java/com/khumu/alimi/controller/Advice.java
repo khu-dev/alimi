@@ -1,5 +1,7 @@
 package com.khumu.alimi.controller;
 
+import com.khumu.alimi.service.KhumuException;
+import com.khumu.alimi.service.KhumuException.NoPermissionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,13 @@ public class Advice {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity custom(Exception e) {
         e.printStackTrace();
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new DefaultResponse<Exception>("존재하지 않는 리소스입니다.", null));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new DefaultResponse<Exception>(e.getMessage(), null));
+    }
+
+    @ExceptionHandler(NoPermissionException.class)
+    public ResponseEntity NoPermission(Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new DefaultResponse<Exception>(e.getMessage(), null));
     }
 }
 
