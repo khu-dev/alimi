@@ -10,6 +10,7 @@ import com.khumu.alimi.mapper.NotificationMapper;
 import com.khumu.alimi.repository.NotificationRepository;
 import com.khumu.alimi.repository.ResourceNotificationSubscriptionRepository;
 import com.khumu.alimi.service.KhumuException;
+import javassist.Loader;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.khumu.alimi.service.KhumuException.*;
 
 @Slf4j
 @Service
@@ -46,22 +49,29 @@ public class NotificationService {
         return ns.map(notificationMapper::toDto).toList();
     }
 
-    public List<NotificationDto> listNotificationsByUsername(String username, Pageable pageable){
+    public List<NotificationDto> listNotificationsByUsername(SimpleKhumuUserDto requestUser, String username, Pageable pageable) throws NoPermissionException {
+        if (requestUser == null || requestUser.getUsername() == null || requestUser.getUsername().equals(username)) {
+            throw new NoPermissionException("현재는 본인의 알림만을 조회할 수 있습니다.");
+        }
         Page<Notification> ns = nr.findAllByRecipient(username, pageable);
 
         return ns.map(notificationMapper::toDto).toList();
     }
 
     @Transactional
-    public void read(Long id) {
+    public void read(SimpleKhumuUserDto requestUser, Long id) throws NoPermissionException {
         Notification n = nr.findById(id).get();
         n.setIsRead(true);
+        throwWhenNotRecipient(requestUser, n);
         log.info(n + "을 읽음 처리했습니다.");
     }
 
     @Transactional
-    public void readAll(String recipient) {
-        List<Notification> notifications = nr.findAllUnreadByRecipient(recipient, Pageable.unpaged()).getContent();
+    public void readAll(SimpleKhumuUserDto requestUser) throws UnauthenticatedException {
+        if (requestUser == null) {
+            throw new UnauthenticatedException();
+        }
+        List<Notification> notifications = nr.findAllUnreadByRecipient(requestUser.getUsername(), Pageable.unpaged()).getContent();
         for (Notification n : notifications) {
             n.setIsRead(true);
             log.info(n + "을 읽음 처리했습니다.");
@@ -69,15 +79,19 @@ public class NotificationService {
     }
 
     @Transactional
-    public void unread(Long id) {
+    public void unread(SimpleKhumuUserDto requestUser, Long id) throws NoPermissionException {
         Notification n = nr.getOne(id);
         n.setIsRead(false);
+        throwWhenNotRecipient(requestUser, n);
         log.info(n + "을 읽지 않음 처리했습니다.");
     }
 
     @Transactional
-    public void unreadAll(String recipient) {
-        List<Notification> notifications = nr.findAllReadByRecipient(recipient, Pageable.unpaged()).getContent();
+    public void unreadAll(SimpleKhumuUserDto requestUser) throws UnauthenticatedException {
+        if (requestUser == null) {
+            throw new UnauthenticatedException();
+        }
+        List<Notification> notifications = nr.findAllReadByRecipient(requestUser.getUsername(), Pageable.unpaged()).getContent();
         for (Notification n : notifications) {
             n.setIsRead(false);
             log.info(n + "을 읽지 않음 처리했습니다.");
@@ -85,17 +99,24 @@ public class NotificationService {
     }
 
     @Transactional
-    public void delete(SimpleKhumuUserDto requestUser, Long id) throws KhumuException.NoPermissionException {
+    public void delete(SimpleKhumuUserDto requestUser, Long id) throws NoPermissionException {
         Notification n = nr.getOne(id);
-        if (!requestUser.getUsername().equals(n.getRecipient())) {
-            throw new KhumuException.NoPermissionException("본인의 알림만을 삭제할 수 있습니다.");
-        }
+        throwWhenNotRecipient(requestUser, n);
         nr.delete(n);
+    }
+
+    private void throwWhenNotRecipient(SimpleKhumuUserDto requestUser, Notification notification) throws NoPermissionException {
+        if (requestUser == null || requestUser.getUsername() == null || !requestUser.getUsername().equals(notification.getRecipient())) {
+            throw new NoPermissionException("본인의 알림이 아니라 해당 작업을 수행할 권한이 없습니다.");
+        }
     }
 
     @Transactional
     // Controller가 사용할 메소드
-    public void subscribe(SimpleKhumuUserDto requestUser, ResourceNotificationSubscription body) throws KhumuException.WrongResourceKindException {
+    public void subscribe(SimpleKhumuUserDto requestUser, ResourceNotificationSubscription body) throws WrongResourceKindException, UnauthenticatedException {
+        if (requestUser == null) {
+            throw new UnauthenticatedException();
+        }
         ResourceNotificationSubscription subscription = getOrCreateSubscription(requestUser, body);
         log.info("구독을 활성화합니다.");
         subscription.setIsActivated(true);
@@ -103,7 +124,10 @@ public class NotificationService {
 
     @Transactional
     // Controller가 사용할 메소드
-    public void unsubscribe(SimpleKhumuUserDto requestUser, ResourceNotificationSubscription body) throws KhumuException.WrongResourceKindException {
+    public void unsubscribe(SimpleKhumuUserDto requestUser, ResourceNotificationSubscription body) throws WrongResourceKindException, UnauthenticatedException {
+        if (requestUser == null) {
+            throw new UnauthenticatedException();
+        }
         ResourceNotificationSubscription subscription = getOrCreateSubscription(requestUser, body);
         log.info("구독을 비활성화합니다.");
         subscription.setIsActivated(false);
@@ -129,12 +153,12 @@ public class NotificationService {
         }
     }
     @Transactional
-    public ResourceNotificationSubscription getOrCreateSubscription(SimpleKhumuUserDto subscriber, ResourceNotificationSubscription body) throws KhumuException.WrongResourceKindException {
+    public ResourceNotificationSubscription getOrCreateSubscription(SimpleKhumuUserDto subscriber, ResourceNotificationSubscription body) throws WrongResourceKindException {
         if (body.getResourceKind() != ResourceKind.article &&
             body.getResourceKind() != ResourceKind.study_article &&
             body.getResourceKind() != ResourceKind.announcement
         ) {
-            throw new KhumuException.WrongResourceKindException();
+            throw new WrongResourceKindException();
         }
         List<ResourceNotificationSubscription> subscriptions = resourceNotificationSubscriptionRepository.findAllBySubscriberAndResourceKindAndResourceId(subscriber.getUsername(), body.getResourceKind(), body.getResourceId());
         ResourceNotificationSubscription subscription = null;

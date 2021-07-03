@@ -2,6 +2,7 @@ package com.khumu.alimi.controller;
 
 import com.khumu.alimi.service.KhumuException;
 import com.khumu.alimi.service.KhumuException.NoPermissionException;
+import com.khumu.alimi.service.KhumuException.UnauthenticatedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,12 @@ public class Advice {
     public ResponseEntity NoPermission(Exception e) {
         e.printStackTrace();
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new DefaultResponse<Exception>(e.getMessage(), null));
+    }
+
+    @ExceptionHandler(UnauthenticatedException.class)
+    public ResponseEntity UnauthenticatedException(Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new DefaultResponse<Exception>(e.getMessage(), null));
     }
 }
 

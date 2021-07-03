@@ -15,11 +15,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.method.P;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.khumu.alimi.service.KhumuException.*;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -35,11 +40,12 @@ public class NotificationController {
     @RequestMapping(value="/api/notifications", method=RequestMethod.GET)
     @ResponseBody
     public DefaultResponse<List<NotificationDto>> list(
+            @AuthenticationPrincipal SimpleKhumuUserDto user,
             @RequestParam(value="recipient", required = false) String recipientUsername,
-            @PageableDefault(page=0, size=30) Pageable pageable) {
+            @PageableDefault(page=0, size=30) Pageable pageable) throws NoPermissionException {
         List<NotificationDto> notifications = null;
         if (recipientUsername != null) {
-            notifications = notificationService.listNotificationsByUsername(recipientUsername, pageable);
+            notifications = notificationService.listNotificationsByUsername(user, recipientUsername, pageable);
         } else {
             notifications = notificationService.listNotifications(pageable);
         }
@@ -50,36 +56,36 @@ public class NotificationController {
 
     @PatchMapping(value = "/api/notifications/all/read")
     @ResponseBody
-    public DefaultResponse<Object> readAll(@AuthenticationPrincipal SimpleKhumuUserDto user) {
-        notificationService.readAll(user.getUsername());
-        return new DefaultResponse<>(user.getUsername() + "의 모든 Notifications를 읽음 처리 했습니다.", null);
+    public DefaultResponse<Object> readAll(@AuthenticationPrincipal SimpleKhumuUserDto user) throws UnauthenticatedException {
+        notificationService.readAll(user);
+        return new DefaultResponse<>("jinsu" + "의 모든 Notifications를 읽음 처리 했습니다.", null);
     }
 
     @PatchMapping(value = "/api/notifications/{id}/read")
     @ResponseBody
-    public DefaultResponse<Object> read(@PathVariable Long id) {
-        notificationService.read(id);
+    public DefaultResponse<Object> read(@AuthenticationPrincipal SimpleKhumuUserDto user, @PathVariable Long id) throws NoPermissionException {
+        notificationService.read(user, id);
         return new DefaultResponse<>("Notification(id=" + id + ")를 읽음 처리 했습니다.", null);
     }
 
     @PatchMapping(value = "/api/notifications/all/unread")
     @ResponseBody
-    public DefaultResponse<Object> unreadAll(@AuthenticationPrincipal SimpleKhumuUserDto user) {
-        notificationService.unreadAll(user.getUsername());
+    public DefaultResponse<Object> unreadAll(@AuthenticationPrincipal SimpleKhumuUserDto user) throws UnauthenticatedException {
+        notificationService.unreadAll(user);
         return new DefaultResponse<>(user.getUsername() + "의 모든 Notifications를 읽지 않음 처리 했습니다.", null);
     }
 
     @PatchMapping(value = "/api/notifications/{id}/unread")
     @ResponseBody
-    public DefaultResponse<Object> unread(@PathVariable Long id) {
-        notificationService.unread(id);
+    public DefaultResponse<Object> unread(@AuthenticationPrincipal SimpleKhumuUserDto user, @PathVariable Long id) throws NoPermissionException {
+        notificationService.unread(user, id);
         return new DefaultResponse<>("Notification(id=" + id + ")를 읽지 않음 처리 했습니다.", null);
     }
 
     @DeleteMapping(value = "/api/notifications/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     @ResponseBody
-    public DefaultResponse<Object> delete(@AuthenticationPrincipal SimpleKhumuUserDto user, @PathVariable Long id) throws KhumuException.NoPermissionException {
+    public DefaultResponse<Object> delete(@AuthenticationPrincipal SimpleKhumuUserDto user, @PathVariable Long id) throws NoPermissionException {
         notificationService.delete(user, id);
         return new DefaultResponse<>("Notification(id=" + id + ")를 삭제했습니다.", null);
     }

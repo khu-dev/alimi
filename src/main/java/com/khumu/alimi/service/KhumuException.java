@@ -30,4 +30,13 @@ public class KhumuException {
         }
     }
 
+    @Getter
+    @Setter
+    @ToString
+    public static class UnauthenticatedException extends Exception {
+        public UnauthenticatedException() {
+            super("인증되지 않은 유저의 요청입니다.");
+        }
+    }
+
 }
