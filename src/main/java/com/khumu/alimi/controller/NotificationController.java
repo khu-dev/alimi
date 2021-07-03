@@ -47,22 +47,36 @@ public class NotificationController {
         return new DefaultResponse<>(null, notifications);
     }
 
-    @RequestMapping(value = "/api/notifications/{id}", method = RequestMethod.PATCH)
+    @PatchMapping(value = "/api/notifications/all/read")
     @ResponseBody
-    public DefaultResponse<Object> update(@PathVariable Long id, @RequestBody NotificationUpdateBody body) {
-        log.info(body.toString());
-
-        System.out.println(body.isRead());
-        System.out.println(id);
-        if (body.isRead()) {
-            notificationService.read(id);
-        } else {
-            log.warn("Nothing to update");
-        }
-        return new DefaultResponse<>("Notification을 수정했습니다.", null);
+    public DefaultResponse<Object> readAll(@AuthenticationPrincipal SimpleKhumuUserDto user) {
+        notificationService.readAll(user.getUsername());
+        return new DefaultResponse<>(user.getUsername() + "의 모든 Notifications를 읽음 처리 했습니다.", null);
     }
 
-    @PostMapping(value = "/api/subscribe")
+    @PatchMapping(value = "/api/notifications/{id}/read")
+    @ResponseBody
+    public DefaultResponse<Object> read(@PathVariable Long id) {
+        notificationService.read(id);
+        return new DefaultResponse<>("Notification(id=" + id + ")를 읽음 처리 했습니다.", null);
+    }
+
+//    @RequestMapping(value = "/api/notifications/{id}", method = RequestMethod.PATCH)
+//    @ResponseBody
+//    public DefaultResponse<Object> update(@PathVariable Long id, @RequestBody NotificationUpdateBody body) {
+//        log.info(body.toString());
+//
+//        System.out.println(body.isRead());
+//        System.out.println(id);
+//        if (body.isRead()) {
+//            notificationService.read(id);
+//        } else {
+//            log.warn("Nothing to update");
+//        }
+//        return new DefaultResponse<>("Notification을 수정했습니다.", null);
+//    }
+
+    @PostMapping(value = "/api/subscriptions")
     @ResponseBody
     @ResponseStatus(code = HttpStatus.CREATED)
     public DefaultResponse<Object> subscribeResource(@AuthenticationPrincipal SimpleKhumuUserDto user, @RequestBody ResourceNotificationSubscription body) throws Exception {
@@ -83,7 +97,7 @@ public class NotificationController {
         return new DefaultResponse<>(null, subscriptionDto);
     }
 
-    @DeleteMapping(value = "/api/subscribe")
+    @DeleteMapping(value = "/api/subscriptions")
     @ResponseBody
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public DefaultResponse<Object> unsubscribeResource(@AuthenticationPrincipal SimpleKhumuUserDto user, @RequestBody ResourceNotificationSubscription body) throws Exception {

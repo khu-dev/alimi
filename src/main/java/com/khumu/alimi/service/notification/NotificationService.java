@@ -45,6 +45,15 @@ public class NotificationService {
         n.setIsRead(true);
     }
 
+    @Transactional
+    public void readAll(String recipient) {
+        List<Notification> notifications = nr.findAllUnreadByRecipient(recipient, Pageable.unpaged()).getContent();
+        for (Notification n : notifications) {
+            n.setIsRead(true);
+            log.info(n + "을 읽음 처리했습니다.");
+        }
+    }
+
     public List<NotificationDto> listNotifications(Pageable pageable){
         System.out.println("NotificationServiceImpl.listNotifications");
         Page<Notification> ns = nr.findAll(pageable);
