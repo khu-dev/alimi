@@ -34,15 +34,16 @@ public class NotificationService {
 
     final NotificationMapper notificationMapper;
     public Notification getNotification(Long id) {
-        Notification n = nr.getOne(id);
+        Notification n = nr.findById(id).get();
 //        applyPlainForeignKey(n);
         return n;
     }
 
     @Transactional
     public void read(Long id) {
-        Notification n = nr.getOne(id);
+        Notification n = nr.findById(id).get();
         n.setIsRead(true);
+        log.info(n + "을 읽음 처리했습니다.");
     }
 
     @Transactional
@@ -51,6 +52,22 @@ public class NotificationService {
         for (Notification n : notifications) {
             n.setIsRead(true);
             log.info(n + "을 읽음 처리했습니다.");
+        }
+    }
+
+    @Transactional
+    public void unread(Long id) {
+        Notification n = nr.getOne(id);
+        n.setIsRead(false);
+        log.info(n + "을 읽지 않음 처리했습니다.");
+    }
+
+    @Transactional
+    public void unreadAll(String recipient) {
+        List<Notification> notifications = nr.findAllReadByRecipient(recipient, Pageable.unpaged()).getContent();
+        for (Notification n : notifications) {
+            n.setIsRead(false);
+            log.info(n + "을 읽지 않음 처리했습니다.");
         }
     }
 

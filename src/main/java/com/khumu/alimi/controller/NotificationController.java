@@ -61,6 +61,20 @@ public class NotificationController {
         return new DefaultResponse<>("Notification(id=" + id + ")를 읽음 처리 했습니다.", null);
     }
 
+    @PatchMapping(value = "/api/notifications/all/unread")
+    @ResponseBody
+    public DefaultResponse<Object> unreadAll(@AuthenticationPrincipal SimpleKhumuUserDto user) {
+        notificationService.unreadAll(user.getUsername());
+        return new DefaultResponse<>(user.getUsername() + "의 모든 Notifications를 읽지 않음 처리 했습니다.", null);
+    }
+
+    @PatchMapping(value = "/api/notifications/{id}/unread")
+    @ResponseBody
+    public DefaultResponse<Object> unread(@PathVariable Long id) {
+        notificationService.unread(id);
+        return new DefaultResponse<>("Notification(id=" + id + ")를 읽지 않음 처리 했습니다.", null);
+    }
+
 //    @RequestMapping(value = "/api/notifications/{id}", method = RequestMethod.PATCH)
 //    @ResponseBody
 //    public DefaultResponse<Object> update(@PathVariable Long id, @RequestBody NotificationUpdateBody body) {

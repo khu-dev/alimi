@@ -17,4 +17,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     Page<Notification> findAllByRecipient (@Param("recipient") String recipient, Pageable pageable);
     @Query("select n from Notification n where n.recipient = :recipient and n.isRead = false")
     Page<Notification> findAllUnreadByRecipient(String recipient, Pageable pageable);
+    @Query("select n from Notification n where n.recipient = :recipient and n.isRead = true")
+    Page<Notification> findAllReadByRecipient(String recipient, Pageable pageable);
 }
