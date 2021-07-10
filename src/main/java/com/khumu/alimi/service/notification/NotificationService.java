@@ -113,6 +113,7 @@ public class NotificationService {
 
     @Transactional
     // Controller가 사용할 메소드
+    // 해당 구독 정보에 해당하는 구독을 생성하거나 존재하는 경우 기존 구독 정보를 activated로 설정함.
     public void subscribe(SimpleKhumuUserDto requestUser, ResourceNotificationSubscription body) throws WrongResourceKindException, UnauthenticatedException {
         if (requestUser == null) {
             throw new UnauthenticatedException();
@@ -124,6 +125,7 @@ public class NotificationService {
 
     @Transactional
     // Controller가 사용할 메소드
+    // 해당 구독 정보에 해당하는 구독을 inactivated 시킴
     public void unsubscribe(SimpleKhumuUserDto requestUser, ResourceNotificationSubscription body) throws WrongResourceKindException, UnauthenticatedException {
         if (requestUser == null) {
             throw new UnauthenticatedException();
@@ -133,9 +135,10 @@ public class NotificationService {
         subscription.setIsActivated(false);
     }
 
+    @Transactional
+    // 해당 구독 정보 1개를 Get
     public ResourceNotificationSubscriptionDto getSubscription(SimpleKhumuUserDto requestUser, String subscriberId, ResourceKind resourceKind, Long resourceId) {
         // 우선 인증 패스
-
         List<ResourceNotificationSubscription> existingSubscriptions = resourceNotificationSubscriptionRepository.findAllBySubscriberAndResourceKindAndResourceId(subscriberId, resourceKind, resourceId);
         if (existingSubscriptions.isEmpty()) {
             // 사실 내부적으로는 구독 자체가 존재하지 않지만 클라이언트는 그런 내용을 알고 싶지않다.
@@ -152,6 +155,11 @@ public class NotificationService {
             return notificationMapper.toDto(existingSubscriptions.get(existingSubscriptions.size() - 1));
         }
     }
+
+    // user의 해당 리소스에 대한 구독 정보를 조회해주거나
+    // 없는 경우 activated된 구독을 생성함.
+    // 한 user에 대해 여러 개의 구독 정보가 존재하는 경우
+    // 가장 마지막 거 하나만 남기고 나머진 모두 삭제함
     @Transactional
     public ResourceNotificationSubscription getOrCreateSubscription(SimpleKhumuUserDto subscriber, ResourceNotificationSubscription body) throws WrongResourceKindException {
         if (body.getResourceKind() != ResourceKind.article &&
@@ -185,47 +193,4 @@ public class NotificationService {
 
         return subscription;
     }
-
-    // 리소스에 대한 구독을 activate하거나 inactivate합니다.
-//    @Transactional
-//    public ResourceNotificationSubscription toggleSubscription(SimpleKhumuUserDto requestUser, ResourceNotificationSubscription body) throws Exception {
-//        body.setSubscriber(requestUser.getUsername());
-//        if (
-//                (body.getResourceKind() == ResourceKind.article && body.getArticle() == null) ||
-//                (body.getResourceKind() == ResourceKind.study_article && body.getStudyArticle() == null) ||
-//                (body.getResourceKind() == ResourceKind.announcement && body.getAnnouncement() == null)
-//        ) {
-//            throw new Exception("resource_kind에 맞는 resource id를 입력해주세요.");
-//        }
-//
-//        List<ResourceNotificationSubscription> myExistingSubscriptions = resourceNotificationSubscriptionRepository.findAllByArticleAndSubscriber(
-//                body.getArticle(), body.getSubscriber());
-//
-//        if (myExistingSubscriptions.isEmpty()) {
-//            log.info(body.getArticle() + " 번 게시물에 대한 " + body.getSubscriber() + " 유저의 게시글 알림 구독을 생성합니다.");
-//            return resourceNotificationSubscriptionRepository.save(body);
-//        }
-//
-//        ResourceNotificationSubscription subscription = null;
-//        if (myExistingSubscriptions.size() > 1) {
-//            // 존재하던 구독이 많으면 첫 번째꺼 하나만 남김
-//            for (int i = 0; i < myExistingSubscriptions.size() - 1; i++) {
-//                log.warn(body.getArticle() + " 번 게시물에 대한 " + body.getSubscriber() + " 유저의 게시글 알림 구독이 너무 많아 마지막것만 남기고 나머지는 삭제합니다.");
-//                resourceNotificationSubscriptionRepository.delete(myExistingSubscriptions.get(i));
-//            }
-//            // myExistingSubscriptions이 db에서 삭제 시 같은 list를 참조하면서 삭제되었다해도 1칸짜리(index: 0)인 list에서
-//            // 첫 칸에 접근하는 것이니 올바른 동작임.
-//            // persistent layer에 있는 instance를 가져옴
-//            subscription = resourceNotificationSubscriptionRepository.getOne(myExistingSubscriptions.get(myExistingSubscriptions.size() - 1).getId());
-//            // 기존 알림 구독의 부정
-//            subscription.setIsActivated(!subscription.getIsActivated());
-//        } else {
-//            // 존재하던 구독이 없으면 새로 만듦.
-//            // 기본은 알림 구독
-//            subscription = resourceNotificationSubscriptionRepository.save(body);
-//            subscription.setIsActivated(true);
-//        }
-//
-//        return subscription;
-//    }
 }

@@ -25,8 +25,7 @@ public class SqsMessageListener {
     final ObjectMapper objectMapper;
 
     @SqsListener(value = "${sqs.notificationQueue.name}")
-    public void receiveMessage(
-            SqsMessageBodyDto body) throws JsonProcessingException {
+    public void receiveMessage(SqsMessageBodyDto body) {
         log.info("SQS 메시지를 가져왔습니다.");
         try{
             ResourceKind resourceKind = ResourceKind.valueOf(body.getMessageAttributes().getResourceKind().getValue());
@@ -40,15 +39,23 @@ public class SqsMessageListener {
                 case comment:{
                     CommentDto commentDto = objectMapper.readValue(body.getMessage(), CommentDto.class);
                     eventMessageDto.setResource(commentDto);
+
                     commentEventMessageService.createArticleNotificationSubscriptionForCommentAuthor(eventMessageDto);
                     commentEventMessageService.createNotifications(eventMessageDto);
-                    break;
-                }
+
+                } break;
                 case article: {
                     ArticleResource articleResource = objectMapper.readValue(body.getMessage(), ArticleResource.class);
                     eventMessageDto.setResource(articleResource);
-                    articleEventMessageService.createArticleNotificationSubscriptionForAuthor(eventMessageDto);
-                    break;
+                    switch (eventKind) {
+                        case create:{
+                            articleEventMessageService.createArticleNotificationSubscriptionForAuthor(eventMessageDto);
+                        }break;
+
+                        case new_hot_article:{
+                            articleEventMessageService.createNewHotArticleNotification(eventMessageDto);
+                        }break;
+                    }
                 }
             }
 

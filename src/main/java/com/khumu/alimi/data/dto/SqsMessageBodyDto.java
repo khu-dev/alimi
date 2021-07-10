@@ -32,6 +32,14 @@ import java.util.Map;
 @NoArgsConstructor
 @Builder
 @Getter
+/**
+ * SNS에서 SQS로 전달된 메시지.
+ * 실제 메시지는 SQS에서 이런 식으로 작성해야함. 즉 본 클래스의 message가 sqs의 Message를 의미하는 것이 아니라 Message.message를 의미
+ * Message Attribute도 사실상 message 필드에 escaped string 형태로 작성해야함.
+ * {
+ *     "message": "{\"id\": 184, \"author\": \"bo314\"}"
+ * }
+ */
 public class SqsMessageBodyDto{
     String type;
     String messageId;

@@ -16,5 +16,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ArticleResource {
     Long id;
+    String title;
     String author;
 }
