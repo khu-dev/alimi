@@ -50,7 +50,10 @@ public class NotificationService {
     }
 
     public List<NotificationDto> listNotificationsByUsername(SimpleKhumuUserDto requestUser, String username, Pageable pageable) throws NoPermissionException {
+        log.info("listNotificationsByUsername의 인자 로깅. requestUser: " + requestUser + ", recipientUsername: " + username);
+
         if (requestUser == null || requestUser.getUsername() == null || !requestUser.getUsername().equals(username)) {
+            log.error("알림을 조회할 권한이 없습니다. requestUser: " + requestUser + ", 조회하려는 recipient의 username: " + username);
             throw new NoPermissionException("현재는 본인의 알림만을 조회할 수 있습니다.");
         }
         Page<Notification> ns = nr.findAllByRecipient(username, pageable);
