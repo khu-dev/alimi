@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.khumu.alimi.controller.NotificationController;
 import com.khumu.alimi.data.entity.Notification;
 import com.khumu.alimi.mapper.NotificationMapper;
+import com.khumu.alimi.service.KhumuException;
 import com.khumu.alimi.service.notification.NotificationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +41,7 @@ public class NotificationControllerWebMvcTest {
 
     private List<Notification> fixtureNotifications = new ArrayList<Notification>();
     @BeforeEach
-    void setUp() {
+    void setUp() throws KhumuException.UnauthenticatedException, KhumuException.NoPermissionException {
 
         Notification n1 = Notification.builder()
                 .id(1L).title("댓글이 생성되었습니다.").content("hello, world 댓글이랍니다~!")
@@ -59,7 +60,7 @@ public class NotificationControllerWebMvcTest {
 
         fixtureNotifications.add(n2);
         when(notificationService.listNotifications(Pageable.unpaged())).thenReturn(fixtureNotifications.stream().map(notificationMapper::toDto).collect(Collectors.toList()));
-        when(notificationService.listNotificationsByUsername(anyString(), Pageable.unpaged())).thenReturn(fixtureNotifications.stream().map(notificationMapper::toDto).collect(Collectors.toList()));
+        when(notificationService.listNotificationsByUsername(null, anyString(), Pageable.unpaged())).thenReturn(fixtureNotifications.stream().map(notificationMapper::toDto).collect(Collectors.toList()));
     }
 
     @AfterEach

@@ -37,6 +37,9 @@ public class KhumuException {
         public UnauthenticatedException() {
             super("인증되지 않은 유저의 요청입니다.");
         }
+        public UnauthenticatedException(String message) {
+            super(message);
+        }
     }
 
 }

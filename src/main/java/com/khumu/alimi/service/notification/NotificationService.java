@@ -49,8 +49,15 @@ public class NotificationService {
         return ns.map(notificationMapper::toDto).toList();
     }
 
-    public List<NotificationDto> listNotificationsByUsername(SimpleKhumuUserDto requestUser, String username, Pageable pageable) throws NoPermissionException {
+    public List<NotificationDto> listNotificationsByUsername(SimpleKhumuUserDto requestUser, String username, Pageable pageable) throws NoPermissionException, UnauthenticatedException {
         log.info("listNotificationsByUsername의 인자 로깅. requestUser: " + requestUser + ", recipientUsername: " + username);
+        if (username.equals("me")) {
+            if (requestUser == null || requestUser.getUsername() == null) {
+                throw new UnauthenticatedException("설정한 경우 인증된 유저만이 recipient를 me로 설정할 수 있습니다.");
+            }
+            username = requestUser.getUsername();
+            log.info("recipient: me => recipient: " + username + "으로 올바른 recipient 값을 설정합니다.");
+        }
 
         if (requestUser == null || requestUser.getUsername() == null || !requestUser.getUsername().equals(username)) {
             log.error("알림을 조회할 권한이 없습니다. requestUser: " + requestUser + ", 조회하려는 recipient의 username: " + username);

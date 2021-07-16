@@ -42,7 +42,7 @@ public class NotificationController {
     public DefaultResponse<List<NotificationDto>> list(
             @AuthenticationPrincipal SimpleKhumuUserDto user,
             @RequestParam(value="recipient", required = false) String recipientUsername,
-            @PageableDefault(page=0, size=30) Pageable pageable) throws NoPermissionException {
+            @PageableDefault(page=0, size=30) Pageable pageable) throws NoPermissionException, UnauthenticatedException {
         List<NotificationDto> notifications = null;
         if (recipientUsername != null) {
             notifications = notificationService.listNotificationsByUsername(user, recipientUsername, pageable);
