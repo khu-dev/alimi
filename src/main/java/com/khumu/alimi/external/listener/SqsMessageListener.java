@@ -4,10 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.khumu.alimi.data.EventKind;
 import com.khumu.alimi.data.ResourceKind;
+import com.khumu.alimi.data.dto.AnnouncementDto;
 import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.dto.EventMessageDto;
 import com.khumu.alimi.data.dto.SqsMessageBodyDto;
 import com.khumu.alimi.data.resource.ArticleResource;
+import com.khumu.alimi.service.notification.AnnouncementEventMessageService;
 import com.khumu.alimi.service.notification.ArticleEventMessageService;
 import com.khumu.alimi.service.notification.CommentEventMessageService;
 import io.awspring.cloud.messaging.listener.annotation.SqsListener;
@@ -21,7 +23,7 @@ import org.springframework.stereotype.Service;
 public class SqsMessageListener {
     final CommentEventMessageService commentEventMessageService;
     final ArticleEventMessageService articleEventMessageService;
-
+    final AnnouncementEventMessageService announcementEventMessageService;
     final ObjectMapper objectMapper;
 
     @SqsListener(value = "${sqs.notificationQueue.name}")
@@ -56,7 +58,15 @@ public class SqsMessageListener {
                             articleEventMessageService.createNewHotArticleNotification(eventMessageDto);
                         }break;
                     }
-                }
+                } break;
+                case announcement:{
+                    AnnouncementDto announcementDto = objectMapper.readValue(body.getMessage(), AnnouncementDto.class);
+                    switch (eventKind) {
+                        case create:{
+                            announcementEventMessageService.createNotificationsForNewAnnouncement(announcementDto);
+                        } break;
+                    }
+                } break;
             }
 
         } catch (Exception e) {
