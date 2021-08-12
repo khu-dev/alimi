@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -19,13 +20,15 @@ import java.time.LocalDateTime;
 })
 @Builder
 @Entity
-public class PushOption {
+public class PushOption implements Serializable {
     @Id
-    @Column
-    // username
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+    @Column(nullable = false)
+    String username;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
     PushOptionKind pushOptionKind;
 
     @Builder.Default

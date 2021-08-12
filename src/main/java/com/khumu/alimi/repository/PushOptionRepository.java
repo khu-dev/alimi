@@ -9,6 +9,6 @@ import java.util.Optional;
 /**
  * Push subscription은 간단하니까 Jpa에 바로 기능 추가.
  */
-public interface PushOptionRepository extends JpaRepository<PushOption, String> {
-    Optional<PushOption> findByIdAndPushOptionKind(String id, PushOptionKind pushOptionKind);
+public interface PushOptionRepository extends JpaRepository<PushOption, Long> {
+    Optional<PushOption> findByUsernameAndPushOptionKind(String username, PushOptionKind pushOptionKind);
 }

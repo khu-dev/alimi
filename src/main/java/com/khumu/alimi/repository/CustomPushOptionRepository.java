@@ -24,13 +24,16 @@ public class CustomPushOptionRepository {
     @Lazy
     PushOptionRepository pushOptionRepository;
 
+    public Optional<PushOption> findById(Long id) {
+        return pushOptionRepository.findById(id);
+    }
     // id와 pushOptionKind를 통해 찾고, 없으면 true로 만들어서 리턴
     public PushOption getOrCreate(PushOption pushOption) {
-        Optional<PushOption> optionalPushOption = pushOptionRepository.findByIdAndPushOptionKind(pushOption.getId(), pushOption.getPushOptionKind());
+        Optional<PushOption> optionalPushOption = pushOptionRepository.findByUsernameAndPushOptionKind(pushOption.getUsername(), pushOption.getPushOptionKind());
         PushOption result = null;
         if (optionalPushOption.isEmpty()) {
             // 기본값을 통해 PushOption 생성
-            result = pushOptionRepository.save(PushOption.builder().id(pushOption.getId()).pushOptionKind(pushOption.getPushOptionKind()).build());
+            result = pushOptionRepository.save(PushOption.builder().username(pushOption.getUsername()).pushOptionKind(pushOption.getPushOptionKind()).build());
         } else {
             result = optionalPushOption.get();
         }
