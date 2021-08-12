@@ -46,7 +46,7 @@ public class PushController {
         return new DefaultResponse<Map<PushOptionKind, PushOption>>(null, optionInfo);
     }
 
-    @PutMapping(value="/api/push/options/{optionId}")
+    @PatchMapping(value="/api/push/options/{optionId}")
     @ResponseBody
     public DefaultResponse<PushOption> updatePushOption(
             @AuthenticationPrincipal SimpleKhumuUserDto user,

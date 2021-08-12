@@ -57,7 +57,7 @@ public class SqsMessageListener {
                         }break;
 
                         case new_hot_article:{
-                            articleEventMessageService.createNewHotArticleNotification(eventMessageDto);
+                            articleEventMessageService.notifyNewHotArticle(eventMessageDto);
                         }break;
                     }
                 } break;
