@@ -1,6 +1,5 @@
 package com.khumu.alimi.external.listener;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.khumu.alimi.data.EventKind;
 import com.khumu.alimi.data.ResourceKind;
@@ -41,9 +40,12 @@ public class SqsMessageListener {
                 case comment:{
                     CommentDto commentDto = objectMapper.readValue(body.getMessage(), CommentDto.class);
                     eventMessageDto.setResource(commentDto);
-
-                    commentEventMessageService.createArticleNotificationSubscriptionForCommentAuthor(eventMessageDto);
-                    commentEventMessageService.createNotifications(eventMessageDto);
+                    switch (eventMessageDto.getEventKind()) {
+                        case create:
+                            commentEventMessageService.subscribeArticle(eventMessageDto);
+                            commentEventMessageService.createNotificationsForNewComment(commentDto);
+                            break;
+                    }
 
                 } break;
                 case article: {
@@ -51,7 +53,7 @@ public class SqsMessageListener {
                     eventMessageDto.setResource(articleResource);
                     switch (eventKind) {
                         case create:{
-                            articleEventMessageService.createArticleNotificationSubscriptionForAuthor(eventMessageDto);
+                            articleEventMessageService.subscribeByNewArticle(eventMessageDto);
                         }break;
 
                         case new_hot_article:{

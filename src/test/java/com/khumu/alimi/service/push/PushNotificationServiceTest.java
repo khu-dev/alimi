@@ -4,9 +4,9 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.*;
 import com.khumu.alimi.FireBaseConfig;
 import com.khumu.alimi.data.entity.Notification;
-import com.khumu.alimi.data.entity.PushSubscription;
+import com.khumu.alimi.data.entity.PushDevice;
 import com.khumu.alimi.external.push.FcmPushManager;
-import com.khumu.alimi.repository.PushSubscriptionRepository;
+import com.khumu.alimi.repository.PushDeviceRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 @TestPropertySource(locations= {"classpath:application-test.properties"})
 class PushNotificationServiceTest {
     @MockBean
-    PushSubscriptionRepository pushSubscriptionRepository;
+    PushDeviceRepository pushDeviceRepository;
     @SpyBean
     FirebaseApp firebaseApp;
     @InjectMocks
@@ -48,8 +48,8 @@ class PushNotificationServiceTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        when(pushSubscriptionRepository.listByUsername(anyString())).thenReturn(
-                new ArrayList<>(Arrays.asList(new PushSubscription(
+        when(pushDeviceRepository.listByUsername(anyString())).thenReturn(
+                new ArrayList<>(Arrays.asList(new PushDevice(
                         defaultDeviceToken,
                         "bo314"
                 )))

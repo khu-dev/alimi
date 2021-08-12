@@ -5,26 +5,32 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table
 @Data
+@Table(indexes = {
+        @Index(columnList = "pushOptionKind")
+})
 @Builder
+@Entity
 public class PushOption {
     @Id
     @Column
     // username
     String id;
-    @Builder.Default
-    Boolean isCommentNotificationActivated = true;
+
+    @Enumerated(value = EnumType.STRING)
+    PushOptionKind pushOptionKind;
 
     @Builder.Default
-    Boolean isAnnouncementNotificationActivated=true;
+    Boolean isActivated = true;
 
-    @Builder.Default
-    Boolean isKhumuNotificationActivated=true;
+    @CreationTimestamp
+    LocalDateTime createdAt;
 }

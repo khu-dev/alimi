@@ -124,6 +124,7 @@ public class NotificationService {
     @Transactional
     // Controller가 사용할 메소드
     // 해당 구독 정보에 해당하는 구독을 생성하거나 존재하는 경우 기존 구독 정보를 activated로 설정함.
+    // 존재하지 않으면 activated 상태로 생성한다.
     public void subscribe(SimpleKhumuUserDto requestUser, ResourceNotificationSubscription body) throws WrongResourceKindException, UnauthenticatedException {
         if (requestUser == null) {
             throw new UnauthenticatedException();

@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table
 @Data
 @Builder
-public class PushSubscription {
+public class PushDevice {
     @Id
     String deviceToken;
     String user;

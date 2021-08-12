@@ -27,7 +27,7 @@ import static com.khumu.alimi.service.KhumuException.*;
 @Slf4j
 public class CommentEventMessageService {
     final NotificationRepository notificationRepository;
-    final CustomPushSubscriptionRepository pushSubscriptionRepository;
+    final CustomPushDeviceRepository pushDeviceRepository;
     final CustomPushOptionRepository pushOptionRepository;
     final NotificationService notificationService;
     final ResourceNotificationSubscriptionRepository resourceNotificationSubscriptionRepository;
@@ -68,8 +68,8 @@ public class CommentEventMessageService {
 
             Notification n = notificationRepository.save(tmp);
 
-            List<PushSubscription> subscriptions = pushSubscriptionRepository.findAllByUser(recipientId);
-            for (PushSubscription subscription : subscriptions) {
+            List<PushDevice> subscriptions = pushDeviceRepository.findAllByUser(recipientId);
+            for (PushDevice subscription : subscriptions) {
                 pushManager.notify(n, subscription.getDeviceToken());
                 log.info("푸시를 보냅니다. " + subscription.getUser());
             }
@@ -81,23 +81,19 @@ public class CommentEventMessageService {
     // 댓글 생성 생성에 대한 recipient 찾기
     @Transactional
     public List<String> getRecipientIds(CommentDto commentDto) {
-        // 지금은 우선 article에 대해서만 동작
+        // 현재 댓글의 게시글에 대한 구독 정보
         List<ResourceNotificationSubscription> subscriptions = resourceNotificationSubscriptionRepository.findAllByResourceKindAndResourceId(ResourceKind.article, commentDto.getArticle());
 
-        return subscriptions.stream().filter(subscription -> {
-            PushOption pushOption = pushOptionRepository.getOrCreate(PushOption.builder().id(subscription.getSubscriber()).build());
-
-                // 알림을 활성화한 사람
-                return pushOption.getIsCommentNotificationActivated() &&
-                        // 현 댓글 작성자는 알림을 보내지 않는다.
-                        !subscription.getSubscriber().equals(commentDto.getAuthor().getUsername());
-            }).map(subscription -> subscription.getSubscriber()).collect(Collectors.toList());
+        // 구독자 중 댓글 작성자 본인은 빼고 recipient로 filter
+        return subscriptions.stream().filter(subscription -> !subscription.getSubscriber().equals(commentDto.getAuthor().getUsername()))
+                .map(subscription -> subscription.getSubscriber()).collect(Collectors.toList());
     }
 
     @Transactional
     // SqsListener가 Comment event에 반응하여 사용할 메소드
     // CommentEvenetMessageService는 NotificationService에 의존한다.
-    public void createArticleNotificationSubscriptionForCommentAuthor(EventMessageDto<CommentDto> eventMessageDto) throws WrongResourceKindException {
+    // 새로 댓글이 작성된 경우 새 댓글의 작성자는 그 댓글의 게시글을 subscribe한다.
+    public void subscribeArticle(EventMessageDto<CommentDto> eventMessageDto) throws WrongResourceKindException {
         CommentDto commentDto = eventMessageDto.getResource();
         ResourceKind resourceKind = null;
         Long resourceId = null;

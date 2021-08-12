@@ -8,7 +8,7 @@ import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.dto.EventMessageDto;
 import com.khumu.alimi.data.entity.Notification;
 import com.khumu.alimi.data.entity.PushOption;
-import com.khumu.alimi.data.entity.PushSubscription;
+import com.khumu.alimi.data.entity.PushDevice;
 import com.khumu.alimi.data.entity.ResourceNotificationSubscription;
 import com.khumu.alimi.external.push.PushManager;
 import com.khumu.alimi.repository.*;
@@ -32,7 +32,7 @@ import static com.khumu.alimi.service.KhumuException.WrongResourceKindException;
 @Slf4j
 public class AnnouncementEventMessageService {
     final NotificationRepository notificationRepository;
-    final CustomPushSubscriptionRepository pushSubscriptionRepository;
+    final CustomPushDeviceRepository pushDeviceRepository;
     final CustomPushOptionRepository pushOptionRepository;
     final AnnouncementAuthorFollowRepository announcementAuthorFollowRepository;
 
@@ -58,8 +58,8 @@ public class AnnouncementEventMessageService {
 
             Notification n = notificationRepository.save(tmp);
 
-            List<PushSubscription> subscriptions = pushSubscriptionRepository.findAllByUser(recipientId);
-            for (PushSubscription subscription : subscriptions) {
+            List<PushDevice> subscriptions = pushDeviceRepository.findAllByUser(recipientId);
+            for (PushDevice subscription : subscriptions) {
                 pushManager.notify(n, subscription.getDeviceToken());
                 log.info("푸시를 보냅니다. " + subscription.getUser());
             }

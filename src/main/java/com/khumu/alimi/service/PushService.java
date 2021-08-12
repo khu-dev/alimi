@@ -2,9 +2,9 @@ package com.khumu.alimi.service;
 
 import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.data.entity.PushOption;
-import com.khumu.alimi.data.entity.PushSubscription;
+import com.khumu.alimi.data.entity.PushDevice;
 import com.khumu.alimi.repository.CustomPushOptionRepository;
-import com.khumu.alimi.repository.CustomPushSubscriptionRepository;
+import com.khumu.alimi.repository.CustomPushDeviceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -16,12 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 public class PushService {
-    final CustomPushSubscriptionRepository pushSubscriptionRepository;
+    final CustomPushDeviceRepository pushDeviceRepository;
     final CustomPushOptionRepository pushOptionRepository;
 
     @Transactional
-    public PushSubscription subscribePush(PushSubscription subscriptionReq){
-        PushSubscription subscription = pushSubscriptionRepository.save(subscriptionReq);
+    public PushDevice subscribePush(PushDevice subscriptionReq){
+        PushDevice subscription = pushDeviceRepository.save(subscriptionReq);
 
         // 만약 인증된 유저라면
         // 디바이스를 등록할 때 만약 이 유저에 대한 PushOption이 존재하지 않으면 생성함.
@@ -42,11 +42,7 @@ public class PushService {
     // 어떤 종류의 알림들을 push로 받을 것인지
     public PushOption updatePushOption(SimpleKhumuUserDto user, PushOption body) {
         // persistent한 PushOption instance를 리턴받아야 제대로 값이 자동 update 된다.
-        PushOption option = pushOptionRepository.getOrCreate(PushOption.builder().id(user.getUsername()).build());
-        option.setIsAnnouncementNotificationActivated(body.getIsAnnouncementNotificationActivated());
-        option.setIsCommentNotificationActivated(body.getIsCommentNotificationActivated());
-        option.setIsKhumuNotificationActivated(body.getIsKhumuNotificationActivated());
-
+        PushOption option = pushOptionRepository.getOrCreate(body);
         return option;
     }
 }

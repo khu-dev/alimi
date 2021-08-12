@@ -1,7 +1,7 @@
 package com.khumu.alimi.controller;
 
 import com.khumu.alimi.data.entity.PushOption;
-import com.khumu.alimi.data.entity.PushSubscription;
+import com.khumu.alimi.data.entity.PushDevice;
 import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.service.PushService;
 import lombok.*;
@@ -19,15 +19,15 @@ public class PushController {
 
     @PostMapping(value="/api/push/subscribe")
     @ResponseBody
-    public ResponseEntity<DefaultResponse<PushSubscription>> createPushSubscription(
+    public ResponseEntity<DefaultResponse<PushDevice>> createPushDevice(
             @AuthenticationPrincipal SimpleKhumuUserDto user,
-        @RequestBody PushSubscription body) {
+        @RequestBody PushDevice body) {
         if (user != null) {
             body.setUser(user.getUsername());
         }
 
         log.info(user + " 유저에 대한 푸시 디바이스를 등록해 푸시 알림을 구독합니다.");
-        PushSubscription newSubscription = pushService.subscribePush(body);
+        PushDevice newSubscription = pushService.subscribePush(body);
         return new ResponseEntity<>(new DefaultResponse<>(
                 null, newSubscription), HttpStatus.OK);
     }

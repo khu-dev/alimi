@@ -1,7 +1,6 @@
 package com.khumu.alimi.repository;
 
-import com.khumu.alimi.data.entity.PushOption;
-import com.khumu.alimi.data.entity.PushSubscription;
+import com.khumu.alimi.data.entity.PushDevice;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -16,17 +15,17 @@ import java.util.Optional;
  */
 @Slf4j
 @Repository
-public class CustomPushSubscriptionRepository {
+public class CustomPushDeviceRepository {
     @Autowired
     @Lazy
-    PushSubscriptionRepository pushSubscriptionRepository;
+    PushDeviceRepository pushDeviceRepository;
     @Autowired
     EntityManager em;
 
     String name = "zz";
-    public PushSubscription getOrCreate(PushSubscription subscription) {
-        Optional<PushSubscription> subscriptionRow = pushSubscriptionRepository.findById(subscription.getDeviceToken());
-        PushSubscription result = null;
+    public PushDevice getOrCreate(PushDevice subscription) {
+        Optional<PushDevice> subscriptionRow = pushDeviceRepository.findById(subscription.getDeviceToken());
+        PushDevice result = null;
         if (subscriptionRow.isPresent()) {
             subscription = subscriptionRow.get();
             log.info(subscription.getDeviceToken().substring(0,
@@ -34,7 +33,7 @@ public class CustomPushSubscriptionRepository {
             // 같은 device에 대한 다른 유저
             subscription.setUser(subscription.getUser());
         } else {
-            subscription = pushSubscriptionRepository.save(subscription);
+            subscription = pushDeviceRepository.save(subscription);
             log.info(subscription.getDeviceToken().substring(0,
                     Math.min(subscription.getDeviceToken().length(), 10)) + "에 대한 Push 구독이 존재하지 않습니다. 새로 생성합니다.");
         }
@@ -42,12 +41,12 @@ public class CustomPushSubscriptionRepository {
         return subscription;
     }
 
-    public List<PushSubscription> findAllByUser(String username) {
-        return pushSubscriptionRepository.findAllByUser(username);
-//        return pushSubscriptionRepository.findAll();
+    public List<PushDevice> findAllByUser(String username) {
+        return pushDeviceRepository.findAllByUser(username);
+//        return pushDeviceRepository.findAll();
     }
 
-    public PushSubscription save(PushSubscription subscription) {
-        return pushSubscriptionRepository.save(subscription);
+    public PushDevice save(PushDevice subscription) {
+        return pushDeviceRepository.save(subscription);
     }
 }

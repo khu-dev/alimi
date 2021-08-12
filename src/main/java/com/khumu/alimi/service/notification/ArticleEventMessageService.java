@@ -1,16 +1,15 @@
 package com.khumu.alimi.service.notification;
 
 import com.khumu.alimi.data.ResourceKind;
-import com.khumu.alimi.data.dto.ArticleDto;
 import com.khumu.alimi.data.dto.EventMessageDto;
 import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
 import com.khumu.alimi.data.entity.Notification;
-import com.khumu.alimi.data.entity.PushSubscription;
+import com.khumu.alimi.data.entity.PushDevice;
 import com.khumu.alimi.data.entity.ResourceNotificationSubscription;
 import com.khumu.alimi.data.resource.ArticleResource;
 import com.khumu.alimi.external.push.PushManager;
 import com.khumu.alimi.repository.NotificationRepository;
-import com.khumu.alimi.repository.PushSubscriptionRepository;
+import com.khumu.alimi.repository.PushDeviceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,11 +25,11 @@ import java.util.List;
 public class ArticleEventMessageService {
     final NotificationRepository notificationRepository;
     final NotificationService notificationService;
-    final PushSubscriptionRepository pushSubscriptionRepository;
+    final PushDeviceRepository pushDeviceRepository;
     final PushManager pushManager;
 
-    // ArticleEventMessageService는 NotificationService에 의존한다.
-    public void createArticleNotificationSubscriptionForAuthor(EventMessageDto<ArticleResource> eventMessageDto) {
+    // 게시글이 생성되었다는 이벤트를 통해 해당 게시글의 author는 자신의 게시글을 자동으로 subscribe시킴
+    public void subscribeByNewArticle(EventMessageDto<ArticleResource> eventMessageDto) {
         ArticleResource articleResource = eventMessageDto.getResource();
         try {
             notificationService.subscribe(SimpleKhumuUserDto.builder().username(articleResource.getAuthor()).build(), ResourceNotificationSubscription.builder()
@@ -57,8 +56,8 @@ public class ArticleEventMessageService {
 
         Notification n = notificationRepository.save(tmp);
 
-        List<PushSubscription> subscriptions = pushSubscriptionRepository.findAllByUser(author);
-        for (PushSubscription subscription : subscriptions) {
+        List<PushDevice> subscriptions = pushDeviceRepository.findAllByUser(author);
+        for (PushDevice subscription : subscriptions) {
             pushManager.notify(n, subscription.getDeviceToken());
             log.info("푸시를 보냅니다. " + subscription.getUser());
         }
