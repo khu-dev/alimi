@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 
 /**
- * Django가 이용하는 Comment DTO
+ * Django가 생성한 ArticleModel을 직렬화한 것
  */
 @AllArgsConstructor
 @NoArgsConstructor

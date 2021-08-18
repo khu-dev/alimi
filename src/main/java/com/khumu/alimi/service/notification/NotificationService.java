@@ -1,3 +1,4 @@
+// 실제 Notification을 보내거나 생성하는 것 자체에 대한 서비스
 package com.khumu.alimi.service.notification;
 
 import com.khumu.alimi.data.ResourceKind;
@@ -38,7 +39,6 @@ public class NotificationService {
     final NotificationMapper notificationMapper;
     public Notification getNotification(Long id) {
         Notification n = nr.findById(id).get();
-//        applyPlainForeignKey(n);
         return n;
     }
 

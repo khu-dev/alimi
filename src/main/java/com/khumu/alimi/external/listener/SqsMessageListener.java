@@ -8,21 +8,21 @@ import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.dto.EventMessageDto;
 import com.khumu.alimi.data.dto.SqsMessageBodyDto;
 import com.khumu.alimi.data.resource.ArticleResource;
-import com.khumu.alimi.service.notification.AnnouncementEventMessageService;
-import com.khumu.alimi.service.notification.ArticleEventMessageService;
-import com.khumu.alimi.service.notification.CommentEventMessageService;
+import com.khumu.alimi.service.notification.AnnouncementEventService;
+import com.khumu.alimi.service.notification.ArticleEventService;
+import com.khumu.alimi.service.notification.CommentEventService;
 import io.awspring.cloud.messaging.listener.annotation.SqsListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 @Slf4j
 @RequiredArgsConstructor
 public class SqsMessageListener {
-    final CommentEventMessageService commentEventMessageService;
-    final ArticleEventMessageService articleEventMessageService;
-    final AnnouncementEventMessageService announcementEventMessageService;
+    final CommentEventService commentEventMessageService;
+    final ArticleEventService articleEventMessageService;
+    final AnnouncementEventService announcementEventMessageService;
     final ObjectMapper objectMapper;
 
     @SqsListener(value = "${sqs.notificationQueue.name}")
@@ -31,7 +31,7 @@ public class SqsMessageListener {
         try{
             ResourceKind resourceKind = ResourceKind.valueOf(body.getMessageAttributes().getResourceKind().getValue());
             EventKind eventKind = EventKind.valueOf(body.getMessageAttributes().getEventKind().getValue());
-            EventMessageDto eventMessageDto = EventMessageDto.builder().eventKind(eventKind).resourceKind(resourceKind).build();
+            EventMessageDto<Object> eventMessageDto = EventMessageDto.builder().eventKind(eventKind).resourceKind(resourceKind).build();
             log.info("ResourceKind: " + resourceKind + ", EventKind: " + eventKind + ", EventMessageDto: " + eventMessageDto);
             // 실제 발생한 이벤트 속 정보를 얻기 위해선 body.getMessage()를 Deserialize 해야한다.
             // body.getMessage()는 각각의 리소스들의 Dto를 Json 문자열로 나타낸 것이다.
@@ -39,25 +39,23 @@ public class SqsMessageListener {
             switch (resourceKind){
                 case comment:{
                     CommentDto commentDto = objectMapper.readValue(body.getMessage(), CommentDto.class);
-                    eventMessageDto.setResource(commentDto);
                     switch (eventMessageDto.getEventKind()) {
                         case create:
-                            commentEventMessageService.subscribeArticle(eventMessageDto);
+                            commentEventMessageService.subscribeArticle(commentDto);
                             commentEventMessageService.createNotificationsForNewComment(commentDto);
                             break;
                     }
 
                 } break;
                 case article: {
-                    ArticleResource articleResource = objectMapper.readValue(body.getMessage(), ArticleResource.class);
-                    eventMessageDto.setResource(articleResource);
+                    ArticleResource article = objectMapper.readValue(body.getMessage(), ArticleResource.class);
                     switch (eventKind) {
                         case create:{
-                            articleEventMessageService.subscribeByNewArticle(eventMessageDto);
+                            articleEventMessageService.subscribeByNewArticle(article);
                         }break;
 
                         case new_hot_article:{
-                            articleEventMessageService.notifyNewHotArticle(eventMessageDto);
+                            articleEventMessageService.notifyNewHotArticle(article);
                         }break;
                     }
                 } break;

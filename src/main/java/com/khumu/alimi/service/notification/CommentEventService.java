@@ -25,7 +25,7 @@ import static com.khumu.alimi.service.KhumuException.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CommentEventMessageService {
+public class CommentEventService {
     final NotificationRepository notificationRepository;
     final CustomPushDeviceRepository pushDeviceRepository;
     final CustomPushOptionRepository pushOptionRepository;
@@ -33,23 +33,6 @@ public class CommentEventMessageService {
     final ResourceNotificationSubscriptionRepository resourceNotificationSubscriptionRepository;
     final PushManager pushManager;
     final Gson gson;
-
-    @Transactional
-    public List<Notification> createNotifications(EventMessageDto<CommentDto> e) {
-        List<Notification> notifications = new ArrayList<>();
-        switch (e.getResourceKind()) {
-            case comment:
-                CommentDto commentDto = e.getResource();
-                switch (e.getEventKind()) {
-                    case create:
-                        notifications = createNotificationsForNewComment(commentDto);
-                        break;
-                }
-                break;
-        }
-
-        return notifications;
-    }
 
     @Transactional
     public List<Notification> createNotificationsForNewComment(CommentDto commentDto) {
@@ -93,8 +76,7 @@ public class CommentEventMessageService {
     // SqsListener가 Comment event에 반응하여 사용할 메소드
     // CommentEvenetMessageService는 NotificationService에 의존한다.
     // 새로 댓글이 작성된 경우 새 댓글의 작성자는 그 댓글의 게시글을 subscribe한다.
-    public void subscribeArticle(EventMessageDto<CommentDto> eventMessageDto) throws WrongResourceKindException {
-        CommentDto commentDto = eventMessageDto.getResource();
+    public void subscribeArticle(CommentDto commentDto) throws WrongResourceKindException {
         ResourceKind resourceKind = null;
         Long resourceId = null;
         if (commentDto.getArticle() != null) {
@@ -113,7 +95,7 @@ public class CommentEventMessageService {
                     .resourceId(resourceId)
                     .build());
         } catch (Exception e) {
-            log.error("Event message에 의한 알림 구독 생성이 실패했습니다. " + eventMessageDto);
+            log.error("알림 구독 생성이 실패했습니다. " + commentDto);
             e.printStackTrace();
         }
     }

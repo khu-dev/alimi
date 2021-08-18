@@ -30,7 +30,7 @@ import static com.khumu.alimi.service.KhumuException.WrongResourceKindException;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AnnouncementEventMessageService {
+public class AnnouncementEventService {
     final NotificationRepository notificationRepository;
     final CustomPushDeviceRepository pushDeviceRepository;
     final CustomPushOptionRepository pushOptionRepository;

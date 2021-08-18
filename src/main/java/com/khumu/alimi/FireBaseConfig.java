@@ -18,6 +18,7 @@ import java.io.InputStream;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
+// Firebase는 essence@khu.ac.kr 계정 이용 중
 public class FireBaseConfig {
     @Value("${firebase.credential.pathType}")
     // firebase credential을 절대 경로로 가져올 것인지 class path로 가져올 것인지

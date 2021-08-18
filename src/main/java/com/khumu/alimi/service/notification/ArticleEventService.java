@@ -21,7 +21,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class ArticleEventMessageService {
+public class ArticleEventService {
     final NotificationRepository notificationRepository;
     final NotificationService notificationService;
     final PushDeviceRepository pushDeviceRepository;
@@ -29,22 +29,20 @@ public class ArticleEventMessageService {
     final PushManager pushManager;
 
     // 게시글이 생성되었다는 이벤트를 통해 해당 게시글의 author는 자신의 게시글을 자동으로 subscribe시킴
-    public void subscribeByNewArticle(EventMessageDto<ArticleResource> eventMessageDto) {
-        ArticleResource articleResource = eventMessageDto.getResource();
+    public void subscribeByNewArticle(ArticleResource article) {
         try {
-            notificationService.subscribe(SimpleKhumuUserDto.builder().username(articleResource.getAuthor()).build(), ResourceNotificationSubscription.builder()
+            notificationService.subscribe(SimpleKhumuUserDto.builder().username(article.getAuthor()).build(), ResourceNotificationSubscription.builder()
                     .resourceKind(ResourceKind.article)
-                    .resourceId(articleResource.getId())
+                    .resourceId(article.getId())
                     .build());
         } catch (Exception e) {
-            log.error("Event message에 의한 알림 구독 생성이 실패했습니다. " +articleResource);
+            log.error("article에 대한 알림 구독 생성이 실패했습니다. " + article);
             e.printStackTrace();
 
         }
     }
 
-    public void notifyNewHotArticle(EventMessageDto<ArticleResource> eventMessageDto) {
-        ArticleResource article = eventMessageDto.getResource();
+    public void notifyNewHotArticle(ArticleResource article) {
         String author = article.getAuthor();
         PushOption pushOption = pushOptionRepository.getOrCreate(PushOption.builder().username(author).pushOptionKind(PushOptionKind.NEW_HOT_ARTICLE).build());
         if (pushOption.getIsActivated() == false){

@@ -5,16 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Push subscription은 간단하니까 Jpa에 바로 기능 추가.
+ * Push device은 간단하니까 Jpa에 바로 기능 추가.
  */
 @Slf4j
 @Repository
+@Transactional
 public class CustomPushDeviceRepository {
     @Autowired
     @Lazy
@@ -22,10 +24,8 @@ public class CustomPushDeviceRepository {
     @Autowired
     EntityManager em;
 
-    String name = "zz";
     public PushDevice getOrCreate(PushDevice subscription) {
         Optional<PushDevice> subscriptionRow = pushDeviceRepository.findById(subscription.getDeviceToken());
-        PushDevice result = null;
         if (subscriptionRow.isPresent()) {
             subscription = subscriptionRow.get();
             log.info(subscription.getDeviceToken().substring(0,
@@ -43,7 +43,6 @@ public class CustomPushDeviceRepository {
 
     public List<PushDevice> findAllByUser(String username) {
         return pushDeviceRepository.findAllByUser(username);
-//        return pushDeviceRepository.findAll();
     }
 
     public PushDevice save(PushDevice subscription) {
