@@ -122,7 +122,14 @@ public class NotificationController {
             @PathVariable String username,
             @PathVariable ResourceKind resourceKind,
             @PathVariable Long resourceId) throws Exception {
-        ResourceNotificationSubscriptionDto subscriptionDto = notificationService.getSubscription(user, username, resourceKind, resourceId);
+        ResourceNotificationSubscriptionDto subscriptionDto = notificationService.getSubscription(
+                user,
+                ResourceNotificationSubscription.builder()
+                        .subscriber(username)
+                        .resourceKind(resourceKind)
+                        .resourceId(resourceId)
+                        .build()
+        );
         return new DefaultResponse<>(null, subscriptionDto);
     }
 

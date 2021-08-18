@@ -11,20 +11,14 @@ import com.khumu.alimi.mapper.NotificationMapper;
 import com.khumu.alimi.repository.NotificationRepository;
 import com.khumu.alimi.repository.ResourceNotificationSubscriptionRepository;
 import com.khumu.alimi.service.KhumuException;
-import javassist.Loader;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.khumu.alimi.service.KhumuException.*;
 
@@ -115,11 +109,6 @@ public class NotificationService {
         nr.delete(n);
     }
 
-    private void throwWhenNotRecipient(SimpleKhumuUserDto requestUser, Notification notification) throws NoPermissionException {
-        if (requestUser == null || requestUser.getUsername() == null || !requestUser.getUsername().equals(notification.getRecipient())) {
-            throw new NoPermissionException("본인의 알림이 아니라 해당 작업을 수행할 권한이 없습니다.");
-        }
-    }
 
     @Transactional
     // Controller가 사용할 메소드
@@ -129,7 +118,10 @@ public class NotificationService {
         if (requestUser == null) {
             throw new UnauthenticatedException();
         }
-        ResourceNotificationSubscription subscription = getOrCreateSubscription(requestUser, body);
+        throwOnNullResourceKind(body);
+
+        body.setSubscriber(requestUser.getUsername());
+        ResourceNotificationSubscription subscription = resourceNotificationSubscriptionRepository.getOrCreate(body);
         log.info("구독을 활성화합니다.");
         subscription.setIsActivated(true);
     }
@@ -141,67 +133,35 @@ public class NotificationService {
         if (requestUser == null) {
             throw new UnauthenticatedException();
         }
-        ResourceNotificationSubscription subscription = getOrCreateSubscription(requestUser, body);
+        throwOnNullResourceKind(body);
+
+        body.setSubscriber(requestUser.getUsername());
+        ResourceNotificationSubscription subscription = resourceNotificationSubscriptionRepository.getOrCreate(body);
         log.info("구독을 비활성화합니다.");
         subscription.setIsActivated(false);
     }
 
     @Transactional
-    // 해당 구독 정보 1개를 Get
-    public ResourceNotificationSubscriptionDto getSubscription(SimpleKhumuUserDto requestUser, String subscriberId, ResourceKind resourceKind, Long resourceId) {
-        // 우선 인증 패스
-        List<ResourceNotificationSubscription> existingSubscriptions = resourceNotificationSubscriptionRepository.findAllBySubscriberAndResourceKindAndResourceId(subscriberId, resourceKind, resourceId);
-        if (existingSubscriptions.isEmpty()) {
-            // 사실 내부적으로는 구독 자체가 존재하지 않지만 클라이언트는 그런 내용을 알고 싶지않다.
-            // isActivated인지만 궁금.
-            // 추후 필요한 정보들을 위해 혹은 디버깅을 위해 요청 정보에 포함된 필드들도 몇 개 전달해줌.
-            return ResourceNotificationSubscriptionDto.builder()
-                    .subscriber(subscriberId)
-                    .isActivated(false)
-                    .resourceKind(resourceKind)
-                    .resourceId(resourceId)
-                    .build();
-        } else {
-            // 존재하는 구독 중 마지막 것.
-            return notificationMapper.toDto(existingSubscriptions.get(existingSubscriptions.size() - 1));
+    // subscription에 해당하는 구독 정보 1개를 Get하거나 만든다. 혹은 오류적으로 1개 이상의 구독 정보가 존재하는 경우 나머지를 삭제함.
+    // 사실상 isActivated을 조회하기 위함.
+    public ResourceNotificationSubscriptionDto getSubscription(SimpleKhumuUserDto requestUser, ResourceNotificationSubscription subscription) {
+        // 우선 인증 패스했다고 가정
+        subscription = resourceNotificationSubscriptionRepository.getOrCreate(subscription);
+        return notificationMapper.toDto(subscription);
+    }
+
+    private void throwWhenNotRecipient(SimpleKhumuUserDto requestUser, Notification notification) throws NoPermissionException {
+        if (requestUser == null || requestUser.getUsername() == null || !requestUser.getUsername().equals(notification.getRecipient())) {
+            throw new NoPermissionException("본인의 알림이 아니라 해당 작업을 수행할 권한이 없습니다.");
         }
     }
 
-    // user의 해당 리소스에 대한 구독 정보를 조회해주거나
-    // 없는 경우 activated된 구독을 생성함.
-    // 한 user에 대해 여러 개의 구독 정보가 존재하는 경우
-    // 가장 마지막 거 하나만 남기고 나머진 모두 삭제함
-    @Transactional
-    public ResourceNotificationSubscription getOrCreateSubscription(SimpleKhumuUserDto subscriber, ResourceNotificationSubscription body) throws WrongResourceKindException {
-        if (body.getResourceKind() != ResourceKind.article &&
-            body.getResourceKind() != ResourceKind.study_article &&
-            body.getResourceKind() != ResourceKind.announcement
+    public void throwOnNullResourceKind(ResourceNotificationSubscription subscription) throws WrongResourceKindException {
+        if (subscription.getResourceKind() != ResourceKind.article &&
+                subscription.getResourceKind() != ResourceKind.study_article &&
+                subscription.getResourceKind() != ResourceKind.announcement
         ) {
-            throw new WrongResourceKindException();
+            throw new KhumuException.WrongResourceKindException();
         }
-        List<ResourceNotificationSubscription> subscriptions = resourceNotificationSubscriptionRepository.findAllBySubscriberAndResourceKindAndResourceId(subscriber.getUsername(), body.getResourceKind(), body.getResourceId());
-        ResourceNotificationSubscription subscription = null;
-        ResourceKind resourceKind = body.getResourceKind();
-        
-        if (subscriptions.isEmpty()) {
-            log.info(subscriber.getUsername() + "의 해당 Article에 대한 구독을 생성합니다.");
-            subscription = resourceNotificationSubscriptionRepository.save(ResourceNotificationSubscription.builder()
-                    .subscriber(subscriber.getUsername())
-                    .resourceKind(resourceKind)
-                    .resourceId(body.getResourceId())
-                    .isActivated(true) // 기본값은 true이다.
-                    .build());
-        } else {
-            log.info("이미 " + subscriber.getUsername() + "가 해당 Article을 구독 중입니다. 새로운 구독 생성 작업을 수행하지 않겠습니다.");
-            // 마지막 구독을 allocate
-            subscription = subscriptions.get(subscriptions.size() - 1);
-            if (subscriptions.size() > 1) {
-                log.warn(body.getResourceKind().name() + "(" + body.getResourceId() + ")에 대한 " + subscriber.getUsername() + "의 구독이 이미 2개 이상 존재합니다. 마지막 구독만 남기고 나머지를 삭제합니다.");
-
-                resourceNotificationSubscriptionRepository.deleteAll(subscriptions.subList(0, subscriptions.size() - 1));
-            }
-        }
-
-        return subscription;
     }
 }
