@@ -29,13 +29,10 @@ public class FcmPushManager implements PushManager{
     public Message createMessage(Notification n, String deviceToken){
         Message message = Message.builder()
                 .setToken(deviceToken)
-                .setAndroidConfig(AndroidConfig.builder()
-                        .setNotification(
-                                AndroidNotification.builder() // title이나 body 중 하나라도 null이 아니어야 알림이 간다!
-                                        .setTitle(n.getTitle())
-                                        .setBody(n.getContent())
-                                        .build())
-                        .build())
+                .setNotification(com.google.firebase.messaging.Notification.builder()
+                    .setTitle(n.getTitle())
+                    .setBody(n.getContent())
+                    .build())
                 .build();
         return message;
     }
