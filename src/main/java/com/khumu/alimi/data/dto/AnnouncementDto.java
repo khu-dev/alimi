@@ -22,6 +22,7 @@ public class AnnouncementDto {
     Long id;
     String title;
     String authorName;
+    String link;
     // follower들의 ID
     List<String> followers;
 }

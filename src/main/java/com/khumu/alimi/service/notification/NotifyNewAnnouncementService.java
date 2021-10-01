@@ -40,7 +40,8 @@ public class NotifyNewAnnouncementService {
                     .title(announcementDto.getAuthorName() + "의 새로운 공지사항이 작성되었어요!")
                     .content(announcementDto.getTitle())
                     .kind("공지사항")
-                    .reference("announcements")
+                    .reference("announcements/" + announcementDto.getId())
+                    .link(announcementDto.getLink())
                     .build());
 
             // TODO: 푸시 알림 조건 반영

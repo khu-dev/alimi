@@ -25,7 +25,11 @@ public class Notification {
     String content;
     String kind;
     String recipient;
+    // e.g. articles/1, articles?board=hot
     String reference; // 참조 링크
+    // 누르면 바로 이동할 URL
+    // e.g. https://www.naver.com/
+    String link;
 
 //    @JsonProperty("is_read")// Jackson이 is라는 prefix를 삭제해버림.
     // boolean인 경우 발생하던 문젠데 Boolean으로 변경함으로써 해결
