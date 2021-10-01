@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
 {
    "id": 184,
@@ -20,6 +22,8 @@ public class AnnouncementDto {
     Long id;
     String title;
     String authorName;
+    // follower들의 ID
+    List<String> followers;
 }
 
 

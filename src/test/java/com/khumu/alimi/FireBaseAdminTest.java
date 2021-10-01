@@ -34,8 +34,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FireBaseAdminTest {
     @Value("${firebase.credential.path}")
     String credentialPath;
-    @Value("${firebase.credential.database-url}")
-    String firebaseDBUrl;
     @Value("${firebase.credential.default-device-token}")
     String defaultDeviceToken;
 
@@ -60,7 +58,7 @@ public class FireBaseAdminTest {
             assertThat(credential).isNotNull();
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(credential))
-                    .setDatabaseUrl(firebaseDBUrl)
+//                    .setDatabaseUrl(firebaseDBUrl)
                     .build();
             FirebaseApp app = FirebaseApp.initializeApp(options);
             assertThat(app).isNotNull();

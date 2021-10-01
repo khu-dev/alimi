@@ -2,6 +2,7 @@ package com.khumu.alimi.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.khumu.alimi.data.ResourceKind;
+import com.khumu.alimi.data.dto.AnnouncementDto;
 import com.khumu.alimi.data.dto.NotificationDto;
 import com.khumu.alimi.data.dto.ResourceNotificationSubscriptionDto;
 import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
@@ -9,6 +10,7 @@ import com.khumu.alimi.data.entity.Notification;
 import com.khumu.alimi.data.entity.ResourceNotificationSubscription;
 import com.khumu.alimi.service.KhumuException;
 import com.khumu.alimi.service.notification.NotificationService;
+import com.khumu.alimi.service.notification.NotifyNewAnnouncementService;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +33,7 @@ import static com.khumu.alimi.service.KhumuException.*;
 @RestController
 public class NotificationController {
     final NotificationService notificationService;
+    private final NotifyNewAnnouncementService notifyNewAnnouncementService;
 
     @RequestMapping(value="/ping", method=RequestMethod.GET)
     public String ping() {
@@ -90,20 +93,14 @@ public class NotificationController {
         return new DefaultResponse<>("Notification(id=" + id + ")를 삭제했습니다.", null);
     }
 
-//    @RequestMapping(value = "/api/notifications/{id}", method = RequestMethod.PATCH)
-//    @ResponseBody
-//    public DefaultResponse<Object> update(@PathVariable Long id, @RequestBody NotificationUpdateBody body) {
-//        log.info(body.toString());
-//
-//        System.out.println(body.isRead());
-//        System.out.println(id);
-//        if (body.isRead()) {
-//            notificationService.read(id);
-//        } else {
-//            log.warn("Nothing to update");
-//        }
-//        return new DefaultResponse<>("Notification을 수정했습니다.", null);
-//    }
+    @PostMapping(value = "/api/notifications/notify-new-announcement")
+    @ResponseBody
+    @ResponseStatus(code = HttpStatus.OK)
+    // TODO: 지금은 편의상 그냥 Notification을 return
+    // 근데 얘는 영속화된 Notification이 아니라 푸시알림만 보냄.
+    public List<Notification> notifyNewAnnouncement(@RequestBody AnnouncementDto body) throws Exception {
+        return notifyNewAnnouncementService.notify(body);
+    }
 
     @PostMapping(value = "/api/subscriptions")
     @ResponseBody

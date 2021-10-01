@@ -8,7 +8,6 @@ import com.khumu.alimi.data.dto.CommentDto;
 import com.khumu.alimi.data.dto.EventMessageDto;
 import com.khumu.alimi.data.dto.SqsMessageBodyDto;
 import com.khumu.alimi.data.resource.ArticleResource;
-import com.khumu.alimi.service.notification.AnnouncementEventService;
 import com.khumu.alimi.service.notification.ArticleEventService;
 import com.khumu.alimi.service.notification.CommentEventService;
 import io.awspring.cloud.messaging.listener.annotation.SqsListener;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Component;
 public class SqsMessageListener {
     final CommentEventService commentEventMessageService;
     final ArticleEventService articleEventMessageService;
-    final AnnouncementEventService announcementEventMessageService;
     final ObjectMapper objectMapper;
 
     @SqsListener(value = "${sqs.notificationQueue.name}")
@@ -63,7 +61,6 @@ public class SqsMessageListener {
                     AnnouncementDto announcementDto = objectMapper.readValue(body.getMessage(), AnnouncementDto.class);
                     switch (eventKind) {
                         case create:{
-                            announcementEventMessageService.createNotificationsForNewAnnouncement(announcementDto);
                         } break;
                     }
                 } break;
