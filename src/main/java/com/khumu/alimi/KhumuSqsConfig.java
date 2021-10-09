@@ -46,6 +46,7 @@ class KhumuSqsConfig {
         // 한 번에 가져오는 메시지의 수.
         factory.setMaxNumberOfMessages(10);
         // Long polling. wait time까지 기다리거나 메시지가 MaxNumber가 되면 task 실행. 배치 기다리는 시간같은 느낌.
+        // 이게 가격을 줄여줘야하는데..
         factory.setWaitTimeOut(20);
         SimpleAsyncTaskExecutor simpleAsyncTaskExecutor = new SimpleAsyncTaskExecutor("SqsListener");
         // 한 번에 가져온 메시지를 동시에 처리하는 개수

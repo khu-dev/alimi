@@ -76,14 +76,12 @@ public class SqsMessageListener {
             e.printStackTrace();
             log.error("SQS 메시지 처리 도중 오류 발생!");
         }
-
-
-        System.out.println("SQS 비용을 줄이기 위한 Dummy wait 시작");
-        try {
-            Thread.sleep(1500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("SQS 비용을 줄이기 위한 Dummy wait 마무리");
+//        System.out.println("SQS 비용을 줄이기 위한 Dummy wait 시작");
+//        try {
+//            Thread.sleep(1500);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println("SQS 비용을 줄이기 위한 Dummy wait 마무리");
     }
 }
