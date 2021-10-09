@@ -6,6 +6,7 @@ import com.khumu.alimi.FireBaseConfig;
 import com.khumu.alimi.data.entity.Notification;
 import com.khumu.alimi.data.entity.PushDevice;
 import com.khumu.alimi.external.push.FcmPushManager;
+import com.khumu.alimi.external.push.PushManager;
 import com.khumu.alimi.repository.PushDeviceRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.khumu.alimi.external.push.PushManager.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -78,7 +80,7 @@ class PushNotificationServiceTest {
     }
 
     @Test
-    void executeNotify() {
+    void executeNotify() throws PushException {
         pushManager.notify(Notification.builder()
                 .recipient("bo314")
                 .title("Execute notify")

@@ -42,7 +42,7 @@ public class ArticleEventService {
         }
     }
 
-    public void notifyNewHotArticle(ArticleResource article) {
+    public void notifyNewHotArticle(ArticleResource article) throws PushManager.PushException {
         String author = article.getAuthor();
         PushOption pushOption = pushOptionRepository.getOrCreate(PushOption.builder().username(author).pushOptionKind(PushOptionKind.NEW_HOT_ARTICLE).build());
         if (pushOption.getIsActivated() == false){
