@@ -44,7 +44,9 @@ public class CustomPushDeviceRepository {
     public List<PushDevice> findAllByUser(String username) {
         return pushDeviceRepository.findAllByUser(username);
     }
-
+    public List<PushDevice> findAll(){
+        return pushDeviceRepository.findAll();
+    }
     public PushDevice save(PushDevice subscription) {
         return pushDeviceRepository.save(subscription);
     }

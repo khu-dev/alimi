@@ -30,7 +30,7 @@ public class NotifyNewAnnouncementService {
     final PushManager pushManager;
 
     @Transactional
-    public List<Notification> notify(AnnouncementDto announcementDto) {
+    public List<Notification> notify(AnnouncementDto announcementDto) throws PushManager.PushException {
         List<Notification> results = new ArrayList<>();
         log.info("새로운 공지사항 " + announcementDto.getId() + "에 대한 알림 전송 시작");
 
