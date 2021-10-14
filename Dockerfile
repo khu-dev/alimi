@@ -11,3 +11,4 @@ RUN cp -r src/main/resources/* build/resources/main
 RUN mv build/libs/*.jar build/libs/alimi.jar
 
 ENTRYPOINT ["java", "-Dspring.profiles.active=dev", "-jar", "build/libs/alimi.jar", "--spring.config.location=build/resources/main/"]
+
