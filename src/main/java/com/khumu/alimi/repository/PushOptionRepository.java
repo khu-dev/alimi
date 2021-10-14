@@ -4,6 +4,7 @@ import com.khumu.alimi.data.entity.PushOption;
 import com.khumu.alimi.data.entity.PushOptionKind;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -11,4 +12,6 @@ import java.util.Optional;
  */
 interface PushOptionRepository extends JpaRepository<PushOption, Long> {
     Optional<PushOption> findByUsernameAndPushOptionKind(String username, PushOptionKind pushOptionKind);
+
+    List<PushOption> findAllByPushOptionKindAndIsActivated(PushOptionKind kind, boolean isActivated);
 }

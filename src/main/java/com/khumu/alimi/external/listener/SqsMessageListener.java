@@ -3,13 +3,11 @@ package com.khumu.alimi.external.listener;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.khumu.alimi.data.EventKind;
 import com.khumu.alimi.data.ResourceKind;
-import com.khumu.alimi.data.dto.AnnouncementDto;
-import com.khumu.alimi.data.dto.CommentDto;
-import com.khumu.alimi.data.dto.EventMessageDto;
-import com.khumu.alimi.data.dto.SqsMessageBodyDto;
+import com.khumu.alimi.data.dto.*;
 import com.khumu.alimi.data.resource.ArticleResource;
 import com.khumu.alimi.service.notification.ArticleEventService;
 import com.khumu.alimi.service.notification.CommentEventService;
+import com.khumu.alimi.service.notification.HaksaScheduleEventService;
 import io.awspring.cloud.messaging.listener.annotation.SqsListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +19,7 @@ import org.springframework.stereotype.Component;
 public class SqsMessageListener {
     final CommentEventService commentEventMessageService;
     final ArticleEventService articleEventMessageService;
+    final HaksaScheduleEventService haksaScheduleEventService;
     final ObjectMapper objectMapper;
 
     @SqsListener(value = "${sqs.notificationQueue.name}")
@@ -43,7 +42,6 @@ public class SqsMessageListener {
                             commentEventMessageService.createNotificationsForNewComment(commentDto);
                             break;
                     }
-
                 } break;
                 case article: {
                     ArticleResource article = objectMapper.readValue(body.getMessage(), ArticleResource.class);
@@ -64,20 +62,26 @@ public class SqsMessageListener {
                         } break;
                     }
                 } break;
+                case haksa_schedule:{
+                    System.out.println("새로운 학사일정 전달됨!");
+                    HaksaScheduleDto haksaScheduleDto = objectMapper.readValue(body.getMessage(), HaksaScheduleDto.class);
+                    System.out.println(1);
+                    haksaScheduleEventService.createNotificationForHaksaScheduleStarts(haksaScheduleDto);
+                } break;
+                default:
+                    System.out.println("default");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
             log.error("SQS 메시지 처리 도중 오류 발생!");
         }
-
-
-        System.out.println("SQS 비용을 줄이기 위한 Dummy wait 시작");
-        try {
-            Thread.sleep(15000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("SQS 비용을 줄이기 위한 Dummy wait 마무리");
+//        System.out.println("SQS 비용을 줄이기 위한 Dummy wait 시작");
+//        try {
+//            Thread.sleep(1500);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println("SQS 비용을 줄이기 위한 Dummy wait 마무리");
     }
 }

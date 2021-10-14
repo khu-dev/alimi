@@ -35,7 +35,7 @@ public class CommentEventService {
     final Gson gson;
 
     @Transactional
-    public List<Notification> createNotificationsForNewComment(CommentDto commentDto) {
+    public List<Notification> createNotificationsForNewComment(CommentDto commentDto) throws PushManager.PushException {
         List<Notification> results = new ArrayList<>();
         List<String> recipientIds = this.getRecipientIds(commentDto);
         log.info("" + recipientIds);
