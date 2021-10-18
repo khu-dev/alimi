@@ -5,6 +5,7 @@ import com.khumu.alimi.data.EventKind;
 import com.khumu.alimi.data.ResourceKind;
 import com.khumu.alimi.data.dto.*;
 import com.khumu.alimi.data.resource.ArticleResource;
+import com.khumu.alimi.service.notification.AnnouncementEventService;
 import com.khumu.alimi.service.notification.ArticleEventService;
 import com.khumu.alimi.service.notification.CommentEventService;
 import com.khumu.alimi.service.notification.HaksaScheduleEventService;
@@ -17,8 +18,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 public class SqsMessageListener {
-    final CommentEventService commentEventMessageService;
+    final AnnouncementEventService announcementEventService;
     final ArticleEventService articleEventMessageService;
+    final CommentEventService commentEventMessageService;
     final HaksaScheduleEventService haksaScheduleEventService;
     final ObjectMapper objectMapper;
 
@@ -56,9 +58,10 @@ public class SqsMessageListener {
                     }
                 } break;
                 case announcement:{
-                    AnnouncementDto announcementDto = objectMapper.readValue(body.getMessage(), AnnouncementDto.class);
+                    NewAnnouncementCrawledDto event = objectMapper.readValue(body.getMessage(), NewAnnouncementCrawledDto.class);
                     switch (eventKind) {
                         case create:{
+                            announcementEventService.notifyNewAnnouncementCrawled(event);
                         } break;
                     }
                 } break;

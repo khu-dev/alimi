@@ -2,15 +2,12 @@ package com.khumu.alimi.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.khumu.alimi.data.ResourceKind;
-import com.khumu.alimi.data.dto.AnnouncementDto;
-import com.khumu.alimi.data.dto.NotificationDto;
-import com.khumu.alimi.data.dto.ResourceNotificationSubscriptionDto;
-import com.khumu.alimi.data.dto.SimpleKhumuUserDto;
+import com.khumu.alimi.data.dto.*;
 import com.khumu.alimi.data.entity.Notification;
 import com.khumu.alimi.data.entity.ResourceNotificationSubscription;
 import com.khumu.alimi.service.KhumuException;
+import com.khumu.alimi.service.notification.AnnouncementEventService;
 import com.khumu.alimi.service.notification.NotificationService;
-import com.khumu.alimi.service.notification.NotifyNewAnnouncementService;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -32,8 +29,8 @@ import static com.khumu.alimi.service.KhumuException.*;
 @Slf4j
 @RestController
 public class NotificationController {
-    final NotificationService notificationService;
-    private final NotifyNewAnnouncementService notifyNewAnnouncementService;
+    private final NotificationService notificationService;
+    private final AnnouncementEventService announcementEventService;
 
     @RequestMapping(value="/ping", method=RequestMethod.GET)
     public String ping() {
@@ -98,8 +95,8 @@ public class NotificationController {
     @ResponseStatus(code = HttpStatus.OK)
     // TODO: 지금은 편의상 그냥 Notification을 return
     // 근데 얘는 영속화된 Notification이 아니라 푸시알림만 보냄.
-    public List<Notification> notifyNewAnnouncement(@RequestBody AnnouncementDto body) throws Exception {
-        return notifyNewAnnouncementService.notify(body);
+    public void notifyNewAnnouncement(@RequestBody NewAnnouncementCrawledDto body) {
+        announcementEventService.notifyNewAnnouncementCrawled(body);
     }
 
     @PostMapping(value = "/api/subscriptions")

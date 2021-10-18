@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
+ * notice crawler가 새로운 공지사항을 crawl한 경우 매시지를 publish
 {
    "id": 184,
    "title": "수강신청 안내",
@@ -22,9 +23,7 @@ public class AnnouncementDto {
     Long id;
     String title;
     String authorName;
-    String link;
-    // follower들의 ID
-    List<String> followers;
+    String subLink; // 왜 필드 이름이 sub_link일까..
 }
 
 

@@ -38,7 +38,6 @@ public class ArticleEventService {
         } catch (Exception e) {
             log.error("article에 대한 알림 구독 생성이 실패했습니다. " + article);
             e.printStackTrace();
-
         }
     }
 
