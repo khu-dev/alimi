@@ -83,6 +83,7 @@ public class HaksaScheduleEventService {
                 } catch (PushManager.PushException e) {
                     if (e.getMessage().contains("Requested entity was not found.")) {
                         log.warn("더 이상 존재하지 않는 device tokne이므로 삭제합니다." + device.getDeviceToken());
+                        pushDeviceRepository.delete(device);
                     } else{
                         e.printStackTrace();
                     }
