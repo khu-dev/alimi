@@ -34,7 +34,7 @@ public class AnnouncementEventService {
         for (String recipientId:event.getFollowers()){
             Notification tmp = Notification.builder()
                     .recipient(recipientId)
-                    .title(event.getAnnouncement().getAuthorName() + "이 새로운 공지사항을 등록했습니다!")
+                    .title(event.getAnnouncement().getAuthor().getAuthorName() + "이 새로운 공지사항을 등록했습니다!")
                     .content(event.getAnnouncement().getTitle())
                     .kind("공지사항")
                     .reference(null)

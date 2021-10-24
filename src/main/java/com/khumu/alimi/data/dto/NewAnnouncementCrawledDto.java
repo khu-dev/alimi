@@ -10,14 +10,19 @@ import java.util.List;
 /**
  * notice crawler가 새로운 공지사항을 crawl한 경우 매시지를 publish
 {
-   "announcement": {
-     "id": 184,
-     "title": "수강신청 안내",
-     "author_name": "컴퓨터공학과"
-   },
-   "followers": [
-     "jinsu", "bo314"
-   ]
+    "announcement": {
+        "id": 1,
+        "title": "소방시설 보완공사 시행 안내 ",
+        "sub_link": "http://ce.khu.ac.kr/index.php?hCode=BOARD&page=view&idx=2330&bo_idx=1",
+        "date": "2021-08-06 11:15:38",
+        "author": {
+        "id": 1,
+        "author_name": "컴퓨터공학과",
+        "followed": false
+    },
+    "followers": [
+        "jinsu", "bo314"
+    ]
 }
  */
 @AllArgsConstructor
