@@ -23,6 +23,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+    implementation("com.slack.api:slack-api-client:1.12.1")
+
     // gson
     implementation('com.google.code.gson:gson:2.8.0')
 

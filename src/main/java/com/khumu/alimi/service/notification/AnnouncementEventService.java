@@ -56,9 +56,7 @@ public class AnnouncementEventService {
                         e.printStackTrace();
                     }
                 }
-
             }    
         }
-        
     }
 }

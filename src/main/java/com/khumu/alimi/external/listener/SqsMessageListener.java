@@ -5,6 +5,7 @@ import com.khumu.alimi.data.EventKind;
 import com.khumu.alimi.data.ResourceKind;
 import com.khumu.alimi.data.dto.*;
 import com.khumu.alimi.data.resource.ArticleResource;
+import com.khumu.alimi.external.slack.SlackNotifier;
 import com.khumu.alimi.service.notification.AnnouncementEventService;
 import com.khumu.alimi.service.notification.ArticleEventService;
 import com.khumu.alimi.service.notification.CommentEventService;
@@ -23,6 +24,7 @@ public class SqsMessageListener {
     final CommentEventService commentEventMessageService;
     final HaksaScheduleEventService haksaScheduleEventService;
     final ObjectMapper objectMapper;
+    final SlackNotifier slackNotifier;
 
     @SqsListener(value = "${sqs.notificationQueue.name}")
     public void receiveMessage(SqsMessageBodyDto body) {
@@ -61,6 +63,7 @@ public class SqsMessageListener {
                     NewAnnouncementCrawledDto event = objectMapper.readValue(body.getMessage(), NewAnnouncementCrawledDto.class);
                     switch (eventKind) {
                         case create:{
+                            slackNotifier.sendSlack("새로운 공지사항에 대한 알림을 보냅니다.", event.getAnnouncement().getTitle());
                             announcementEventService.notifyNewAnnouncementCrawled(event);
                         } break;
                     }

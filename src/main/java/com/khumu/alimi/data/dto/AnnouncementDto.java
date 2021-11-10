@@ -29,7 +29,7 @@ public class AnnouncementDto {
     Long id;
     String title;
     String subLink;
-    LocalDateTime date;
+//    LocalDateTime date;
     AuthorDto author;
 
     @AllArgsConstructor
