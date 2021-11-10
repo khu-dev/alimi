@@ -54,13 +54,12 @@ public class HaksaScheduleEventService {
         // dto에는 UTC + 9 string가 전달되고
         // 그걸 해석을 잘 못해서 Timezone 정보가 누락됨.
         // 그리고 9시간 더해서 실제 한국시로 변환함
-        LocalDateTime startDate = haksaScheduleDto.getStartsAt().plusHours(9);
-        LocalDateTime endDate = haksaScheduleDto.getEndsAt().plusHours(9);
+        LocalDateTime startDate = haksaScheduleDto.getStartsAt();
+        LocalDateTime endDate = haksaScheduleDto.getEndsAt();
 
         String content = "[" + startDate.getYear() + "/" + startDate.getMonthValue() + "/" + startDate.getDayOfMonth();;
-        if (startDate.getDayOfYear() == endDate.getDayOfYear() &&
-            startDate.getDayOfMonth() == endDate.getDayOfMonth() &&
-            startDate.getDayOfWeek() == endDate.getDayOfWeek()
+        if (startDate.getDayOfMonth() != endDate.getDayOfMonth() ||
+            startDate.getDayOfWeek() != endDate.getDayOfWeek()
         ) {
             content += "~" + endDate.getYear() + "/" + endDate.getMonthValue() + "/" + endDate.getDayOfMonth();;
         }
