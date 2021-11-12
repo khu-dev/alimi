@@ -23,12 +23,12 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+    implementation("com.slack.api:slack-api-client:1.12.1")
+
     // gson
     implementation('com.google.code.gson:gson:2.8.0')
 
-    // jpa mysql driver
-    // 참고 https://victorydntmd.tistory.com/321
-    runtimeOnly 'mysql:mysql-connector-java'
+    implementation 'mysql:mysql-connector-java:8.0.25'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // logger
