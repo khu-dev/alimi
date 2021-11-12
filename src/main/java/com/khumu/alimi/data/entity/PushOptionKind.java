@@ -11,8 +11,8 @@ public enum PushOptionKind {
     NEW_HOT_ARTICLE,
 
     // 자신이 팔로우 중인 작성자의 새 공지사항이 작성됐을 때
-    @JsonProperty("new_announcement_of_following_author")
-    NEW_ANNOUNCEMENT_OF_FOLLOWING_AUTHOR,
+    @JsonProperty("announcement_crawled")
+    ANNOUNCEMENT_CRAWLED,
 
     // 학사일정 관련 알림
     @JsonProperty("haksa_schedule")

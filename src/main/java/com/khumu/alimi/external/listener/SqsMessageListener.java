@@ -6,7 +6,7 @@ import com.khumu.alimi.data.ResourceKind;
 import com.khumu.alimi.data.dto.*;
 import com.khumu.alimi.data.resource.ArticleResource;
 import com.khumu.alimi.external.slack.SlackNotifier;
-import com.khumu.alimi.service.notification.AnnouncementEventService;
+import com.khumu.alimi.service.NotifyAnnouncementCrawledService;
 import com.khumu.alimi.service.notification.ArticleEventService;
 import com.khumu.alimi.service.notification.CommentEventService;
 import com.khumu.alimi.service.notification.HaksaScheduleEventService;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 public class SqsMessageListener {
-    final AnnouncementEventService announcementEventService;
+    final NotifyAnnouncementCrawledService announcementEventService;
     final ArticleEventService articleEventMessageService;
     final CommentEventService commentEventMessageService;
     final HaksaScheduleEventService haksaScheduleEventService;
@@ -69,10 +69,13 @@ public class SqsMessageListener {
                     }
                 } break;
                 case haksa_schedule:{
-                    System.out.println("새로운 학사일정 전달됨!");
-                    HaksaScheduleDto haksaScheduleDto = objectMapper.readValue(body.getMessage(), HaksaScheduleDto.class);
-                    System.out.println(1);
-                    haksaScheduleEventService.createNotificationForHaksaScheduleStarts(haksaScheduleDto);
+                    switch (eventKind) {
+                        case start:{
+                            System.out.println("새로운 학사일정 전달됨!");
+                            HaksaScheduleDto haksaScheduleDto = objectMapper.readValue(body.getMessage(), HaksaScheduleDto.class);
+                            haksaScheduleEventService.createNotificationForHaksaScheduleStarts(haksaScheduleDto);
+                        } break;
+                    }
                 } break;
                 default:
                     System.out.println("default");
@@ -81,13 +84,7 @@ public class SqsMessageListener {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("SQS 메시지 처리 도중 오류 발생!");
+            slackNotifier.sendSlack("SQS 메시지 처리 도중 오류 발생!", e.getStackTrace().toString());
         }
-//        System.out.println("SQS 비용을 줄이기 위한 Dummy wait 시작");
-//        try {
-//            Thread.sleep(1500);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        System.out.println("SQS 비용을 줄이기 위한 Dummy wait 마무리");
     }
 }
