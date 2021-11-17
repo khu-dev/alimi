@@ -50,4 +50,8 @@ public class CustomPushDeviceRepository {
     public PushDevice save(PushDevice subscription) {
         return pushDeviceRepository.save(subscription);
     }
+
+    public void delete(PushDevice device) {
+        pushDeviceRepository.delete(device);
+    }
 }

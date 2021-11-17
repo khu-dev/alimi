@@ -22,7 +22,8 @@ public class NotificationDto {
     String content;
     String kind;
     String recipient;
-    String reference; // 참조 링크
+    String reference; // 참조할 수 있는 경로
+    String link; // 실제 링크
 
     // @JsonProperty("is_read")// Jackson이 is라는 prefix를 삭제해버림.
     // boolean인 경우 발생하던 문젠데 Boolean으로 변경함으로써 해결

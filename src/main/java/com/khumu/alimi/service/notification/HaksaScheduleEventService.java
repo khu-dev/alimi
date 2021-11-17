@@ -21,9 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.khumu.alimi.service.KhumuException.WrongResourceKindException;
@@ -54,35 +52,42 @@ public class HaksaScheduleEventService {
         // dto에는 UTC + 9 string가 전달되고
         // 그걸 해석을 잘 못해서 Timezone 정보가 누락됨.
         // 그리고 9시간 더해서 실제 한국시로 변환함
-        LocalDateTime startDate = haksaScheduleDto.getStartsAt().plusHours(9);
-        LocalDateTime endDate = haksaScheduleDto.getEndsAt().plusHours(9);
+        LocalDateTime startDate = haksaScheduleDto.getStartsAt();
+        LocalDateTime endDate = haksaScheduleDto.getEndsAt();
 
         String content = "[" + startDate.getYear() + "/" + startDate.getMonthValue() + "/" + startDate.getDayOfMonth();;
-        if (startDate.getDayOfYear() == endDate.getDayOfYear() &&
-            startDate.getDayOfMonth() == endDate.getDayOfMonth() &&
-            startDate.getDayOfWeek() == endDate.getDayOfWeek()
+        if (startDate.getDayOfMonth() != endDate.getDayOfMonth() ||
+            startDate.getDayOfWeek() != endDate.getDayOfWeek()
         ) {
             content += "~" + endDate.getYear() + "/" + endDate.getMonthValue() + "/" + endDate.getDayOfMonth();;
         }
         content += "] " + haksaScheduleDto.getTitle();
 
+        // ㅇr... 이건 수신자를 전달을 안해줘서... 한 사람에게 Notification은 하나만 생성하고
+        // device마다 푸시를 보내는 게 쉽지는 않네...
+        // Hash맵을 이용해서 한 번만 보내야겠다...
+        Map<String, Notification> notifications = new HashMap<>();
         for (PushDevice device : devices) {
             if (!usersIgnored.contains(device.getUser())) {
-                Notification tmp = Notification.builder()
-                        .recipient(device.getUser())
-                        .title("새로운 학사일정이 있어요!")
-                        .content(content)
-                        .kind("학사일정")
-                        .build();
+                if (!notifications.containsKey(device.getUser())) {
+                    notifications.put(device.getUser(), notificationRepository.save(Notification.builder()
+                            .recipient(device.getUser())
+                            .title("새로운 학사일정이 있어요!")
+                            .content(content)
+                            .kind("학사일정")
+                            .build()
+                    ));
+                }
 
-                Notification n = notificationRepository.save(tmp);
                 try {
+                    Notification n = notifications.get(device.getUser());
                     pushManager.notify(n, device.getDeviceToken());
                     log.info("푸시를 보냈습니다. " + device.getUser());
                     results.add(n);
                 } catch (PushManager.PushException e) {
                     if (e.getMessage().contains("Requested entity was not found.")) {
                         log.warn("더 이상 존재하지 않는 device tokne이므로 삭제합니다." + device.getDeviceToken());
+                        pushDeviceRepository.delete(device);
                     } else{
                         e.printStackTrace();
                     }
