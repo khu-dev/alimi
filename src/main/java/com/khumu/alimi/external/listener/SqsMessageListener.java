@@ -84,7 +84,7 @@ public class SqsMessageListener {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("SQS 메시지 처리 도중 오류 발생!");
-            slackNotifier.sendSlack("SQS 메시지 처리 도중 오류 발생!", e.getStackTrace().toString());
+            slackNotifier.sendSlack("SQS 메시지 처리 도중 오류 발생!", e.getMessage());
         }
     }
 }
