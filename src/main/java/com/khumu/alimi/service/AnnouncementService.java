@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class NotifyAnnouncementCrawledService {
+public class AnnouncementService {
     private final NotificationRepository notificationRepository;
     private final CustomPushDeviceRepository pushDeviceRepository;
     private final CustomPushOptionRepository pushOptionRepository;

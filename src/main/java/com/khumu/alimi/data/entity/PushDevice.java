@@ -15,4 +15,9 @@ public class PushDevice {
     @Id
     String deviceToken;
     String user;
+
+    // 해당 기기에서 유저 정보를 삭제합니다.
+    public void deleteUserInfo() {
+        user = null;
+    }
 }

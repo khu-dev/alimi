@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.khumu.alimi.data.ResourceKind;
 import com.khumu.alimi.data.dto.*;
 import com.khumu.alimi.data.entity.ResourceNotificationSubscription;
-import com.khumu.alimi.service.NotifyAnnouncementCrawledService;
+import com.khumu.alimi.service.AnnouncementService;
 import com.khumu.alimi.service.notification.NotificationService;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import static com.khumu.alimi.service.KhumuException.*;
 @RestController
 public class NotificationController {
     private final NotificationService notificationService;
-    private final NotifyAnnouncementCrawledService announcementEventService;
+    private final AnnouncementService announcementEventService;
 
     @RequestMapping(value="/ping", method=RequestMethod.GET)
     public String ping() {

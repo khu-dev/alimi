@@ -1,4 +1,4 @@
-package com.khumu.alimi.service.notification;
+package com.khumu.alimi.service;
 
 import com.khumu.alimi.data.ResourceKind;
 import com.khumu.alimi.data.dto.EventMessageDto;
@@ -9,6 +9,7 @@ import com.khumu.alimi.external.push.PushManager;
 import com.khumu.alimi.repository.CustomPushOptionRepository;
 import com.khumu.alimi.repository.NotificationRepository;
 import com.khumu.alimi.repository.PushDeviceRepository;
+import com.khumu.alimi.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class ArticleEventService {
+public class ArticleService {
     final NotificationRepository notificationRepository;
     final NotificationService notificationService;
     final PushDeviceRepository pushDeviceRepository;

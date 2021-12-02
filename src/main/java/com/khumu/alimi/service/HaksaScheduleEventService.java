@@ -1,4 +1,4 @@
-package com.khumu.alimi.service.notification;
+package com.khumu.alimi.service;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.gson.Gson;
@@ -14,6 +14,7 @@ import com.khumu.alimi.repository.CustomPushDeviceRepository;
 import com.khumu.alimi.repository.CustomPushOptionRepository;
 import com.khumu.alimi.repository.NotificationRepository;
 import com.khumu.alimi.repository.ResourceNotificationSubscriptionRepository;
+import com.khumu.alimi.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.jni.Local;

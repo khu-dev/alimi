@@ -1,4 +1,4 @@
-package com.khumu.alimi.service.notification;
+package com.khumu.alimi.service;
 
 import com.google.gson.Gson;
 import com.khumu.alimi.data.ResourceKind;
@@ -7,6 +7,7 @@ import com.khumu.alimi.data.dto.EventMessageDto;
 import com.khumu.alimi.data.entity.*;
 import com.khumu.alimi.external.push.PushManager;
 import com.khumu.alimi.repository.*;
+import com.khumu.alimi.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ import static com.khumu.alimi.service.KhumuException.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CommentEventService {
+public class CommentService {
     final NotificationRepository notificationRepository;
     final CustomPushDeviceRepository pushDeviceRepository;
     final CustomPushOptionRepository pushOptionRepository;

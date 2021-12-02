@@ -26,11 +26,11 @@ import static com.khumu.alimi.service.KhumuException.*;
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
-
     final NotificationRepository nr;
     final ResourceNotificationSubscriptionRepository resourceNotificationSubscriptionRepository;
 
     final NotificationMapper notificationMapper;
+
     public Notification getNotification(Long id) {
         Notification n = nr.findById(id).get();
         return n;

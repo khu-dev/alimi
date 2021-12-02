@@ -16,6 +16,8 @@ public interface ResourceNotificationSubscriptionRepository extends JpaRepositor
     List<ResourceNotificationSubscription> findAllByResourceKindAndResourceId(ResourceKind resourceKind, Long resourceId);
     List<ResourceNotificationSubscription> findAllBySubscriberAndResourceKindAndResourceId(String subscriberId, ResourceKind resourceKind, Long resourceId);
 
+    List<ResourceNotificationSubscription> findAllBySubscriber(String subscriberId);
+
     // 해당 유저의 해당 ResourceKind의 ResourceNotificationSubscription을 조회하거나 만들고 조회함.
     default ResourceNotificationSubscription getOrCreate(ResourceNotificationSubscription subscription){
         // user의 해당 리소스에 대한 구독 정보를 조회해주거나

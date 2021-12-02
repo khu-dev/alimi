@@ -39,6 +39,15 @@ public class PushService {
     }
 
     @Transactional
+    public List<PushDevice> unsubscribe(String username) {
+        List<PushDevice> devices = pushDeviceRepository.findAllByUser(username);
+        pushDeviceRepository.deleteAll(devices);
+        log.info(username + "의 Device 정보들을 삭제합니다.");
+
+        return devices;
+    }
+
+    @Transactional
     // 딱히 Dto를 사용할 것도 없네.
     public Map<PushOptionKind, PushOption> getPushOption(SimpleKhumuUserDto requestUser, String username) {
         Map<PushOptionKind, PushOption> pushOptionInfo = new HashMap<>();
