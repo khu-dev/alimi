@@ -85,13 +85,9 @@ public class HaksaScheduleEventService {
                     pushManager.notify(n, device.getDeviceToken());
                     log.info("푸시를 보냈습니다. " + device.getUser());
                     results.add(n);
-                } catch (PushManager.PushException e) {
-                    if (e.getMessage().contains("Requested entity was not found.")) {
-                        log.warn("더 이상 존재하지 않는 device tokne이므로 삭제합니다." + device.getDeviceToken());
-                        pushDeviceRepository.delete(device);
-                    } else{
-                        e.printStackTrace();
-                    }
+                } catch (PushManager.ExpiredPushTokenException e) {
+                    log.warn("더 이상 존재하지 않는 device tokne이므로 삭제합니다." + device.getDeviceToken());
+                    pushDeviceRepository.delete(device);
                 }
 
             }

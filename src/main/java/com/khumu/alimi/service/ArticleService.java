@@ -60,10 +60,15 @@ public class ArticleService {
 
         Notification n = notificationRepository.save(tmp);
 
-        List<PushDevice> subscriptions = pushDeviceRepository.findAllByUser(author);
-        for (PushDevice subscription : subscriptions) {
-            pushManager.notify(n, subscription.getDeviceToken());
-            log.info("푸시를 보냅니다. " + subscription.getUser());
+        List<PushDevice> devices = pushDeviceRepository.findAllByUser(author);
+        for (PushDevice device : devices) {
+            try {
+                log.info("푸시를 보냅니다. " + n.getRecipient());
+                pushManager.notify(n, device.getDeviceToken());
+            } catch (PushManager.ExpiredPushTokenException e) {
+                log.warn("더 이상 존재하지 않는 device tokne이므로 삭제합니다." + device.getDeviceToken());
+                pushDeviceRepository.delete(device);
+            }
         }
     }
 }
