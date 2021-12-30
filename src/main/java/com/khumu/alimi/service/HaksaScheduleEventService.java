@@ -1,4 +1,4 @@
-package com.khumu.alimi.service.notification;
+package com.khumu.alimi.service;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.gson.Gson;
@@ -14,6 +14,7 @@ import com.khumu.alimi.repository.CustomPushDeviceRepository;
 import com.khumu.alimi.repository.CustomPushOptionRepository;
 import com.khumu.alimi.repository.NotificationRepository;
 import com.khumu.alimi.repository.ResourceNotificationSubscriptionRepository;
+import com.khumu.alimi.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.jni.Local;
@@ -84,13 +85,9 @@ public class HaksaScheduleEventService {
                     pushManager.notify(n, device.getDeviceToken());
                     log.info("푸시를 보냈습니다. " + device.getUser());
                     results.add(n);
-                } catch (PushManager.PushException e) {
-                    if (e.getMessage().contains("Requested entity was not found.")) {
-                        log.warn("더 이상 존재하지 않는 device tokne이므로 삭제합니다." + device.getDeviceToken());
-                        pushDeviceRepository.delete(device);
-                    } else{
-                        e.printStackTrace();
-                    }
+                } catch (PushManager.ExpiredPushTokenException e) {
+                    log.warn("더 이상 존재하지 않는 device tokne이므로 삭제합니다." + device.getDeviceToken());
+                    pushDeviceRepository.delete(device);
                 }
 
             }

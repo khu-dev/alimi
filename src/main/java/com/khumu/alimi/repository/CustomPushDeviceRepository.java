@@ -54,4 +54,8 @@ public class CustomPushDeviceRepository {
     public void delete(PushDevice device) {
         pushDeviceRepository.delete(device);
     }
+
+    public void deleteAll(Iterable<PushDevice> devices){
+        pushDeviceRepository.deleteAll(devices);
+    }
 }

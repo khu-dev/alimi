@@ -1,4 +1,4 @@
-package com.khumu.alimi.service.notification;
+package com.khumu.alimi.service;
 
 import com.khumu.alimi.data.ResourceKind;
 import com.khumu.alimi.data.dto.EventMessageDto;
@@ -9,6 +9,7 @@ import com.khumu.alimi.external.push.PushManager;
 import com.khumu.alimi.repository.CustomPushOptionRepository;
 import com.khumu.alimi.repository.NotificationRepository;
 import com.khumu.alimi.repository.PushDeviceRepository;
+import com.khumu.alimi.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class ArticleEventService {
+public class ArticleService {
     final NotificationRepository notificationRepository;
     final NotificationService notificationService;
     final PushDeviceRepository pushDeviceRepository;
@@ -59,10 +60,15 @@ public class ArticleEventService {
 
         Notification n = notificationRepository.save(tmp);
 
-        List<PushDevice> subscriptions = pushDeviceRepository.findAllByUser(author);
-        for (PushDevice subscription : subscriptions) {
-            pushManager.notify(n, subscription.getDeviceToken());
-            log.info("푸시를 보냅니다. " + subscription.getUser());
+        List<PushDevice> devices = pushDeviceRepository.findAllByUser(author);
+        for (PushDevice device : devices) {
+            try {
+                log.info("푸시를 보냅니다. " + n.getRecipient());
+                pushManager.notify(n, device.getDeviceToken());
+            } catch (PushManager.ExpiredPushTokenException e) {
+                log.warn("더 이상 존재하지 않는 device tokne이므로 삭제합니다." + device.getDeviceToken());
+                pushDeviceRepository.delete(device);
+            }
         }
     }
 }

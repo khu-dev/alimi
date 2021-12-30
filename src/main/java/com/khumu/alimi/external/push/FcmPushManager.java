@@ -18,7 +18,7 @@ public class FcmPushManager implements PushManager{
     @Value("${khumu.notification.rootLink}")
     String NOTIFICATION_ROOT_LINK;
 
-    public void notify(Notification n, String deviceToken) throws PushException {
+    public void notify(Notification n, String deviceToken) throws ExpiredPushTokenException {
         try {
             System.out.println("Execute push notify to " + n.getRecipient() + "(" + deviceToken + ")");
             String result = firebaseMessaging.send(
@@ -26,6 +26,10 @@ public class FcmPushManager implements PushManager{
             );
             System.out.println(result);
         } catch (FirebaseMessagingException e) {
+            if (e.getMessage().contains("Requested entity was not found.")) {
+                throw new ExpiredPushTokenException(deviceToken);
+            }
+
             throw new PushException(e.getMessage());
         }
     }
