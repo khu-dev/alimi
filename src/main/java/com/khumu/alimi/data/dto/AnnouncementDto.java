@@ -16,9 +16,10 @@ import java.util.List;
     "sub_link": "http://ce.khu.ac.kr/index.php?hCode=BOARD&page=view&idx=2330&bo_idx=1",
     "date": "2021-08-06 11:15:38",
     "author": {
-    "id": 1,
-    "author_name": "컴퓨터공학과",
-    "followed": false
+        "id": 1,
+        "author_name": "컴퓨터공학과",
+        "followed": false
+    }
 }
  */
 @AllArgsConstructor

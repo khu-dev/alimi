@@ -146,7 +146,13 @@ public class NotificationService {
     // 사실상 isActivated을 조회하기 위함.
     public ResourceNotificationSubscriptionDto getSubscription(SimpleKhumuUserDto requestUser, ResourceNotificationSubscription subscription) {
         // 우선 인증 패스했다고 가정
-        subscription = resourceNotificationSubscriptionRepository.getOrCreate(subscription);
+        List<ResourceNotificationSubscription> subscriptions = resourceNotificationSubscriptionRepository.findAllBySubscriberAndResourceKindAndResourceId(subscription.getSubscriber(), subscription.getResourceKind(), subscription.getResourceId());
+        if (subscriptions.isEmpty()){
+            subscription.setIsActivated(false);
+            return notificationMapper.toDto(subscription);
+        }
+
+        subscription = subscriptions.get(subscriptions.size() - 1);
         return notificationMapper.toDto(subscription);
     }
 
