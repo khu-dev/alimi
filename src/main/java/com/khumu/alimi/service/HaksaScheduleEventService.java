@@ -69,7 +69,7 @@ public class HaksaScheduleEventService {
         // Hash맵을 이용해서 한 번만 보내야겠다...
         Map<String, Notification> notifications = new HashMap<>();
         for (PushDevice device : devices) {
-            if (!usersIgnored.contains(device.getUser())) {
+            if (device.getUser() != null && !usersIgnored.contains(device.getUser())) {
                 if (!notifications.containsKey(device.getUser())) {
                     notifications.put(device.getUser(), notificationRepository.save(Notification.builder()
                             .recipient(device.getUser())
