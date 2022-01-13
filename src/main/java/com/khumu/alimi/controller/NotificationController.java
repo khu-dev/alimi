@@ -108,7 +108,7 @@ public class NotificationController {
             @AuthenticationPrincipal SimpleKhumuUserDto user,
             @PathVariable String username,
             @PathVariable ResourceKind resourceKind,
-            @PathVariable Long resourceId) throws Exception {
+            @PathVariable Long resourceId) {
         ResourceNotificationSubscriptionDto subscriptionDto = notificationService.getSubscription(
                 user,
                 ResourceNotificationSubscription.builder()
